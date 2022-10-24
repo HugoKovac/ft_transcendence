@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+
+  nest:
+    build: ./site/nestjs/
+    container_name: nest
+    ports: 
+      - "3000:3000"
+    volumes:
+      - ./site/nestjs/source/:/usr/src/app/
+    depends_on:
+      - postgresql
+    restart: always
+    networks:
+      - backend
+
+  postgresql:
+    image: bitnami/postgresql:latest
+    container_name: postgresql
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env.db
+    restart: always
+    networks:
+      - backend
+
+  pgAdmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgAdmin
+    restart: always
+    networks:
+      - backend
+    depends_on:
+      - postgresql
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+
+networks:
+  backend:
+
