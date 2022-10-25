@@ -21,12 +21,14 @@ export class UsersController {
 	}
 
 	@Post('create')
-	@UsePipes(ValidationPipe)
-	createUser(@Body() createUserDto: CreateUserDto) {		
+	@UsePipes(new ValidationPipe({whitelist: true}))
+	createUser(@Body() createUserDto: CreateUserDto) {
+		console.log(createUserDto)
 		return this.usersService.create(createUserDto);
 	}
 
 	@Delete('id/:id')
+	@UsePipes(new ValidationPipe({whitelist: true}))
 	deleteUser(@Param('id', ParseIntPipe) id: number) {
 		return this.usersService.remove(id);
 	}

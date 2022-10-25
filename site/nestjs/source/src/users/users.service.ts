@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {Repository} from 'typeorm'
+import {Repository} from 'typeorm';
 import {User} from '../typeorm/user.entity'
 import { CreateUserDto } from './users.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -12,17 +13,26 @@ export class UsersService {
 		private readonly usersRepository: Repository<User>,
 	) { }
 
-	create(createUserDto: CreateUserDto){
+	async create(createUserDto: CreateUserDto){
 		const newUser = this.usersRepository.create(createUserDto);
-		this.usersRepository.save(newUser)
+
+		newUser.salt = await bcrypt.genSalt();
+		newUser.password = await bcrypt.hashSync(newUser.password, newUser.salt)
+
+		await this.usersRepository.save(newUser)
 	}
 
-	findAll() : Promise<User[]>{ 
-		return this.usersRepository.find();
+	async findAll() : Promise<User[]>{ 
+		let rtn: User[] = await this.usersRepository.find()
+		for (let i of rtn){
+			delete i.password
+			delete i.salt
+		}
+		return rtn
 	}
 	
-	findbyId(id: number) : Promise<User> {
-		return this.usersRepository.findOneBy({id});
+	async findbyId(id: number) : Promise<User> {
+		return await this.usersRepository.findOneBy({id});
 	}
 
 	async remove(id: number): Promise<void>{
