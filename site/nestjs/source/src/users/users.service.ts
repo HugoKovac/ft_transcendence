@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {User} from '../typeorm/user.entity'
 import { CreateUserDto } from './users.dto';
 import * as bcrypt from 'bcrypt';
+import { LoginCredsDto } from './usersLoginCreds.dto';
+
 
 @Injectable()
 export class UsersService {
@@ -32,10 +34,27 @@ export class UsersService {
 	}
 	
 	async findbyId(id: number) : Promise<User> {
-		return await this.usersRepository.findOneBy({id});
+		let rtn: User = await this.usersRepository.findOneBy({id});
+		delete rtn.password
+		delete rtn.salt
+		return rtn
 	}
 
 	async remove(id: number): Promise<void>{
 		await this.usersRepository.delete(id)
+	}
+
+	async login(LoginCreds: LoginCredsDto): Promise<Partial<User>>{
+		const {email, password} = LoginCreds
+		let usr: User = await this.usersRepository.findOneBy({email})
+		if (!usr)
+			throw new NotFoundException('Login or password not found')
+		const hashedPassword = await bcrypt.hash(password, usr.salt)
+		if (hashedPassword === usr.password){
+			return {username: usr.username,
+				email: usr.email}
+		}
+		throw new NotFoundException('Login or password not found')
+		console.log(usr)
 	}
 }

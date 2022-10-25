@@ -1,9 +1,10 @@
 import { Controller, Get, Post,
 	Param, Body, UsePipes,
 	ValidationPipe, ParseIntPipe,
-	Delete } from '@nestjs/common';
+	Delete, BadRequestException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './users.dto';
+import { LoginCredsDto } from './usersLoginCreds.dto';
 
 
 @Controller('users')
@@ -13,6 +14,14 @@ export class UsersController {
 	@Get()
 	getUser(){
 		return this.usersService.findAll();
+	}
+
+	@Post('login')
+	@UsePipes(new ValidationPipe({whitelist: true}))
+	login(
+		@Body() LoginCreds: LoginCredsDto
+	){
+		return this.usersService.login(LoginCreds);
 	}
 
 	@Get('id/:id')
