@@ -9,7 +9,7 @@ export class CreateUserDto{
     @MinLength(6)
 	username: string;
 
-	@IsNotEmpty()
-    @MinLength(12)
-	password: string;
+	// @IsNotEmpty()
+    // @MinLength(12)
+	// password: string;
 }

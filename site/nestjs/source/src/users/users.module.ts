@@ -3,7 +3,6 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../typeorm/index';
-import { MarvinAuthGuard } from 'src/auth/guards/marvin.guards';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
