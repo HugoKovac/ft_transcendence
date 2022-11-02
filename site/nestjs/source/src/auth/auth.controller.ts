@@ -1,7 +1,7 @@
-import { Controller, Get, Redirect, Req, Res, UseGuards } from "@nestjs/common";
+import { Controller, Get, Param, ParseIntPipe, Redirect, Req, Res, UseGuards } from "@nestjs/common";
 import { MarvinAuthGuard } from "./guards/marvin.guards";
 import { AuthService } from "./auth.service";
-import { resolve } from "path";
+import { JwtAuthGuard } from "./guards/jwt.guard";
 
 @Controller('auth')
 export class AuthController {
@@ -9,29 +9,23 @@ export class AuthController {
 
   @Get('login')
   @UseGuards(MarvinAuthGuard)
-  async login(mag:MarvinAuthGuard){
-	console.log(mag)
-  }
+  async login(mag:MarvinAuthGuard){}
 
   @Get()
   @Redirect('login', 301)
   Redirect(){}
-
+  
   @Get('redirect')
   @UseGuards(MarvinAuthGuard)
-  async redirect(@Res() res, @Req() req){
-	//   console.log(req)
-	// console.log(res)
-
+  async returnCookie(@Res() res, @Req() req){
+	// for (let i in res){
+	// 	console.log(i)
+	// 	for (let j in res[i])
+	// 		console.log(` => ${j}`)
+	// }
+	console.log(req.user)//marvin's payload
 	const token = await this.authService.signIn(req.user)
-
-	await res.cookie('accessToken', token, {
-		maxAge: 2592000000,
-		sameSite: true,
-		secure: false,
-	})
-
-	return await res.status(200).send('redirected')
+	await res.cookie('jwt', token)
+	res.redirect(301, '../test')//!change to home path
   }
-
 }

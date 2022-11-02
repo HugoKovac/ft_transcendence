@@ -6,10 +6,11 @@ export class CreateUserDto{
 	email: string;
     
 	@IsNotEmpty()
-    @MinLength(6)
 	username: string;
+	
+	@IsNotEmpty()
+	pp: string
 
-	// @IsNotEmpty()
-    // @MinLength(12)
-	// password: string;
+	@IsNotEmpty()
+	providerId: string
 }

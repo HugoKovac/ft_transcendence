@@ -7,10 +7,11 @@ import { User } from "src/typeorm";
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { JwtStrategy } from "./strategy/jwt.strategy";
 
 
 @Module({
-	providers: [MarvinStrategy, AuthService],
+	providers: [MarvinStrategy, AuthService, JwtStrategy],
 	controllers: [AuthController],
 	imports: [TypeOrmModule.forFeature([User]),
 		PassportModule,
@@ -18,9 +19,9 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({
                 secret:  configService.get('JWT_SECRET'),
-                signOptions: {
-                    expiresIn: configService.get('JWT_EXPIRE'),
-                },
+                // signOptions: {
+                //     expiresIn: configService.get('JWT_EXPIRE'),
+                // },
             }),
 			inject: [ConfigService],
         }),

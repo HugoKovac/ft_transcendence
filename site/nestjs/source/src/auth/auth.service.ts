@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
 import {JwtService} from '@nestjs/jwt'
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/typeorm";
@@ -12,19 +12,13 @@ export class AuthService{
 		@InjectRepository(User)
 		private userRepo: Repository<User>
 	){}
-	/*
-		signIn : verifie si le user existe
-		createUser : genere un user avec un paylod de ses infos
-		creatToken : creer et return le token JWT en fonction su paylod du user
-	*/
 
 	async signIn(user: User){
-		// console.log(user)
 
 		if (!user)
 			throw new BadRequestException()
 
-		const {username, id, ... user_others} = user
+		const {username, providerId, pp, email} = user
 
 		const repo_username = await this.userRepo.findOne({ where: { username : username} })
 
@@ -33,20 +27,22 @@ export class AuthService{
 
 		return await this.createToken({
 			username: username,
-			id: id,
+			providerId: providerId,
+			pp: pp,
+			email: email,
 		})
 	}
 
 	async createUser(userDTO: CreateUserDto){
 		try{
 			const newUser = await this.userRepo.create(userDTO)
-			console.log(newUser)
-			//? add email in newUser ?
 			await this.userRepo.save(newUser)
 			
 			return this.createToken({
 				username: newUser.username,
-				id: newUser.id,
+				providerId: newUser.providerId,
+				pp: newUser.pp,
+				email: newUser.email,
 			})
 		}
 		catch {

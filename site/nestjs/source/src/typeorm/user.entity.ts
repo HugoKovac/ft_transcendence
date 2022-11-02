@@ -25,12 +25,11 @@ export class User {
         nullable: false,
         default: '',
     })
-	password: string;
+	pp: string
 
 	@Column({
         nullable: false,
         default: '',
     })
-	salt: string;
-
+	providerId: string
 }

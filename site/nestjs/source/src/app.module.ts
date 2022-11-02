@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-// import { UsersModule } from './users/users.module';
+import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import entities from './typeorm/index'
 import { AuthModule } from './auth/auth.module'
+import { JwtStrategy } from './auth/strategy/jwt.strategy';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { AuthModule } from './auth/auth.module'
 		}),
 		inject: [ConfigService],
 	}),
-	// UsersModule,
+	UsersModule,
 	AuthModule,
 ],
   controllers: [AppController],

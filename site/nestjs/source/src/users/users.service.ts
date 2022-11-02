@@ -18,43 +18,41 @@ export class UsersService {
 	async create(createUserDto: CreateUserDto){
 		const newUser = this.usersRepository.create(createUserDto);
 
-		newUser.salt = await bcrypt.genSalt();
-		newUser.password = await bcrypt.hashSync(newUser.password, newUser.salt)
+		// newUser.salt = await bcrypt.genSalt();
+		// newUser.password = await bcrypt.hashSync(newUser.password, newUser.salt)
 
 		await this.usersRepository.save(newUser)
 	}
 
 	async findAll() : Promise<User[]>{ 
 		let rtn: User[] = await this.usersRepository.find()
-		for (let i of rtn){
-			delete i.password
-			delete i.salt
-		}
 		return rtn
 	}
 	
 	async findbyId(id: number) : Promise<User> {
 		let rtn: User = await this.usersRepository.findOneBy({id});
-		delete rtn.password
-		delete rtn.salt
+
+		console.log(rtn)
+		
 		return rtn
 	}
 
-	async remove(id: number): Promise<void>{
+
+	async remove(id: number): Promise<string>{
 		await this.usersRepository.delete(id)
+		return `User ${id} deleted with success`
 	}
 
-	async login(LoginCreds: LoginCredsDto): Promise<Partial<User>>{
-		const {email, password} = LoginCreds
-		let usr: User = await this.usersRepository.findOneBy({email})
-		if (!usr)
-			throw new NotFoundException('Login or password not found')
-		const hashedPassword = await bcrypt.hash(password, usr.salt)
-		if (hashedPassword === usr.password){
-			return {username: usr.username,
-				email: usr.email}
-		}
-		throw new NotFoundException('Login or password not found')
-		console.log(usr)
-	}
+	// async login(LoginCreds: LoginCredsDto): Promise<Partial<User>>{
+	// 	const {email, password} = LoginCreds
+	// 	let usr: User = await this.usersRepository.findOneBy({email})
+	// 	if (!usr)
+	// 		throw new NotFoundException('Login or password not found')
+	// 	const hashedPassword = await bcrypt.hash(password, usr.salt)
+	// 	if (hashedPassword === usr.password){
+	// 		return {username: usr.username,
+	// 			email: usr.email}
+	// 	}
+	// 	throw new NotFoundException('Login or password not found')
+	// }
 }

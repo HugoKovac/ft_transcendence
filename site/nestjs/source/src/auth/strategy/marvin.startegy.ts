@@ -10,9 +10,9 @@ export class MarvinStrategy extends PassportStrategy(Startegy, 'marvin'){
 	)
 	{
 		super({
-		clientID: configService.get('MARVIN_APP_ID'),
-		clientSecret:configService.get('MARVIN_APP_SECRET'),
-		callbackURL: configService.get('MARVIN_CALLBACK_URL'),
+			clientID: configService.get('MARVIN_APP_ID'),
+			clientSecret:configService.get('MARVIN_APP_SECRET'),
+			callbackURL: configService.get('MARVIN_CALLBACK_URL'),
 		})
 	}
 
