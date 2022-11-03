@@ -3,12 +3,12 @@ version: '3'
 services:
 
   nest:
-    build: ./site/nestjs/
+    build: ./backend/nestjs/
     container_name: nest
     ports: 
       - "3000:3000"
     volumes:
-      - ./site/nestjs/source/:/usr/src/app/
+      - ./backend/nestjs/source/:/usr/src/app/
     depends_on:
       - postgresql
     restart: always
