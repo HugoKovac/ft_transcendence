@@ -13,8 +13,8 @@ services:
       - postgresql
     restart: always
     networks:
-      backend:
-        ipv4_address: 172.19.0.2
+      back:
+        ipv4_address: 10.1.0.2
 
   postgresql:
     image: bitnami/postgresql:latest
@@ -25,16 +25,16 @@ services:
       - .env.db
     restart: always
     networks:
-      backend:
-        ipv4_address: 172.19.0.3
+      back:
+        ipv4_address: 10.1.0.3
 
   pgAdmin:
     image: dpage/pgadmin4:latest
     container_name: pgAdmin
     restart: always
     networks:
-      backend:
-        ipv4_address: 172.19.0.4
+      back:
+        ipv4_address: 10.1.0.4
     depends_on:
       - postgresql
     environment:
@@ -44,10 +44,9 @@ services:
       - "5050:80"
 
 networks:
-  backend:
-    driver: bridge
+  back:
     ipam:
-     config:
-       - subnet: 127.19.0.0/16
-         gateway: 127.19.0.1
+      driver: default
+      config:
+        - subnet: 10.1.0.0/24
 

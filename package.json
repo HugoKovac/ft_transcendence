@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "source": "file:backend/nestjs/source"
+  }
+}
