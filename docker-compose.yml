@@ -3,12 +3,12 @@ version: '3'
 services:
 
   nest:
-    build: ./backend/nestjs/
+    build: ./backend/
     container_name: nest
     ports: 
-      - "3000:3000"
+      - "3001:3000"
     volumes:
-      - ./backend/nestjs/source/:/usr/src/app/
+      - ./backend/source/:/usr/src/app/
     depends_on:
       - postgresql
     restart: always
@@ -42,6 +42,15 @@ services:
       PGADMIN_DEFAULT_PASSWORD: root
     ports:
       - "5050:80"
+
+  react:
+    container_name: react
+    build: ./frontend/
+    restart: always
+    ports: 
+      - "3000:3000"
+    volumes:
+      - ./frontend/my-app/:/usr/src/app/
 
 networks:
   back:
