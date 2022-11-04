@@ -48,7 +48,7 @@ services:
     build: ./frontend/
     restart: always
     ports: 
-      - "3000:3000"
+      - "3002:3000"
     volumes:
       - ./frontend/my-app/:/usr/src/app/
 
