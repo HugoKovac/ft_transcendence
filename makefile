@@ -1,5 +1,5 @@
 all:
-	sudo docker-compose build --force
+	sudo docker-compose build
 	sudo docker-compose up
 
 re:
