@@ -26,6 +26,6 @@ export class AuthController {
 	console.log(req.user)//marvin's payload
 	const token = await this.authService.signIn(req.user)
 	await res.cookie('jwt', token)
-	res.redirect(301, '../test')//!change to home path
+	res.redirect(301, 'http://localhost:3002')//!change to home path
   }
 }
