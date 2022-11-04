@@ -1,0 +1,28 @@
+ul li {
+	list-style: none;
+	color: white;
+	display: inline;
+}
+
+li{
+	margin: 10px;
+}
+	
+.NavBar {
+	background-color: #292d39;
+	display: flex;
+}
+
+.left-NavBar {
+	padding: 0%;
+	margin-right: auto;
+	margin-left: 15px;
+}
+.right-NavBar {
+	margin-right: 15px;
+	padding: 0%;
+}
+
+.ancr {
+	text-decoration: none;
+}
