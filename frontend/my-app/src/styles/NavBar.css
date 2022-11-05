@@ -26,3 +26,13 @@ li{
 .ancr {
 	text-decoration: none;
 }
+
+.nav-active{
+	color: #00babc;
+	/* text-decoration: underline; */
+}
+
+.nav-active li{
+	color: #00babc;
+	font-weight: bold;
+}
