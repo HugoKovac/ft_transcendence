@@ -4,6 +4,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/typeorm";
 import { CreateUserDto } from "src/users/users.dto";
 import { Repository } from "typeorm";
+import { decode } from "jsonwebtoken";
+import { JwtPayload } from "./strategy/jwt.strategy";
 
 @Injectable()
 export class AuthService{
@@ -52,5 +54,26 @@ export class AuthService{
 
 	async createToken(payload){
 		return await this.jwtService.sign(payload)
+	}
+
+
+	async logged(inToken: string): Promise<boolean>{
+		
+		if (inToken == undefined || inToken.search('jwt=') == -1 )
+			return false
+
+		let token = inToken.replace('jwt=', '')
+
+		try{
+			let tokenUserInfo: any = decode(token)
+			let user = await this.userRepo.findOneBy({providerId: tokenUserInfo.providerId})
+			if (!user)
+				return false
+	
+			return true
+		}
+		catch{
+			return false
+		}
 	}
 }
