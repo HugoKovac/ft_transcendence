@@ -1,9 +1,11 @@
 import { NavLink } from "react-router-dom"
 import "../styles/NavBar.css"
+import axios from 'axios'
+import { useEffect, useState } from "react"
 
 type props_right_bar = { logged_in: boolean }
 
-function Login_button(){
+function LoginButton(){
 	return (
 		<NavLink to='/login' className={(nav) : any => (nav.isActive ? "ancr nav-active" : "ancr")}>
 				<li>Login</li>
@@ -11,7 +13,7 @@ function Login_button(){
 	)
 }
 
-function Profile_button(){
+function ProfileButton(){
 	return (
 		<NavLink to='/profile' className={(nav) : any => (nav.isActive ? "ancr nav-active" : "ancr")}>
 				<li>Profile</li>
@@ -19,7 +21,7 @@ function Profile_button(){
 	)
 }
 
-function Left_bar(){
+function LeftBar(){
 	return (
 		<ul className="left-NavBar">
 			 <NavLink to='/' className={(nav) : any => (nav.isActive ? "ancr nav-active" : "ancr")}>
@@ -29,14 +31,26 @@ function Left_bar(){
 	)
 }
 
-function Right_bar(props : props_right_bar){
+function RightBar(){
+
+	const [log, setLog] = useState(false)
 
 	let button;
 
-	if (props.logged_in)
-		button = <Profile_button />
+	const axInst = axios.create({
+		baseURL: 'http://localhost:3000/api/',
+		withCredentials: true,
+	})
+
+	useEffect(
+		() => {axInst.get('auth/logged').then((res) => {setLog(res.data)})}, []
+	)
+
+
+	if (log === true)
+		button = <ProfileButton />
 	else
-		button = <Login_button />
+		button = <LoginButton />
 
 	return (
 		<ul className="right-NavBar">
@@ -48,8 +62,8 @@ function Right_bar(props : props_right_bar){
 const NavBar = () => {
 	return (
 		<div className="NavBar">
-			<Left_bar />
-			<Right_bar logged_in={false} />
+			<LeftBar />
+			<RightBar />
 		</div> 
 	)
 }

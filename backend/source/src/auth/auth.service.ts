@@ -59,13 +59,13 @@ export class AuthService{
 
 	async logged(inToken: string): Promise<boolean>{
 		
-		if (inToken == undefined || inToken.search('jwt=') == -1 )
+		if (inToken == undefined /*|| inToken.search('jwt=') == -1 */)
 			return false
 
-		let token = inToken.replace('jwt=', '')
+		// let token = inToken.replace('jwt=', '')
 
 		try{
-			let tokenUserInfo: any = decode(token)
+			let tokenUserInfo: any = decode(inToken)
 			let user = await this.userRepo.findOneBy({providerId: tokenUserInfo.providerId})
 			if (!user)
 				return false

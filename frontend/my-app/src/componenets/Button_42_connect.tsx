@@ -1,6 +1,6 @@
 import "../styles/Button_42_connect.css"
 
-const Button_42_Connect = () => {
+const Button42Connect = () => {
 	return (
 		<div className="back-button">
 			<a href="http://localhost:3000/api/auth/" className="ancr-button">
@@ -15,4 +15,4 @@ const Button_42_Connect = () => {
 	)
 }
 
-export default Button_42_Connect
+export default Button42Connect

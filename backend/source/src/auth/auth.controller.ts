@@ -30,6 +30,7 @@ export class AuthController {
 
 @Get('logged')
 async logged(@Req() req){
-	return await this.authService.logged(req.query['Cookie'])
+	// console.log()
+	return await this.authService.logged(req.cookies['jwt'])
   }
 }
