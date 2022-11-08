@@ -53,8 +53,8 @@ function LeftBar(){
 		<ul className="left-NavBar">
 			 <NavLink to='/' className={(nav) : any => (nav.isActive ? "ancr nav-active" : "ancr")}>
 				<li>Home</li>
-				{button}
 			</NavLink>
+			{button}
 			
 		</ul>
 	)

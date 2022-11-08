@@ -27,6 +27,10 @@ li{
 	text-decoration: none;
 }
 
+.ancr li:hover{
+	color: #65fcff;
+}
+
 .nav-active{
 	color: #00babc;
 	/* text-decoration: underline; */
