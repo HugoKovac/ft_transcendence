@@ -19,28 +19,24 @@ export function IsLog(){
 	return log
 }
 
-function LoginButton(){
+function Button(props: any){
 	return (
-		<NavLink to='/login' className={(nav) : any => (nav.isActive ? "ancr nav-active" : "ancr")}>
-				<li>Login</li>
+		<NavLink to={props.path} className={(nav) : any => (nav.isActive ? "ancr nav-active" : "ancr")}>
+				<li>{props.content}</li>
 		</NavLink>
 	)
+}
+
+function LoginButton(){
+	return ( <Button path='/login' content='Login'/> )
 }
 
 function ProfileButton(){
-	return (
-		<NavLink to='/profile' className={(nav) : any => (nav.isActive ? "ancr nav-active" : "ancr")}>
-				<li>Profile</li>
-		</NavLink>
-	)
+	return ( <Button path='/profile' content='Profile'/> )
 }
 
 function ChatButton(){
-	return (
-		<NavLink to='/chat' className={(nav) : any => (nav.isActive ? "ancr nav-active" : "ancr")}>
-				<li>Chat</li>
-		</NavLink>
-	)
+	return ( <Button path='/chat' content='Chat'/> )
 }
 
 function LeftBar(){
@@ -51,11 +47,8 @@ function LeftBar(){
 
 	return (
 		<ul className="left-NavBar">
-			 <NavLink to='/' className={(nav) : any => (nav.isActive ? "ancr nav-active" : "ancr")}>
-				<li>Home</li>
-			</NavLink>
+			 <Button path='/' content='Home'/>
 			{button}
-			
 		</ul>
 	)
 }
