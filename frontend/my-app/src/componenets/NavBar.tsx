@@ -3,7 +3,21 @@ import "../styles/NavBar.css"
 import axios from 'axios'
 import { useEffect, useState } from "react"
 
-type props_right_bar = { logged_in: boolean }
+export function IsLog(){
+	const [log, setLog] = useState(false)
+
+
+	const axInst = axios.create({
+		baseURL: 'http://localhost:3000/api/',
+		withCredentials: true,
+	})
+
+	useEffect(
+		() => {axInst.get('auth/logged').then((res) => {setLog(res.data)})}, []
+	)
+
+	return log
+}
 
 function LoginButton(){
 	return (
@@ -21,33 +35,36 @@ function ProfileButton(){
 	)
 }
 
+function ChatButton(){
+	return (
+		<NavLink to='/chat' className={(nav) : any => (nav.isActive ? "ancr nav-active" : "ancr")}>
+				<li>Chat</li>
+		</NavLink>
+	)
+}
+
 function LeftBar(){
+	let button
+	
+	if (IsLog() === true)
+		button = <ChatButton />
+
 	return (
 		<ul className="left-NavBar">
 			 <NavLink to='/' className={(nav) : any => (nav.isActive ? "ancr nav-active" : "ancr")}>
 				<li>Home</li>
+				{button}
 			</NavLink>
+			
 		</ul>
 	)
 }
 
 function RightBar(){
 
-	const [log, setLog] = useState(false)
+	let button
 
-	let button;
-
-	const axInst = axios.create({
-		baseURL: 'http://localhost:3000/api/',
-		withCredentials: true,
-	})
-
-	useEffect(
-		() => {axInst.get('auth/logged').then((res) => {setLog(res.data)})}, []
-	)
-
-
-	if (log === true)
+	if (IsLog() === true)
 		button = <ProfileButton />
 	else
 		button = <LoginButton />
