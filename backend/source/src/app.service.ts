@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 export class AppService {
 	constructor() {}
 
-  getHello(): string {
+  getHello(): string { 
     return 'Hello World!';
   }
 }

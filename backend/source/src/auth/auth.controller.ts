@@ -17,15 +17,9 @@ export class AuthController {
   @Get('redirect')
   @UseGuards(MarvinAuthGuard)
   async returnCookie(@Res() res, @Req() req){
-	// for (let i in res){
-	// 	console.log(i)
-	// 	for (let j in res[i])
-	// 		console.log(` => ${j}`)
-	// }
-	// console.log(req.user)//marvin's payload
 	const token = await this.authService.signIn(req.user)
 	await res.cookie('jwt', token)
-	res.redirect(301, 'http://localhost:3002')//!change to home path
+	res.redirect(301, 'http://localhost:3002/redirect/check_token')//!set a thing to say finish for the front begin to check the validity of the cookie
 }
 
 @Get('logged')

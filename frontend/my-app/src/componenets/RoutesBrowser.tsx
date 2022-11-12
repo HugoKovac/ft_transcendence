@@ -1,29 +1,41 @@
+import React, { useContext, useEffect, useState } from "react"
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom"
 import Chat from "../pages/Chat"
 import Home from "../pages/Home"
 import Login from "../pages/Login"
 import Profile from "../pages/Profile"
 import Unauthorized from "../pages/Unauthorized"
-import { IsLog } from "./NavBar"
+import CheckToken from "./CheckToken"
+import LoginStateContext, { LoginStateProvider } from "./LoginStateContext"
+
+
 
 const ProtectedRoute = () : React.ReactElement => {
-	const log = IsLog()
-
-	return ( log ? <Outlet /> : <Unauthorized /> )
+	
+	const { logState, setLogState } = useContext(LoginStateContext)
+	return (
+			<div>
+				<h1>{JSON.stringify(logState)}</h1>
+				{logState ? <Outlet /> : <Unauthorized />}
+			</div> 
+		)
 }
 
 const RoutesBrowser = () : React.ReactElement => {
 	return (
-		<BrowserRouter>
-			<Routes>
-				<Route path="/" element={<Home />} />
-				<Route path="/login" element={<Login />} />
-				<Route path="/profile" element={<Profile />} />
-				<Route path='/chat' element={<ProtectedRoute />}>
-					<Route path='/chat' element={<Chat />}/>
-				</Route>
-			</Routes>
-		</BrowserRouter>
+		<LoginStateProvider>
+			<BrowserRouter>
+				<Routes>
+					<Route path="/" element={<Home />} />
+					<Route path="/login" element={<Login />} />
+					<Route path="/profile" element={<Profile />} />
+					<Route path='/chat' element={<ProtectedRoute />}>
+						<Route path='/chat' element={<Chat />}/>{/*Dans chaque protected route check la validier du token au 1er render*/}
+					</Route>
+					<Route path='/redirect/check_token' element={<CheckToken />} />
+				</Routes>
+			</BrowserRouter>
+		</LoginStateProvider>
 		)	
 }
 

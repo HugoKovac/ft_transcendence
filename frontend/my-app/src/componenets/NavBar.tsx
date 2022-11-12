@@ -1,23 +1,8 @@
 import { NavLink } from "react-router-dom"
 import "../styles/NavBar.css"
-import axios from 'axios'
-import { useEffect, useState } from "react"
+import { useContext } from "react"
+import LoginStateContext from "./LoginStateContext"
 
-export function IsLog(){
-	const [log, setLog] = useState(false)
-
-
-	const axInst = axios.create({
-		baseURL: 'http://localhost:3000/api/',
-		withCredentials: true,
-	})
-
-	useEffect(
-		() => {axInst.get('auth/logged').then((res) => {setLog(res.data)})}, []
-	)
-
-	return log
-}
 
 function Button(props: any){
 	return (
@@ -40,9 +25,10 @@ function ChatButton(){
 }
 
 function LeftBar(){
+	const { logState } = useContext(LoginStateContext)
 	let button
 	
-	if (IsLog() === true)
+	if (logState === true)
 		button = <ChatButton />
 
 	return (
@@ -54,10 +40,10 @@ function LeftBar(){
 }
 
 function RightBar(){
-
+	const { logState } = useContext(LoginStateContext)
 	let button
 
-	if (IsLog() === true)
+	if (logState === true)
 		button = <ProfileButton />
 	else
 		button = <LoginButton />
