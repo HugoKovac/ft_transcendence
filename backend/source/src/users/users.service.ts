@@ -32,8 +32,6 @@ export class UsersService {
 	async findbyId(id: number) : Promise<User> {
 		let rtn: User = await this.usersRepository.findOneBy({id});
 
-		// console.log(rtn)
-		
 		return rtn
 	}
 

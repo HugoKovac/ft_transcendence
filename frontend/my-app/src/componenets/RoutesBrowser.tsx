@@ -13,10 +13,8 @@ import LoginStateContext from "./LoginStateContext"
 const ProtectedRoute = () : React.ReactElement => {
 	
 	const { logState } = useContext(LoginStateContext)
-	console.log(`ProtectedRoute : ${logState}`)
 	return (
 			<div>
-				{/* <h1>{JSON.stringify(logState)}</h1> */}
 				{logState ? <Outlet /> : <Unauthorized />}
 			</div> 
 		)
@@ -29,7 +27,9 @@ const RoutesBrowser = () : React.ReactElement => {
 			<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/login" element={<Login />} />
-				<Route path="/profile" element={<Profile />} />
+				<Route path="/profile" element={<ProtectedRoute />}>
+					<Route path="/profile" element={<Profile />} />
+				</Route>
 				<Route path='/chat' element={<ProtectedRoute />}>
 					<Route path='/chat' element={<Chat />}/>
 				</Route>

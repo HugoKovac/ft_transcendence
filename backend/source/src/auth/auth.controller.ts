@@ -24,7 +24,6 @@ export class AuthController {
 
 @Get('logged')
 async logged(@Req() req){
-	// console.log()
 	return await this.authService.logged(req.cookies['jwt'])
   }
 }

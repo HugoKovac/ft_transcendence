@@ -24,8 +24,8 @@ async function ReqApiLogState(): Promise<boolean>{
 	return rtn
 }
 
-export async function CheckLogState(logState: boolean, setLogState: (state: boolean) => void){
-	if (localStorage.getItem('jwt') === 'true')
+export async function CheckLogState(logState: boolean, setLogState: (state: boolean) => void, check : boolean = false){
+	if ((localStorage.getItem('jwt') === 'true') || check)
 		setLogState(await ReqApiLogState())	
 }
 
