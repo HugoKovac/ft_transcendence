@@ -27,23 +27,11 @@ function ChatButton(){
 // CheckLogState(logState)
 
 function LeftBar(){
-	const {logState, setLogState} = useContext(LoginStateContext)
-	useEffect(
-		() => {
-			const fetchLogState = () => {
-				try{
-					CheckLogState(logState, setLogState)
-				}catch(e){
-					console.log(e)
-				}
-			}
-			fetchLogState()
-		}
-	, [logState])
+	const {logState} = useContext(LoginStateContext)
 	let button
 	
 	if (logState === true)
-		button = <ChatButton />
+	button = <ChatButton />
 
 	return (
 		<ul className="left-NavBar">
@@ -54,20 +42,7 @@ function LeftBar(){
 }
 
 function RightBar(){
-	const {logState, setLogState} = useContext(LoginStateContext)
-
-	useEffect(
-		() => {
-			const fetchLogState = () => {
-				try{
-					CheckLogState(logState, setLogState)
-				}catch(e){
-					console.log(e)
-				}
-			}
-			fetchLogState()
-		}
-	, [logState])
+	const {logState} = useContext(LoginStateContext)
 	let button
 
 	if (logState === true)
