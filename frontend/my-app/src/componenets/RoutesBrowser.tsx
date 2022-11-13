@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext } from "react"
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom"
 import Chat from "../pages/Chat"
 import Home from "../pages/Home"
@@ -12,10 +12,10 @@ import LoginStateContext, { LoginStateProvider } from "./LoginStateContext"
 
 const ProtectedRoute = () : React.ReactElement => {
 	
-	const { logState, setLogState } = useContext(LoginStateContext)
+	const { logState } = useContext(LoginStateContext)
 	return (
 			<div>
-				<h1>{JSON.stringify(logState)}</h1>
+				{/* <h1>{JSON.stringify(logState)}</h1> */}
 				{logState ? <Outlet /> : <Unauthorized />}
 			</div> 
 		)

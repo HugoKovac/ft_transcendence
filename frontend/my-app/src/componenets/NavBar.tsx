@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom"
 import "../styles/NavBar.css"
-import { useContext } from "react"
-import LoginStateContext from "./LoginStateContext"
+import { useContext, useEffect } from "react"
+import LoginStateContext, { CheckLogState } from "./LoginStateContext"
 
 
 function Button(props: any){
@@ -24,8 +24,22 @@ function ChatButton(){
 	return ( <Button path='/chat' content='Chat'/> )
 }
 
+// CheckLogState(logState)
+
 function LeftBar(){
-	const { logState } = useContext(LoginStateContext)
+	const {logState, setLogState} = useContext(LoginStateContext)
+	useEffect(
+		() => {
+			const fetchLogState = () => {
+				try{
+					CheckLogState(logState, setLogState)
+				}catch(e){
+					console.log(e)
+				}
+			}
+			fetchLogState()
+		}
+	, [logState])
 	let button
 	
 	if (logState === true)
@@ -40,7 +54,20 @@ function LeftBar(){
 }
 
 function RightBar(){
-	const { logState } = useContext(LoginStateContext)
+	const {logState, setLogState} = useContext(LoginStateContext)
+
+	useEffect(
+		() => {
+			const fetchLogState = () => {
+				try{
+					CheckLogState(logState, setLogState)
+				}catch(e){
+					console.log(e)
+				}
+			}
+			fetchLogState()
+		}
+	, [logState])
 	let button
 
 	if (logState === true)
