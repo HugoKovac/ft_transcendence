@@ -1,10 +1,11 @@
+import ChatHandle from "../componenets/ChatHandle"
 import NavBar from "../componenets/NavBar"
 
 const Chat = () => {
 	return (
 		<div>
 			<NavBar />
-			<h1>Chat Page</h1>
+			<ChatHandle />
 		</div>
 	)
 }

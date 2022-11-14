@@ -1,6 +1,4 @@
 import "../styles/Button_42_connect.css"
-import { useContext } from "react"
-import LoginStateContext from "./LoginStateContext"
 
 const Button42Connect = () => {
 	return (

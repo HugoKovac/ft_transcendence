@@ -1,7 +1,5 @@
 import Cookies from 'js-cookie'
-import { useEffect } from 'react';
-import { useContext } from 'react';
-import { useState } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginStateContext, { CheckLogState } from './LoginStateContext';
 
@@ -20,7 +18,7 @@ function Disconnect(){
 			CheckLogState(logState, setLogState)
 			nav('/')
 		}
-	}, [log])
+	}, [log, setLog, logState, setLogState, nav])
 
 	return (
 		<div>

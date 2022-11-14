@@ -6,7 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import entities from './typeorm/index'
 import { AuthModule } from './auth/auth.module'
-import { JwtStrategy } from './auth/strategy/jwt.strategy';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -27,6 +27,7 @@ import { JwtStrategy } from './auth/strategy/jwt.strategy';
 	}),
 	UsersModule,
 	AuthModule,
+	ChatModule,
 ],
   controllers: [AppController],
   providers: [AppService],

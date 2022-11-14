@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom"
 import "../styles/NavBar.css"
-import { useContext, useEffect } from "react"
+import { useContext } from "react"
 import LoginStateContext from "./LoginStateContext"
 
 

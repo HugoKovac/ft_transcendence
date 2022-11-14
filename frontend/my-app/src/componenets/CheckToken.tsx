@@ -18,15 +18,15 @@ export function CheckTokenFirstMount(){
 			}
 			fetchLogState()
 		}
-		, [logState])
+		, [logState, setLogState])
 	}
 	
 	function CheckTokenAfterLogin(){
 		localStorage.setItem('jwt', 'true')
 		const {logState, setLogState} = useContext(LoginStateContext)
-	useEffect(() => {CheckLogState(logState, setLogState)}, [])
+		useEffect(() => {CheckLogState(logState, setLogState)}, [logState, setLogState])
 
-	return <Navigate to='/' />
-}
+		return <Navigate to='/' />
+	}
 
 export default CheckTokenAfterLogin
