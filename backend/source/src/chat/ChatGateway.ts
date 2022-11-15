@@ -1,9 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm'
-import { WebSocketGateway, SubscribeMessage, ConnectedSocket, MessageBody } from '@nestjs/websockets'
-import {Socket} from 'socket.io'
+import { WebSocketGateway, SubscribeMessage, ConnectedSocket, MessageBody, WebSocketServer } from '@nestjs/websockets'
+import {Socket, Server} from 'socket.io'
 import { Repository } from 'typeorm'
 import { CreateMessDto } from './message.dto'
 import { Message } from '../typeorm/message.entity'
+import { decode } from 'jsonwebtoken'
 
 type messageObj = {
 	send_id:number,
@@ -21,13 +22,17 @@ type messageObj = {
 export class ChatGateway{
 
 	constructor(@InjectRepository(Message)
-		private readonly messageRepo : Repository<Message>
+		private readonly messageRepo : Repository<Message>,
 	){}
+
+	@WebSocketServer()
+	serv: Server
 
 	@SubscribeMessage('message')
 	async handleMessage(@ConnectedSocket() client: Socket, @MessageBody()body: CreateMessDto){
 		// console.log(`client : ${client.id} | body: ${body.send_id} | ${body.recv_id} | ${body.message} `)
-		console.log(`client : ${client.id} `)
+		console.log(`client : ${client.id} | token : ${client.handshake.auth.token}`)
+		console.log(decode(client.handshake.auth.token))
 		const newMess = this.messageRepo.create(body)
 		await this.messageRepo.save(newMess)
 	}

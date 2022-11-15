@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client"
 
 type messageObj = {
@@ -8,7 +9,14 @@ type messageObj = {
 }
 
 function ChatHandle(){
-	const socket = io("localhost:3000")
+	const socket = io("localhost:3000", {
+		auth: (cb) => {
+			cb({
+			  token: Cookies.get('jwt')
+			});
+		  }
+	})
+
 	const [inputMessage, setInputMessage] = useState<messageObj>({
 		send_id: 0,
 		recv_id: 0,
@@ -18,20 +26,18 @@ function ChatHandle(){
 	const SendMessage = async (e: any) => {
 		e.preventDefault()
 		setInputMessage({...inputMessage, send_id: new Date().getTime(), recv_id: - (new Date().getTime())})
-		console.log(`submit : ${inputMessage}`)
-		await socket.emit('message', inputMessage)
+		socket.emit('message', inputMessage)
 		setInputMessage({send_id: 0, recv_id: 0, message: ''})
-
 	}
 	
 	useEffect(() => {
 		
 		socket.on("connect", () => {
-			console.log(socket.connected); // true
+			console.log(`connected : ${socket.connected}`);
 		});
 		
 		socket.on("disconnect", () => {
-			console.log(socket.connected); // false
+			console.log(`connected : ${socket.connected}`);
 		});
 	}, [])
 
