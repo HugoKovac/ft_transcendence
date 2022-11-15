@@ -1,10 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {User} from '../typeorm/user.entity'
 import { CreateUserDto } from './users.dto';
-import * as bcrypt from 'bcrypt';
-import { LoginCredsDto } from './usersLoginCreds.dto';
 
 
 @Injectable()

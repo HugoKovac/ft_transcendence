@@ -2,22 +2,22 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client"
 
 type messageObj = {
-	id:number,
-	username:string,
+	send_id:number,
+	recv_id:number,
 	message:string,
 }
 
 function ChatHandle(){
 	const socket = io("localhost:3000")
 	const [inputMessage, setInputMessage] = useState<messageObj>({
-		id: 0,
-		username: 'default',
+		send_id: 0,
+		recv_id: 0,
 		message: ''
 	})
 
 	const SendMessage = (e: any) => {
 		e.preventDefault()
-		setInputMessage({...inputMessage, id: new Date().getTime()})
+		setInputMessage({...inputMessage, send_id: new Date().getTime(), recv_id: - (new Date().getTime())})
 		console.log(`submit : ${inputMessage}`)
 		socket.emit('message', inputMessage)
 	}

@@ -5,7 +5,6 @@ import { User } from "src/typeorm";
 import { CreateUserDto } from "src/users/users.dto";
 import { Repository } from "typeorm";
 import { decode } from "jsonwebtoken";
-import { JwtPayload } from "./strategy/jwt.strategy";
 
 @Injectable()
 export class AuthService{

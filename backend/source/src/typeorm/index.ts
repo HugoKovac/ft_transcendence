@@ -1,6 +1,7 @@
+import { Message } from './message.entity'
 import { User } from './user.entity'
 
-const entities = [User,]
+const entities = [User, Message]
 
-export {User}
+export {User, Message}
 export default entities
