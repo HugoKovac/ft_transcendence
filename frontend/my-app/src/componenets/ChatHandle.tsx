@@ -15,11 +15,13 @@ function ChatHandle(){
 		message: ''
 	})
 
-	const SendMessage = (e: any) => {
+	const SendMessage = async (e: any) => {
 		e.preventDefault()
 		setInputMessage({...inputMessage, send_id: new Date().getTime(), recv_id: - (new Date().getTime())})
 		console.log(`submit : ${inputMessage}`)
-		socket.emit('message', inputMessage)
+		await socket.emit('message', inputMessage)
+		setInputMessage({send_id: 0, recv_id: 0, message: ''})
+
 	}
 	
 	useEffect(() => {

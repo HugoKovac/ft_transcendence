@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {Repository} from 'typeorm';
+import {DeleteResult, Repository} from 'typeorm';
 import {User} from '../typeorm/user.entity'
 import { CreateUserDto } from './users.dto';
 
@@ -34,9 +34,9 @@ export class UsersService {
 	}
 
 
-	async remove(id: number): Promise<string>{
-		await this.usersRepository.delete(id)
-		return `User ${id} deleted with success`
+	async remove(id: number) : Promise<string>{
+		const result: DeleteResult = await this.usersRepository.delete(id)
+		return result.affected === 0 ? "Don't exist" : `user: ${id} deleted`
 	}
 
 	// async login(LoginCreds: LoginCredsDto): Promise<Partial<User>>{

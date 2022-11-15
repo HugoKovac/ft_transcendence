@@ -6,6 +6,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './users.dto';
 import {User} from '../typeorm/user.entity'
 import { LoginCredsDto } from './usersLoginCreds.dto';
+import { DeleteResult } from 'typeorm';
 
 
 @Controller('users')
@@ -35,7 +36,7 @@ export class UsersController {
 
 	@Get('delete/:id')//!guard for prod
 	async deleteUserByGet(@Param('id', ParseIntPipe) id: number) {
-	  return this.usersService.remove(id);
+		return this.usersService.remove(id);
 	}
 
 	@Post('create')//!remove if web site don't take password
