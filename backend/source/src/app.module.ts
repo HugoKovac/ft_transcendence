@@ -7,10 +7,11 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import entities from './typeorm/index'
 import { AuthModule } from './auth/auth.module'
 import { ChatModule } from './chat/chat.module';
+import { config } from './auth/strategy/marvin.startegy';
 
 @Module({
   imports: [
-	ConfigModule.forRoot({isGlobal: true}),
+	ConfigModule.forRoot({isGlobal: true, load: [config]}),
 	TypeOrmModule.forRootAsync({
 		imports: [ConfigModule],
 		useFactory: (configService: ConfigService) => ({

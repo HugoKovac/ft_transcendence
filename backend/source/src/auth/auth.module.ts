@@ -11,20 +11,18 @@ import { JwtStrategy } from "./strategy/jwt.strategy";
 
 
 @Module({
-	providers: [MarvinStrategy, AuthService, JwtStrategy],
-	controllers: [AuthController],
-	imports: [TypeOrmModule.forFeature([User]),
+	imports: [ConfigModule,
+		TypeOrmModule.forFeature([User]),
 		PassportModule,
 		JwtModule.registerAsync({
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({
                 secret:  configService.get('JWT_SECRET'),
-                // signOptions: {
-                //     expiresIn: configService.get('JWT_EXPIRE'),
-                // },
             }),
 			inject: [ConfigService],
         }),
 	],
+	providers: [MarvinStrategy, AuthService, JwtStrategy],
+	controllers: [AuthController],
 })
 export class AuthModule{}
