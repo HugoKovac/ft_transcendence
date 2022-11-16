@@ -13,6 +13,7 @@ import LoginStateContext from "./LoginStateContext"
 const ProtectedRoute = () : React.ReactElement => {
 	
 	const { logState } = useContext(LoginStateContext)
+
 	return (
 			<div>
 				{logState ? <Outlet /> : <Unauthorized />}

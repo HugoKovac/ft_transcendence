@@ -2,12 +2,12 @@ import { Injectable, Req, UnauthorizedException } from "@nestjs/common"
 import { ConfigService } from "@nestjs/config"
 import { PassportStrategy } from "@nestjs/passport"
 import { InjectRepository } from "@nestjs/typeorm"
-import console from "console"
-import { ExtractJwt, Strategy } from 'passport-jwt'
+import { Strategy } from 'passport-jwt'
 import { User } from "src/typeorm/user.entity"
 import { Repository } from "typeorm"
 
 export type JwtPayload = {
+	id: number,
 	providerId: string
 	username: string
 	pp: string
@@ -44,6 +44,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt'){
 			throw new UnauthorizedException('please login')//user don't exist
 
 		return {
+			id: payload.id,
 			providerId: payload.providerId,
 			email: payload.email,
 			pp: payload.pp,

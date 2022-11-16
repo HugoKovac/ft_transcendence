@@ -9,6 +9,7 @@ type messageObj = {
 }
 
 function ChatHandle(){
+	
 	const socket = io("localhost:3000", {
 		auth: (cb) => {
 			cb({
@@ -44,7 +45,7 @@ function ChatHandle(){
 	return <div>
 		<form onSubmit={SendMessage}>
 			<label>Message :</label>
-			<input onChange={(e) => {setInputMessage({...inputMessage, message: e.target.value})}} value={inputMessage.message} type="text" name="msg"/>
+			<input autoFocus autoComplete="off" onChange={(e) => {setInputMessage({...inputMessage, message: e.target.value})}} value={inputMessage.message} type="text" name="msg"/>
 			<button>send</button>
 		</form>
 	</div>
