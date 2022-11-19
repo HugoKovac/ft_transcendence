@@ -17,6 +17,8 @@ async function ReqApiLogState(): Promise<number>{
 		withCredentials: true,
 	})
 	
+	console.log('request api')
+
 	let rtn:number = 0
 
 	rtn = await axInst.get('auth/logged').then((res) => {return JSON.parse(res.data)})
@@ -25,7 +27,8 @@ async function ReqApiLogState(): Promise<number>{
 }
 
 export async function CheckLogState(logState: number, setLogState: (state: number) => void, check : boolean = false){
-	if ((localStorage.getItem('jwt') === 'true') || check)
+	console.log(`check logState: ${localStorage.getItem('jwt')}`)
+	if ((localStorage.getItem('jwt') !== '0') || check)
 		setLogState(await ReqApiLogState())
 }
 

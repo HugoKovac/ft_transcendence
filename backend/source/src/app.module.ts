@@ -15,11 +15,11 @@ import { config } from './auth/strategy/marvin.startegy';
 	TypeOrmModule.forRootAsync({
 		imports: [ConfigModule],
 		useFactory: (configService: ConfigService) => {
-			console.log(configService.get('DB_HOST'))
-			console.log(configService.get('DB_PORT') as number)
-			console.log(configService.get('DB_USERNAME'))
-			console.log(configService.get('DB_PASSWORD'))
-			console.log(configService.get('DB_NAME'))
+			// console.log(configService.get('DB_HOST'))
+			// console.log(configService.get('DB_PORT') as number)
+			// console.log(configService.get('DB_USERNAME'))
+			// console.log(configService.get('DB_PASSWORD'))
+			// console.log(configService.get('DB_NAME'))
 			return {
 			type: 'postgres',
 			host: configService.get('DB_HOST'),

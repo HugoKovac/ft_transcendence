@@ -1,12 +1,13 @@
 import Cookies from "js-cookie";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client"
+import {LoginStateContext} from './LoginStateContext'
 
-type messageObj = {
-	send_id:number,
-	recv_id:number,
-	message:string,
-}
+// type messageObj = {
+// 	send_id:number,
+// 	recv_id:number,
+// 	message:string,
+// }
 
 function ChatHandle(){
 	
@@ -18,17 +19,16 @@ function ChatHandle(){
 		  }
 	})
 
-	const [inputMessage, setInputMessage] = useState<messageObj>({
-		send_id: 0,
-		recv_id: 0,
-		message: ''
-	})
+	const [inputMessage, setInputMessage] = useState<string>('')
+	const {logState} = useContext(LoginStateContext)
 
 	const SendMessage = async (e: any) => {
 		e.preventDefault()
-		setInputMessage({...inputMessage, send_id: new Date().getTime(), recv_id: - (new Date().getTime())})
-		socket.emit('message', inputMessage)
-		setInputMessage({send_id: 0, recv_id: 0, message: ''})
+		// setInputMessage({...inputMessage, send_id: new Date().getTime(), recv_id: - (new Date().getTime())})
+		socket.emit('message', {send_id: logState,
+			recv_id: 667,
+			msg: inputMessage})
+		setInputMessage('')
 	}
 	
 	useEffect(() => {
@@ -45,7 +45,7 @@ function ChatHandle(){
 	return <div>
 		<form onSubmit={SendMessage}>
 			<label>Message :</label>
-			<input autoFocus autoComplete="off" onChange={(e) => {setInputMessage({...inputMessage, message: e.target.value})}} value={inputMessage.message} type="text" name="msg"/>
+			<input autoFocus autoComplete="off" onChange={(e) => {setInputMessage(e.target.value)}} value={inputMessage} type="text" name="msg"/>
 			<button>send</button>
 		</form>
 	</div>
