@@ -8,6 +8,7 @@ import entities from './typeorm/index'
 import { AuthModule } from './auth/auth.module'
 import { ChatModule } from './chat/chat.module';
 import { config } from './auth/strategy/marvin.startegy';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { config } from './auth/strategy/marvin.startegy';
 	UsersModule,
 	AuthModule,
 	ChatModule,
+	FriendsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

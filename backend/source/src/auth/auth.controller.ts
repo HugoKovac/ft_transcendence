@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, Redirect, Req, Res, UseGuards } from "@nestjs/common";
+import { Controller, Get, Redirect, Req, Res, UseGuards } from "@nestjs/common";
 import { MarvinAuthGuard } from "./guards/marvin.guards";
 import { AuthService } from "./auth.service";
 
@@ -19,7 +19,7 @@ export class AuthController {
   async returnCookie(@Res() res, @Req() req){
 	const token = await this.authService.signIn(req.user)
 	await res.cookie('jwt', token)
-	res.redirect(301, 'http://localhost:3002/redirect/check_token')//!set a thing to say finish for the front begin to check the validity of the cookie
+	res.redirect(301, 'http://localhost:3002/redirect/check_token')
 }
 
 @Get('logged')

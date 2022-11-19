@@ -42,7 +42,7 @@ function ChatHandle(){
 		socket.on("disconnect", () => {
 			console.log(`connected : ${socket.connected}`);
 		});
-	}, [])
+	}, [socket])
 
 	return <div>
 		<form onSubmit={SendMessage}>
