@@ -1,6 +1,7 @@
 import React, { useContext } from "react"
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom"
 import Chat from "../pages/Chat"
+import Friends from "../pages/Friends"
 import Home from "../pages/Home"
 import Login from "../pages/Login"
 import Profile from "../pages/Profile"
@@ -33,6 +34,9 @@ const RoutesBrowser = () : React.ReactElement => {
 				</Route>
 				<Route path='/chat' element={<ProtectedRoute />}>
 					<Route path='/chat' element={<Chat />}/>
+				</Route>
+				<Route path='/friends' element={<ProtectedRoute />}>
+					<Route path='/friends' element={<Friends />}/>
 				</Route>
 				<Route path='/redirect/check_token' element={<CheckTokenAfterLogin />} />
 			</Routes>

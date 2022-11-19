@@ -22,11 +22,13 @@ services:
     ports:
       - "5432:5432"
     env_file:
-      - .env.db
+      - ./.env.db
     restart: always
     networks:
       back:
         ipv4_address: 10.1.0.3
+    volumes:
+      - ./db_backup:/bitnami/postgresql
 
   pgAdmin:
     image: dpage/pgadmin4:latest

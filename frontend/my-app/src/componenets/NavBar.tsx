@@ -24,6 +24,9 @@ function ChatButton(){
 	return ( <Button path='/chat' content='Chat'/> )
 }
 
+function FriendsButton(){
+	return ( <Button path='/friends' content='Friends'/> )
+}
 
 function LeftBar(){
 	const {logState} = useContext(LoginStateContext)
@@ -45,7 +48,10 @@ function RightBar(){
 	let button
 
 	if (logState !== 0)
-		button = <ProfileButton />
+		button = <div>
+			<FriendsButton />
+			<ProfileButton />
+		</div>
 	else
 		button = <LoginButton />
 
