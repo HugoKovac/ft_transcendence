@@ -30,9 +30,8 @@ export class ChatGateway{
 
 	@SubscribeMessage('message')
 	async handleMessage(@ConnectedSocket() client: Socket, @MessageBody()body: CreateMessDto){
-		console.log(`client : ${client.id} | send_id: ${body.send_id} | recv_id: ${body.recv_id} | msg: ${body.message} `)
-		// console.log(`client : ${client.id} | token : ${client.handshake.auth.token}`)
-		console.log(decode(client.handshake.auth.token))
+		// console.log(`client : ${client.id} | send_id: ${body.send_id} | recv_id: ${body.recv_id} | msg: ${body.message} `)
+		// console.log(decode(client.handshake.auth.token))
 		const newMess = this.messageRepo.create(body)
 		await this.messageRepo.save(newMess)
 	}

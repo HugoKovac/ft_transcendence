@@ -3,11 +3,11 @@ import { useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client"
 import {LoginStateContext} from './LoginStateContext'
 
-// type messageObj = {
-// 	send_id:number,
-// 	recv_id:number,
-// 	message:string,
-// }
+type messageObj = {
+	send_id:number,
+	recv_id:number,
+	message:string,
+}
 
 function ChatHandle(){
 	
@@ -21,13 +21,15 @@ function ChatHandle(){
 
 	const [inputMessage, setInputMessage] = useState<string>('')
 	const {logState} = useContext(LoginStateContext)
+	const payloadMsg: messageObj = {
+		send_id: logState,
+		recv_id: 667,
+		message: inputMessage
+	}
 
 	const SendMessage = async (e: any) => {
 		e.preventDefault()
-		// setInputMessage({...inputMessage, send_id: new Date().getTime(), recv_id: - (new Date().getTime())})
-		socket.emit('message', {send_id: logState,
-			recv_id: 667,
-			msg: inputMessage})
+		socket.emit('message', payloadMsg)
 		setInputMessage('')
 	}
 	
