@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Friends } from "./friends.entity";
 
 @Entity()
 export class User {
@@ -32,4 +33,10 @@ export class User {
         default: '',
     })
 	providerId: string
+
+	@OneToMany(
+		() => Friends,
+		friends => friends.user
+	)
+	friends: Friends[]
 }

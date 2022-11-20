@@ -1,15 +1,21 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "./user.entity";
 
 @Entity()
 export class Friends{
-	@PrimaryColumn({
+	@PrimaryGeneratedColumn({
 		type: 'bigint',
 	})
-	user_id: number
+	id: number;
 
 	@Column({
 		type: 'bigint',
-		array: true
 	})
-	friend_list: number[]
+	friend_id: number
+
+	@ManyToOne(
+		() => User,
+		user => user.friends
+	)
+	user: User
 }

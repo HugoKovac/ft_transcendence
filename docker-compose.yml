@@ -27,8 +27,6 @@ services:
     networks:
       back:
         ipv4_address: 10.1.0.3
-    volumes:
-      - ./db_backup:/bitnami/postgresql
 
   pgAdmin:
     image: dpage/pgadmin4:latest

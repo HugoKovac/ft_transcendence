@@ -6,8 +6,7 @@ export class FriendsController {
 	constructor(private readonly friendsService: FriendsService){}
 
 	@Post('add')
-	addFriend(@Body()bod: newFriend){
-		// console.log(bod)
-		return this.friendsService.findUsernameId(bod)
+	async addFriend(@Body()bod: newFriend){
+		return await this.friendsService.addFriend(bod)
 	}
 }
