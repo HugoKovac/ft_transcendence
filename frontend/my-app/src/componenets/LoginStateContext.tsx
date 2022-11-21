@@ -2,36 +2,34 @@ import axios from "axios"
 import { createContext, useState } from "react"
 
 type ObjLoginStateContext = {
-	logState: boolean,
-	setLogState: (state: boolean) => void
+	logState: number,
+	setLogState: (state: number) => void
 }
 
 export const LoginStateContext = createContext<ObjLoginStateContext>({
-	logState: false,
+	logState: 0,
 	setLogState : () => {}
 })
 
-async function ReqApiLogState(): Promise<boolean>{
+async function ReqApiLogState(): Promise<number>{
 	const axInst = axios.create({
 		baseURL: 'http://localhost:3000/api/',
 		withCredentials: true,
 	})
 	
-	let rtn:boolean = false
-
-	rtn = await axInst.get('auth/logged').then((res) => {return JSON.parse(res.data)})
-
+	const rtn:number = await axInst.get('auth/logged').then((res) => {return JSON.parse(res.data)})
 	return rtn
 }
 
-export async function CheckLogState(logState: boolean, setLogState: (state: boolean) => void, check : boolean = false){
-	if ((localStorage.getItem('jwt') === 'true') || check)
-		setLogState(await ReqApiLogState())	
+export async function CheckLogState(logState: number, setLogState: (state: number) => void, check : boolean = false){
+	// console.log(`check logState: ${localStorage.getItem('jwt')}`)
+	if ((localStorage.getItem('jwt') !== '0') || check)
+		setLogState(await ReqApiLogState())
 }
 
 export const LoginStateProvider = ({children}:any) => {
 
-	const [logState, setLogState] = useState(false)
+	const [logState, setLogState] = useState(0)
 
 	return (
 		<LoginStateContext.Provider value={{ logState, setLogState }}>

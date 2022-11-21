@@ -7,13 +7,21 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import entities from './typeorm/index'
 import { AuthModule } from './auth/auth.module'
 import { ChatModule } from './chat/chat.module';
+import { config } from './auth/strategy/marvin.startegy';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
   imports: [
-	ConfigModule.forRoot({isGlobal: true}),
+	ConfigModule.forRoot({isGlobal: true, load: [config]}),
 	TypeOrmModule.forRootAsync({
 		imports: [ConfigModule],
-		useFactory: (configService: ConfigService) => ({
+		useFactory: (configService: ConfigService) => {
+			// console.log(configService.get('DB_HOST'))
+			// console.log(configService.get('DB_PORT') as number)
+			// console.log(configService.get('DB_USERNAME'))
+			// console.log(configService.get('DB_PASSWORD'))
+			// console.log(configService.get('DB_NAME'))
+			return {
 			type: 'postgres',
 			host: configService.get('DB_HOST'),
 			port: configService.get('DB_PORT') as number,
@@ -22,12 +30,13 @@ import { ChatModule } from './chat/chat.module';
 			database: configService.get('DB_NAME'),
 			entities: entities,
 			synchronize: true,
-		}),
+		}},
 		inject: [ConfigService],
 	}),
 	UsersModule,
 	AuthModule,
 	ChatModule,
+	FriendsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

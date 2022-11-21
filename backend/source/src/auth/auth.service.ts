@@ -6,6 +6,14 @@ import { CreateUserDto } from "src/users/users.dto";
 import { Repository } from "typeorm";
 import { decode } from "jsonwebtoken";
 
+export type userToken = {
+	id: number,
+	providerId: string,
+	username: string,
+	pp: string,
+	email: string
+}
+
 @Injectable()
 export class AuthService{
 	constructor(
@@ -23,10 +31,16 @@ export class AuthService{
 
 		const repo_username = await this.userRepo.findOne({ where: { username : username} })
 
-		if (!repo_username)
+		if (!repo_username){
 			return await this.createUser(user)
+		}
+		
+		let userDB = await this.userRepo.findOneBy({providerId: user.providerId})
+		if (!userDB)
+			throw new UnauthorizedException()
 
-		return await this.createToken({
+		return this.createToken({
+			id: userDB.id,
 			username: username,
 			providerId: providerId,
 			pp: pp,
@@ -36,10 +50,11 @@ export class AuthService{
 
 	async createUser(userDTO: CreateUserDto){
 		try{
-			const newUser = await this.userRepo.create(userDTO)
+			const newUser = this.userRepo.create(userDTO)
 			await this.userRepo.save(newUser)
 			
 			return this.createToken({
+				id: newUser.id,
 				username: newUser.username,
 				providerId: newUser.providerId,
 				pp: newUser.pp,
@@ -51,28 +66,27 @@ export class AuthService{
 		}
 	}
 
-	async createToken(payload){
-		return await this.jwtService.sign(payload)
+	createToken(payload: userToken) :string {
+		return this.jwtService.sign(payload)
 	}
 
 
-	async logged(inToken: string): Promise<boolean>{
+	async logged(inToken: string): Promise<number>{
 		
-		if (inToken == undefined /*|| inToken.search('jwt=') == -1 */)
-			return false
-
-		// let token = inToken.replace('jwt=', '')
+		if (inToken == undefined)
+			return 0
 
 		try{
 			let tokenUserInfo: any = decode(inToken)
+
 			let user = await this.userRepo.findOneBy({providerId: tokenUserInfo.providerId})
 			if (!user)
-				return false
-	
-			return true
+				return 0
+
+			return tokenUserInfo.id
 		}
 		catch{
-			return false
+			return 0
 		}
 	}
 }

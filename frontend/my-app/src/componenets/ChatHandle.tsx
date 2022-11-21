@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client"
+import {LoginStateContext} from './LoginStateContext'
 
 type messageObj = {
 	send_id:number,
@@ -8,37 +10,44 @@ type messageObj = {
 }
 
 function ChatHandle(){
-	const socket = io("localhost:3000")
-	const [inputMessage, setInputMessage] = useState<messageObj>({
-		send_id: 0,
-		recv_id: 0,
-		message: ''
+	
+	const socket = io("localhost:3000", {
+		auth: (cb) => {
+			cb({
+			  token: Cookies.get('jwt')
+			});
+		  }
 	})
+
+	const [inputMessage, setInputMessage] = useState<string>('')
+	const {logState} = useContext(LoginStateContext)
+	const payloadMsg: messageObj = {
+		send_id: logState,
+		recv_id: 667,
+		message: inputMessage
+	}
 
 	const SendMessage = async (e: any) => {
 		e.preventDefault()
-		setInputMessage({...inputMessage, send_id: new Date().getTime(), recv_id: - (new Date().getTime())})
-		console.log(`submit : ${inputMessage}`)
-		await socket.emit('message', inputMessage)
-		setInputMessage({send_id: 0, recv_id: 0, message: ''})
-
+		socket.emit('message', payloadMsg)
+		setInputMessage('')
 	}
 	
 	useEffect(() => {
 		
 		socket.on("connect", () => {
-			console.log(socket.connected); // true
+			console.log(`connected : ${socket.connected}`);
 		});
 		
 		socket.on("disconnect", () => {
-			console.log(socket.connected); // false
+			console.log(`connected : ${socket.connected}`);
 		});
-	}, [])
+	}, [socket])
 
 	return <div>
 		<form onSubmit={SendMessage}>
 			<label>Message :</label>
-			<input onChange={(e) => {setInputMessage({...inputMessage, message: e.target.value})}} value={inputMessage.message} type="text" name="msg"/>
+			<input autoFocus autoComplete="off" onChange={(e) => {setInputMessage(e.target.value)}} value={inputMessage} type="text" name="msg"/>
 			<button>send</button>
 		</form>
 	</div>

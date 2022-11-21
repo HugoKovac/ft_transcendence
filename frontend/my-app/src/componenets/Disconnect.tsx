@@ -15,7 +15,7 @@ function Disconnect(){
 
 	useEffect( () => {
 		if (log === false){
-			CheckLogState(logState, setLogState)
+			CheckLogState(logState, setLogState, true)
 			nav('/')
 		}
 	}, [log, setLog, logState, setLogState, nav])
