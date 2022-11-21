@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { Friends } from "./friends.entity";
 
 @Entity()
@@ -38,5 +38,8 @@ export class User {
 		() => Friends,
 		friends => friends.user
 	)
+	@JoinColumn({
+		name: 'friend_list'
+	})
 	friends: Friends[]
 }

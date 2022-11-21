@@ -27,21 +27,20 @@ export class FriendsService {
 	}
 
 	/**
-	 * Add Friend :
-	 * Find id from username
-	 * Create Friends entity with id of new friend
-	 * save new_friend entity in Friends repo
-	 * update User entity where  id = payload.id with User.friends(new_friend)
+	 * Verifier si le friend
 	 */
 	async addFriend(payload: newFriend):  Promise<string>{//check if payload.id is same id than in jwt decoded
 		try{
 			const friendId: number = await this.findUsernameId(payload)
-			const userEntity: User = await this.userRepo.findOne({where: {id: payload.id}})
-			
+			const userEntity: User = await this.userRepo.findOne({where: {id: payload.id}, relations: ['friends']})
+
+			for (let i of userEntity.friends){
+				if (i.friend_id === friendId)
+					return `${payload.add} is already your friend`
+			}
+
 			const new_friend: Friends = this.friendsRepo.create({friend_id: friendId, user: userEntity})
 			await this.friendsRepo.save(new_friend)
-			
-			await this.userRepo.update(payload.id, {friends: [new_friend]})
 			
 			return `${payload.add} have been added`
 		}
