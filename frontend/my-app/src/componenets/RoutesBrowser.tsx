@@ -8,6 +8,7 @@ import Profile from "../pages/Profile"
 import Unauthorized from "../pages/Unauthorized"
 import CheckTokenAfterLogin, { CheckTokenFirstMount } from "./CheckToken"
 import LoginStateContext from "./LoginStateContext"
+import Game from './Game'
 
 
 
@@ -37,6 +38,9 @@ const RoutesBrowser = () : React.ReactElement => {
 				</Route>
 				<Route path='/friends' element={<ProtectedRoute />}>
 					<Route path='/friends' element={<Friends />}/>
+				</Route>
+				<Route path='/game' element={<ProtectedRoute />}>
+					<Route path='/game' element={<Game />}/>
 				</Route>
 				<Route path='/redirect/check_token' element={<CheckTokenAfterLogin />} />
 			</Routes>

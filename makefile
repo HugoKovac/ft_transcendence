@@ -1,6 +1,6 @@
 all:
-	sudo docker-compose build
-	sudo docker-compose up
+	docker-compose build
+	docker-compose up
 
 re:
-	sudo docker-compose build --force
+	docker-compose build --force
