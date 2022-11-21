@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { decode, JwtPayload } from 'jsonwebtoken';
 import { Friends, User } from 'src/typeorm';
 import { Repository } from 'typeorm';
 
@@ -26,12 +27,18 @@ export class FriendsService {
 		}
 	}
 
-	async getFriends(id: number): Promise<Friends[]>{//get id from jwt decoded
+	async getFriends(jwt: string): Promise<Friends[]>{//get id from jwt decoded
+		const {id} = decode(jwt) as JwtPayload
 		const {friends} = await this.userRepo.findOne({where: {id: id}, relations: ['friends']})
 		return friends
 	}
 
-	async addFriend(payload: newFriend):  Promise<string>{//check if payload.id is same id than in jwt decoded
+	async addFriend(payload: newFriend, jwt: string): Promise<string>{
+		const {id} = decode(jwt) as JwtPayload
+
+		if (payload.id != id)
+			return 'sender id dont match your cookie'
+
 		try{
 			const friendId: number = await this.findUsernameId(payload)
 			const userEntity: User = await this.userRepo.findOne({where: {id: payload.id}, relations: ['friends']})

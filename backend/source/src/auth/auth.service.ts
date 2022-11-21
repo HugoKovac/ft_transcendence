@@ -50,7 +50,7 @@ export class AuthService{
 
 	async createUser(userDTO: CreateUserDto){
 		try{
-			const newUser = await this.userRepo.create(userDTO)
+			const newUser = this.userRepo.create(userDTO)
 			await this.userRepo.save(newUser)
 			
 			return this.createToken({
