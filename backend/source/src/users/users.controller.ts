@@ -1,12 +1,13 @@
 import { Controller, Get, Post,
 	Param, Body, UsePipes,
 	ValidationPipe, ParseIntPipe,
-	Delete, BadRequestException } from '@nestjs/common';
+	Delete, BadRequestException, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './users.dto';
 import {User} from '../typeorm/user.entity'
 import { LoginCredsDto } from './usersLoginCreds.dto';
 import { DeleteResult } from 'typeorm';
+import { AuthGuard } from '@nestjs/passport';
 
 
 @Controller('users')
@@ -14,6 +15,7 @@ export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
 	@Get()//!remove for prod
+	@UseGuards(AuthGuard('jwt'))
 	getUser(){
 		return this.usersService.findAll();
 	}
@@ -27,6 +29,7 @@ export class UsersController {
 	// }
 
 	@Get('id/:id')//!remove for prod
+	@UseGuards(AuthGuard('jwt'))
 	async findUsersById(@Param('id', ParseIntPipe) id: number) {
 		const user: User = await this.usersService.findbyId(id)
 		if (!user)
@@ -35,17 +38,20 @@ export class UsersController {
 	}
 
 	@Get('delete/:id')//!guard for prod
+	@UseGuards(AuthGuard('jwt'))
 	async deleteUserByGet(@Param('id', ParseIntPipe) id: number) {
 		return this.usersService.remove(id);
 	}
 
 	@Post('create')//!remove if web site don't take password
+	@UseGuards(AuthGuard('jwt'))
 	@UsePipes(new ValidationPipe({whitelist: true}))
 	createUser(@Body() createUserDto: CreateUserDto) {
 		return this.usersService.create(createUserDto);
 	}
 
 	@Delete('id/:id')//!guard for prod
+	@UseGuards(AuthGuard('jwt'))
 	@UsePipes(new ValidationPipe({whitelist: true}))
 	deleteUser(@Param('id', ParseIntPipe) id: number) {
 		return this.usersService.remove(id);
