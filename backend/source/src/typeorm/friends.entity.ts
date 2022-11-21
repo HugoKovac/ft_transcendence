@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 
 @Entity()
@@ -12,6 +12,12 @@ export class Friends{
 		type: 'bigint',
 	})
 	friend_id: number
+
+	@Column()
+	friend_username: string
+
+	@CreateDateColumn()
+	created: Date
 
 	@ManyToOne(
 		() => User,
