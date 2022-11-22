@@ -51,7 +51,7 @@ export class FriendsService {
 			const new_friend: Friends = this.friendsRepo.create({friend_id: friendId, friend_username: payload.add , user: userEntity})
 			await this.friendsRepo.save(new_friend)
 			
-			return 'test'
+			return `${payload.add} have been added`
 		}
 		catch(e){
 			console.error(e)
@@ -60,9 +60,6 @@ export class FriendsService {
 	}
 
 	async delFriend({user_id, del_id} : {user_id:number, del_id:number}, jwt: string){
-		console.log(user_id)
-		console.log(del_id)
-		console.log(jwt)
 		const {id} = decode(jwt) as JwtPayload
 
 		if (user_id != id)
