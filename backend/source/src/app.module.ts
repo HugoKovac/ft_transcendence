@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module'
 import { ChatModule } from './chat/chat.module';
 import { config } from './auth/strategy/marvin.startegy';
 import { FriendsModule } from './friends/friends.module';
+import { PongModule } from './pong/pong.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { FriendsModule } from './friends/friends.module';
 	AuthModule,
 	ChatModule,
 	FriendsModule,
+	PongModule,
   ],
   controllers: [AppController],
   providers: [AppService],
