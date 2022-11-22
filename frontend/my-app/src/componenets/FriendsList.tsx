@@ -34,7 +34,7 @@ const FriendsList = () => {
 	
 	const list = friendList.map((i) => <li key={i.id}>
 			<span>{i.friend_username}</span>
-			<button onClick={() => {delHandle(i.friend_id)}}>test</button>
+			<button onClick={() => {delHandle(i.friend_id)}}>X</button>
 		</li>)
 
 	useEffect(() => {getList(); setRerender(false)}, [setFriendList, rerender, setRerender])

@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { io } from "socket.io-client"
 import {LoginStateContext} from './LoginStateContext'
 
@@ -10,7 +10,7 @@ type messageObj = {
 }
 
 function ChatHandle(){
-	
+	const {setRerender} = useContext(LoginStateContext)
 	const socket = io("localhost:3000", {
 		auth: (cb) => {
 			cb({
@@ -31,18 +31,18 @@ function ChatHandle(){
 		e.preventDefault()
 		socket.emit('message', payloadMsg)
 		setInputMessage('')
+		setRerender(true)
 	}
 	
-	useEffect(() => {
+	// useEffect(() => {
+	// 	socket.on("connect", () => {
+	// 		console.log(`connected : ${socket.connected}`);
+	// 	});
 		
-		socket.on("connect", () => {
-			console.log(`connected : ${socket.connected}`);
-		});
-		
-		socket.on("disconnect", () => {
-			console.log(`connected : ${socket.connected}`);
-		});
-	}, [socket])
+	// 	socket.on("disconnect", () => {
+	// 		console.log(`connected : ${socket.connected}`);
+	// 	});
+	// }, [])
 
 	return <div>
 		<form onSubmit={SendMessage}>

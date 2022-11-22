@@ -1,6 +1,5 @@
-import { Controller, Get, Param, ParseIntPipe, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { DeleteResult } from "typeorm";
 import { ChatService } from "./chat.service";
 
 @Controller('message')
@@ -9,7 +8,6 @@ export class ChatController{
 
 	@Get('all')
 	@UseGuards(AuthGuard('jwt'))
-
 	async allMess(){
 		return await this.chatService.allMess()
 	}
@@ -18,5 +16,11 @@ export class ChatController{
 	@UseGuards(AuthGuard('jwt'))
 	async delAllMess(@Param('id', ParseIntPipe) id: number){
 		return await this.chatService.delAllMess(id)
+	}
+
+	@Post('conv')
+	@UseGuards(AuthGuard('jwt'))
+	async getConv(@Body()bod: {user_id:number, friend_id:number}, @Req() req){
+		return await this.chatService.getConv(bod, req.cookies['jwt'])
 	}
 }
