@@ -16,6 +16,12 @@ export class FriendsController {
 	@Get('list/')
 	@UseGuards(AuthGuard('jwt'))
 	async getFriendsList(@Req() req) {
-		return this.friendsService.getFriends(req.cookies['jwt'])
+		return await this.friendsService.getFriends(req.cookies['jwt'])
+	}
+	
+	@Post('delete')
+	@UseGuards(AuthGuard('jwt'))
+	async delFriend(@Body()bod, @Req() req){
+		return await this.friendsService.delFriend(bod, req.cookies['jwt'])
 	}
 }

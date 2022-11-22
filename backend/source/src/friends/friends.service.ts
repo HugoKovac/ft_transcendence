@@ -58,4 +58,31 @@ export class FriendsService {
 			return `fail when adding ${payload.add}`
 		}
 	}
+
+	async delFriend({user_id, del_id} : {user_id:number, del_id:number}, jwt: string){
+		console.log(user_id)
+		console.log(del_id)
+		console.log(jwt)
+		const {id} = decode(jwt) as JwtPayload
+
+		if (user_id != id)
+			return 'sender id dont match your cookie'
+
+		try{
+			const {friends}: User = await this.userRepo.findOne({where: {id: user_id}, relations: ['friends']})
+			
+			for (let i of friends){
+				if (i.friend_id == del_id){
+					await this.friendsRepo.delete(i.id)
+					return 'Friend have been deleted'
+				}
+			}
+
+			return 'Firend not found'
+		}
+		catch{
+			return 'This user is not your firend'
+		}
+		
+	}
 }
