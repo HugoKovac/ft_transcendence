@@ -51,7 +51,7 @@ export class FriendsService {
 			const new_friend: Friends = this.friendsRepo.create({friend_id: friendId, friend_username: payload.add , user: userEntity})
 			await this.friendsRepo.save(new_friend)
 			
-			return `${payload.add} have been added`
+			return 'test'
 		}
 		catch(e){
 			console.error(e)

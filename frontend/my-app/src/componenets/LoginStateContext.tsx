@@ -3,12 +3,16 @@ import { createContext, useState } from "react"
 
 type ObjLoginStateContext = {
 	logState: number,
-	setLogState: (state: number) => void
+	setLogState: (state: number) => void,
+	rerender: boolean,
+	setRerender: (state: boolean) => void,
 }
 
 export const LoginStateContext = createContext<ObjLoginStateContext>({
 	logState: 0,
-	setLogState : () => {}
+	setLogState : () => {},
+	rerender: false,
+	setRerender : () => {},
 })
 
 async function ReqApiLogState(): Promise<number>{
@@ -30,9 +34,10 @@ export async function CheckLogState(logState: number, setLogState: (state: numbe
 export const LoginStateProvider = ({children}:any) => {
 
 	const [logState, setLogState] = useState(0)
+	const [rerender, setRerender] = useState(false)
 
 	return (
-		<LoginStateContext.Provider value={{ logState, setLogState }}>
+		<LoginStateContext.Provider value={{ logState, setLogState, rerender, setRerender }}>
 			{children}
 		</LoginStateContext.Provider>
 	)

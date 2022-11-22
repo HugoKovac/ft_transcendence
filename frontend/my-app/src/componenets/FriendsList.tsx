@@ -1,5 +1,6 @@
 import axios from "axios"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
+import LoginStateContext from "./LoginStateContext"
 
 type Friend = {
 	id: 0,
@@ -9,6 +10,8 @@ type Friend = {
 }
 
 const FriendsList = () => {
+	const {rerender, setRerender} = useContext(LoginStateContext)
+
 	const [friendList, setFriendList] = useState([{
 		id: 0,
 		friend_id: 0,
@@ -27,7 +30,7 @@ const FriendsList = () => {
 	
 	const list = friendList.map((i) => <li key={i.id}> {i.friend_username} </li>)
 //refresh when add new friend in <AddFriend />
-	useEffect(() => {getList()}, [FriendsList, setFriendList])
+	useEffect(() => {getList(); setRerender(false)}, [FriendsList, setFriendList, rerender, setRerender])
 	return <div>
 		<ul>
 			{list}

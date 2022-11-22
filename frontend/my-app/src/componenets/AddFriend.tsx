@@ -4,7 +4,7 @@ import LoginStateContext from "./LoginStateContext"
 
 const AddFriend = () => {
 	const [username, setUsername] = useState('')
-	const {logState} = useContext(LoginStateContext)
+	const {logState, setRerender} = useContext(LoginStateContext)
 	const payload = {
 		id: logState,
 		add: username,
@@ -17,7 +17,8 @@ const AddFriend = () => {
 	const HandleNewFriend = async (e: any) => {
 		e.preventDefault()
 		try{
-			await axInst.post('friends/add', payload).then((res) => {console.log(res.data)})
+			alert(await axInst.post('friends/add', payload).then(res => res.data))
+			setRerender(true)
 		}catch(e){
 			console.error(e)
 			console.error('axios error (friends/add)')
