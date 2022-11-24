@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import Conv from "./conv.entity";
 
 @Entity()
 export class Message{
@@ -10,13 +11,15 @@ export class Message{
 
 	@Column({
 		type: 'bigint',
+		nullable: false,
 	})
-	send_id: number
+	user_id_1: number
 
 	@Column({
 		type: 'bigint',
+		nullable: false,
 	})
-	recv_id: number
+	user_id_2: number
 
 	@Column({
 		nullable: false,
@@ -27,4 +30,13 @@ export class Message{
 
 	@CreateDateColumn()
 	send_at: Date
+
+	@ManyToOne(
+		() => Conv,
+		conv => conv.message
+	)
+	@JoinColumn({
+		name: 'conv'
+	})
+	conv: Conv
 }

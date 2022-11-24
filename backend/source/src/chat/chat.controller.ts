@@ -15,12 +15,18 @@ export class ChatController{
 	@Get('del/:id')
 	@UseGuards(AuthGuard('jwt'))
 	async delAllMess(@Param('id', ParseIntPipe) id: number){
-		return await this.chatService.delAllMess(id)
+		return await this.chatService.AllMess(id)
 	}
 
-	@Post('conv')
+	@Post('new_conv')
 	@UseGuards(AuthGuard('jwt'))
-	async getConv(@Body()bod: {user_id:number, friend_id:number}, @Req() req){
-		return await this.chatService.getConv(bod, req.cookies['jwt'])
+	async getConv(@Body()bod: {user_id_1:number, user_id_2:number}, @Req() req){
+		return await this.chatService.newConv(bod, req.cookies['jwt'])
+	}
+	
+	@Post('new_msg')
+	@UseGuards(AuthGuard('jwt'))
+	async newMsg(@Body()bod: {user_id_1:number, user_id_2:number, msg:string}, @Req() req){
+		return await this.chatService.newMsg(bod, req.cookies['jwt'])
 	}
 }
