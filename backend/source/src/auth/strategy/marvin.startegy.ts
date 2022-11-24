@@ -24,6 +24,7 @@ export class MarvinStrategy extends PassportStrategy(Startegy, 'marvin'){
 		const {id, username, emails, photos} = profile
 
 		// console.log(config())
+		// console.log(profile)
 
 		const user = {
 			provider: 'marvin',

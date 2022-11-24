@@ -10,6 +10,7 @@ export type AuthenticatedSocket = Socket;
 export class PongGateway implements OnGatewayConnection {
 
   async handleConnection(client: Socket, ...args: any[]) : Promise<void> {
+
     
     //? Cette fonction se lancera automatiquement a la connection d'un client (socket)
     //? Cette fonction permettera d'itentifier l'utilisateur, s'il est connecter ou a le droit de jouer au jeu.
