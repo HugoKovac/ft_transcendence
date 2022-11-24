@@ -21,14 +21,16 @@ export class MarvinStrategy extends PassportStrategy(Startegy, 'marvin'){
 	}
 
 	async validate(accessToken:string, refreshToken:string, profile:Startegy.Profile, cb: Startegy.VerifyCallback): Promise<any>{
-		const {id, username, emails, photos} = profile
+		const {id, username, emails, _raw} = profile
+
+console.log(JSON.stringify(profile))
 
 		const user = {
 			provider: 'marvin',
 			providerId: id,
 			username: username,
 			email: emails[0].value,
-			pp: photos[0].value,
+			pp: JSON.parse(_raw).image.link,
 		}
 
 		return cb(null, user)

@@ -68,7 +68,7 @@ export class ChatService{
 		}
 	}
 
-	async newMsg({user_id_1, user_id_2, msg}:{user_id_1:number, user_id_2:number, msg:string}, jwt:string){
+	async newMsg({user_id_1, user_id_2, message}:{user_id_1:number, user_id_2:number, message:string}, jwt:string){
 		//Check if conv exist with user_id_1 et user_id_2 en sender et receveur
 		//if not exist return error
 		//create new message via the entity found
@@ -82,7 +82,7 @@ export class ChatService{
 				return 'This conv don\'t exist'
 				
 			const new_msg = this.messRepo.create({
-				message: msg,
+				message: message,
 				conv
 			})
 
@@ -94,4 +94,6 @@ export class ChatService{
 			return false
 		}
 	}
+
+	//getConv
 }

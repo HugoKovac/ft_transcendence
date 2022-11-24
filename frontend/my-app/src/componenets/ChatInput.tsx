@@ -5,12 +5,12 @@ import {LoginStateContext} from './LoginStateContext'
 import '../styles/Chat.scss'
 
 type messageObj = {
-	send_id:number,
-	recv_id:number,
+	user_id_1:number,
+	user_id_2:number,
 	message:string,
 }
 
-function ChatHandle({friend_id}: {friend_id:number} ){
+function ChatInput({friend_id}: {friend_id:number} ){
 	const {setRerender} = useContext(LoginStateContext)
 	const socket = io("localhost:3000", {
 		auth: (cb) => {
@@ -23,8 +23,8 @@ function ChatHandle({friend_id}: {friend_id:number} ){
 	const [inputMessage, setInputMessage] = useState<string>('')
 	const {logState} = useContext(LoginStateContext)
 	const payloadMsg: messageObj = {
-		send_id: logState,
-		recv_id: friend_id,
+		user_id_1: logState,
+		user_id_2: friend_id,
 		message: inputMessage
 	}
 
@@ -51,4 +51,4 @@ function ChatHandle({friend_id}: {friend_id:number} ){
 		</form>
 }
 
-export default ChatHandle
+export default ChatInput

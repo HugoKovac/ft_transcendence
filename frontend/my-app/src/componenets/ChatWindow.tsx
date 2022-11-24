@@ -1,5 +1,5 @@
 import '../styles/Chat.scss'
-import ChatHandle from './ChatHandle'
+import ChatInput from './ChatInput'
 import Conv from './Conv'
 import Message from './Message'
 
@@ -25,7 +25,7 @@ const ChatWindow = () => {
 				<Message content='test7' own={false} />
 				<Message content='test8' own={true} />
 			</div>
-			<ChatHandle friend_id={1}/>
+			<ChatInput friend_id={1}/>
 		</div>
 	</div>
 }

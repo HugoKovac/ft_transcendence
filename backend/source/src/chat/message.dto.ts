@@ -2,10 +2,10 @@ import { IsNotEmpty } from "class-validator";
 
 export class CreateMessDto{
 	@IsNotEmpty()
-	send_id: number
+	user_id_1: number
 	
 	@IsNotEmpty()
-	recv_id: number
+	user_id_2: number
 
 	message: string
 }
