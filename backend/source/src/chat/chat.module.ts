@@ -5,9 +5,10 @@ import { Message } from "../typeorm/message.entity";
 import { ChatController } from "./chat.controller";
 import { ChatService } from "./chat.service";
 import Conv from "src/typeorm/conv.entity";
+import { User } from "src/typeorm";
 
 @Module({
-	imports: [TypeOrmModule.forFeature([Message, Conv])],
+	imports: [TypeOrmModule.forFeature([Message, Conv, User])],
 	controllers: [ChatController],
 	providers: [ChatGateway, ChatService]
 })

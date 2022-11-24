@@ -10,18 +10,6 @@ export class Message{
 	msg_id: number
 
 	@Column({
-		type: 'bigint',
-		nullable: false,
-	})
-	user_id_1: number
-
-	@Column({
-		type: 'bigint',
-		nullable: false,
-	})
-	user_id_2: number
-
-	@Column({
 		nullable: false,
 		default: '',
 		type: 'varchar'

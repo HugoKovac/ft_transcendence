@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Message } from "src/typeorm";
+import { Message, User } from "src/typeorm";
 import Conv from "src/typeorm/conv.entity";
 import { DeleteResult, Repository } from "typeorm";
 
@@ -9,7 +9,9 @@ export class ChatService{
 	constructor(@InjectRepository(Message)
 	private readonly messRepo : Repository<Message>,
 	@InjectRepository(Conv)
-	private readonly convRepo : Repository<Conv>){}
+	private readonly convRepo : Repository<Conv>,
+	@InjectRepository(User)
+	private readonly userRepo : Repository<User>){}
 
 	async allMess(): Promise<Message[]>{
 		return await this.messRepo.find()
@@ -42,10 +44,18 @@ export class ChatService{
 				user_id_2: user_id_2 || user_id_1
 			}})
 
+			const user = await this.userRepo.findOne({where: {
+				id: user_id_1
+			}})
+
+			if (!user)
+				return false
+
 			if (!conv){
 				const new_conv = this.convRepo.create({
 					user_id_1: user_id_1,
-					user_id_2: user_id_2 
+					user_id_2: user_id_2,
+					user: user
 				})
 
 				await this.convRepo.save(new_conv)
@@ -72,8 +82,6 @@ export class ChatService{
 				return 'This conv don\'t exist'
 				
 			const new_msg = this.messRepo.create({
-				user_id_1: user_id_1,
-				user_id_2: user_id_2,
 				message: msg,
 				conv
 			})
