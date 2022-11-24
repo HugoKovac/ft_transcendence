@@ -41,6 +41,12 @@ export class FriendsService {
 
 		try{
 			const friendId: number = await this.findUsernameId(payload)
+
+			console.log(friendId, payload.id)
+
+			if (friendId == payload.id)
+				return "It's you"
+
 			const userEntity: User = await this.userRepo.findOne({where: {id: payload.id}, relations: ['friends']})
 
 			for (let i of userEntity.friends){

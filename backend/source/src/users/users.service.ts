@@ -20,6 +20,7 @@ export class UsersService {
 		// newUser.password = await bcrypt.hashSync(newUser.password, newUser.salt)
 
 		await this.usersRepository.save(newUser)
+		return newUser
 	}
 
 	async findAll() : Promise<User[]>{ 

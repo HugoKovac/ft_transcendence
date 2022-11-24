@@ -24,7 +24,6 @@ export class ChatService{
 				recv_id: friend_id
 			}})
 
-			console.log(conv)
 			return conv
 		}
 		catch{

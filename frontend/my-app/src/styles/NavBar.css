@@ -9,6 +9,7 @@ li{
 }
 	
 .NavBar {
+	position: relative;
 	background-color: #292d39;
 	display: flex;
 }

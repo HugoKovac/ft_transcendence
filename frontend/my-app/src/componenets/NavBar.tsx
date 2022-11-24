@@ -4,7 +4,7 @@ import { useContext } from "react"
 import LoginStateContext from "./LoginStateContext"
 
 
-function Button(props: any){
+export function Button(props: any){
 	return (
 		<NavLink to={props.path} className={(nav) : any => (nav.isActive ? "ancr nav-active" : "ancr")}>
 				<li>{props.content}</li>

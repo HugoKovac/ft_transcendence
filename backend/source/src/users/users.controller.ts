@@ -1,18 +1,18 @@
 import { Controller, Get, Post,
 	Param, Body, UsePipes,
 	ValidationPipe, ParseIntPipe,
-	Delete, BadRequestException, UseGuards } from '@nestjs/common';
+	Delete, UseGuards, Req, Res } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './users.dto';
 import {User} from '../typeorm/user.entity'
-import { LoginCredsDto } from './usersLoginCreds.dto';
-import { DeleteResult } from 'typeorm';
 import { AuthGuard } from '@nestjs/passport';
+import { AuthService } from 'src/auth/auth.service';
 
 
 @Controller('users')
 export class UsersController {
-	constructor(private readonly usersService: UsersService) {}
+	constructor(private readonly usersService: UsersService,
+		private readonly authService: AuthService) {}//!only for debug
 
 	@Get()//!remove for prod
 	@UseGuards(AuthGuard('jwt'))
@@ -46,8 +46,11 @@ export class UsersController {
 	@Post('create')//!remove if web site don't take password
 	@UseGuards(AuthGuard('jwt'))
 	@UsePipes(new ValidationPipe({whitelist: true}))
-	createUser(@Body() createUserDto: CreateUserDto) {
-		return this.usersService.create(createUserDto);
+		async createUser(@Body() createUserDto: CreateUserDto, @Req() req, @Res() res) {
+		const newUser : User = await this.usersService.create(createUserDto);
+		const token = await this.authService.signIn(newUser)
+		await res.cookie('jwt', token)
+		res.redirect(301, 'http://localhost:3002/redirect/check_token')
 	}
 
 	@Delete('id/:id')//!guard for prod

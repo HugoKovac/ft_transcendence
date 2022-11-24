@@ -32,9 +32,9 @@ const RoutesBrowser = () : React.ReactElement => {
 				<Route path="/profile" element={<ProtectedRoute />}>
 					<Route path="/profile" element={<Profile />} />
 				</Route>
-				<Route path='/chat' element={<ProtectedRoute />}>
+				{/* <Route path='/chat' element={<ProtectedRoute />}> */}
 					<Route path='/chat' element={<Chat />}/>
-				</Route>
+				{/* </Route> */}
 				<Route path='/friends' element={<ProtectedRoute />}>
 					<Route path='/friends' element={<Friends />}/>
 				</Route>

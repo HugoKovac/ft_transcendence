@@ -2,6 +2,7 @@ import Cookies from "js-cookie";
 import { useContext, useState } from "react";
 import { io } from "socket.io-client"
 import {LoginStateContext} from './LoginStateContext'
+import '../styles/Chat.scss'
 
 type messageObj = {
 	send_id:number,
@@ -9,7 +10,7 @@ type messageObj = {
 	message:string,
 }
 
-function ChatHandle(){
+function ChatHandle({friend_id}: {friend_id:number} ){
 	const {setRerender} = useContext(LoginStateContext)
 	const socket = io("localhost:3000", {
 		auth: (cb) => {
@@ -23,7 +24,7 @@ function ChatHandle(){
 	const {logState} = useContext(LoginStateContext)
 	const payloadMsg: messageObj = {
 		send_id: logState,
-		recv_id: 667,
+		recv_id: friend_id,
 		message: inputMessage
 	}
 
@@ -44,13 +45,10 @@ function ChatHandle(){
 	// 	});
 	// }, [])
 
-	return <div>
-		<form onSubmit={SendMessage}>
-			<label>Message :</label>
-			<input autoFocus autoComplete="off" onChange={(e) => {setInputMessage(e.target.value)}} value={inputMessage} type="text" name="msg"/>
-			<button>send</button>
+	return <form onSubmit={SendMessage} className='chatInput'>
+			<input placeholder="type your message..." autoFocus autoComplete="off" onChange={(e) => {setInputMessage(e.target.value)}} value={inputMessage} type="text" name="msg"/>
+			<button>Send</button>
 		</form>
-	</div>
 }
 
 export default ChatHandle
