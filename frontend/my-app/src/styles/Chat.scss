@@ -1,6 +1,6 @@
 .ChatWindow{
 	position: fixed;
-	height: 100%;
+	height: calc(100% - 60px);
 	width: 100%;
 	display: flex;
 }
@@ -12,6 +12,23 @@
 	border-right: 1px;
 	border-color: rgb(0, 0, 0);
 	border-style: solid;
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+	button{
+		&:hover{
+			color: #292d39;
+			background-color: rgb(196, 196, 196);
+		}
+		border: 0;
+		border-radius: 0;
+		height: 60px;
+		padding: 25px;
+		background-color: white;
+		color: #00babc;
+		font-size: 17px;
+		font-weight: 600;
+	}
 	.conv{
 		&:hover{
 			background-color: rgb(196, 196, 196);
@@ -63,7 +80,7 @@
 		}
 	}
 	.chatInput{
-		flex: 1;
+		flex: 0.6;
 		margin-bottom: 0;
 		background-color: white;
 		display: flex;
@@ -75,7 +92,6 @@
 		}
 		
 		input{
-			height: 65%;
 			flex: 5;
 			text-indent: 30px;
 			border: 0;
@@ -87,7 +103,7 @@
 			}
 			border: 0;
 			border-radius: 0;
-			height: 65%;
+			// height: 65%;
 			flex: 0.5;
 			background-color: #292d39;
 			color: white;

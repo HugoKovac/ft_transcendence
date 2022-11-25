@@ -96,4 +96,20 @@ export class ChatService{
 	}
 
 	//getConv
+	async getConv({user_id_1, user_id_2, message}:{user_id_1:number, user_id_2:number, message:string}, jwt:string){
+		try{
+
+			const conv = await this.convRepo.findOne({where:{
+				user_id_1: user_id_1 || user_id_2,
+				user_id_2: user_id_2 || user_id_1
+			}, relations:['message']})
+			
+			// return 'test'
+			// console.log(JSON.stringify(conv))
+			return conv.message
+		}
+		catch{
+			return false
+		}
+	}
 }

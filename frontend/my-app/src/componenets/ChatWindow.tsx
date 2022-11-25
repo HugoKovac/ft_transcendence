@@ -2,17 +2,31 @@ import '../styles/Chat.scss'
 import ChatInput from './ChatInput'
 import Conv from './Conv'
 import Message from './Message'
+import Popup from './Popup'
 
 const ChatWindow = () => {
+
+	const handlePopup = () =>{
+		return <Popup />
+	}
+
 	return <div className="ChatWindow">
 		<div className='chatMenu'>
-			{/* <h1>test</h1> */}
 			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
 			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
 			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
 			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
 			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
 			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
+			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
+			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
+			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
+			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
+			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
+			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
+			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
+			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
+			<button className='btn' onClick={handlePopup}>+ New Conversation</button>
 		</div>
 		<div className='chatBox'>
 			<div className='msgArea'>
@@ -25,7 +39,7 @@ const ChatWindow = () => {
 				<Message content='test7' own={false} />
 				<Message content='test8' own={true} />
 			</div>
-			<ChatInput friend_id={1}/>
+			<ChatInput friend_id={3}/>
 		</div>
 	</div>
 }
