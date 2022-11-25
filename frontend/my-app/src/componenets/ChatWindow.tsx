@@ -21,15 +21,6 @@ const ChatWindow = () => {
 			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
 			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
 			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
-			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
-			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
-			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
-			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
-			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
-			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
-			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
-			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
-			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
 			<button className='btn-pup' onClick={handlePopup}>+ New Conversation</button>
 			<Popup trigger={popup} setter={{popup, setPopup}}>
 				<h1>Choose a friend :</h1>

@@ -96,7 +96,7 @@ export class ChatService{
 	}
 
 	//getConv
-	async getConv({user_id_1, user_id_2, message}:{user_id_1:number, user_id_2:number, message:string}, jwt:string){
+	async getConv({user_id_1, user_id_2}:{user_id_1:number, user_id_2:number}, jwt:string){
 		try{
 
 			const conv = await this.convRepo.findOne({where:{
