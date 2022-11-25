@@ -15,7 +15,7 @@
 	display: flex;
 	flex-direction: column;
 	overflow: auto;
-	button{
+	.btn-pup{
 		&:hover{
 			color: #292d39;
 			background-color: rgb(196, 196, 196);

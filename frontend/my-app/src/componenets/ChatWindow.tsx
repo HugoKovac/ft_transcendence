@@ -1,13 +1,17 @@
+import { useState } from 'react'
 import '../styles/Chat.scss'
 import ChatInput from './ChatInput'
 import Conv from './Conv'
 import Message from './Message'
 import Popup from './Popup'
+import ChooseFriend from './ChooseFriend'
 
 const ChatWindow = () => {
+	const [popup, setPopup] = useState(false)
+
 
 	const handlePopup = () =>{
-		return <Popup />
+		setPopup(true)
 	}
 
 	return <div className="ChatWindow">
@@ -26,7 +30,11 @@ const ChatWindow = () => {
 			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
 			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
 			<Conv name='testName' img_path='https://www.teachervision.com/sites/default/files/inline-images/Test-Prep.jpg' />
-			<button className='btn' onClick={handlePopup}>+ New Conversation</button>
+			<button className='btn-pup' onClick={handlePopup}>+ New Conversation</button>
+			<Popup trigger={popup} setter={{popup, setPopup}}>
+				<h1>Choose a friend :</h1>
+				<ChooseFriend />
+			</Popup>
 		</div>
 		<div className='chatBox'>
 			<div className='msgArea'>

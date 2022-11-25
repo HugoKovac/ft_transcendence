@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { decode, JwtPayload } from 'jsonwebtoken';
+import { first } from 'rxjs';
 import { Friends, User } from 'src/typeorm';
 import { Repository } from 'typeorm';
 
@@ -29,8 +30,15 @@ export class FriendsService {
 
 	async getFriends(jwt: string): Promise<Friends[]>{//get id from jwt decoded
 		const {id} = decode(jwt) as JwtPayload
-		const {friends} = await this.userRepo.findOne({where: {id: id}, relations: ['friends']})
-		return friends
+		try{
+			const {friends} = await this.userRepo.findOne({where: {id: id}, relations: ['friends']})
+			if (!friends)
+				return undefined
+			console.log(JSON.stringify(friends))
+			return friends
+		}catch{
+			return undefined
+		}
 	}
 
 	async addFriend(payload: newFriend, jwt: string): Promise<string>{
