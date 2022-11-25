@@ -1,5 +1,6 @@
 import React, { useContext } from "react"
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom"
+import Game from "../pages/Game"
 import Chat from "../pages/Chat"
 import Friends from "../pages/Friends"
 import Home from "../pages/Home"
@@ -8,7 +9,7 @@ import Profile from "../pages/Profile"
 import Unauthorized from "../pages/Unauthorized"
 import CheckTokenAfterLogin, { CheckTokenFirstMount } from "./CheckToken"
 import LoginStateContext from "./LoginStateContext"
-import Game from './Game'
+
 
 
 

@@ -2,7 +2,6 @@ import { NavLink } from "react-router-dom"
 import "../styles/NavBar.css"
 import { useContext } from "react"
 import LoginStateContext from "./LoginStateContext"
-import Game from './Game'
 
 
 function Button(props: any){

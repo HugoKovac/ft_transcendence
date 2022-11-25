@@ -1,12 +1,23 @@
-import { MessageBody, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
 import { OnGatewayConnection } from '@nestjs/websockets';
-import { ServerEvents, ClientEvents } from './enums/enums'
-import { Socket } from 'socket.io'
-import { CreateLobbyDto } from './dto/create-lobby.dto/create-lobby.dto';
+import { ClientEvents } from '../shared/client/Client.Events'
+import { ServerEvents } from '../shared/server/Server.Events'
+import { Server, Socket } from 'socket.io'
 
 export type AuthenticatedSocket = Socket;
 
-@WebSocketGateway()
+export type ServerResponse = {
+  [ServerEvents.LobbyState]: {
+    message: string;
+  };
+}
+
+@WebSocketGateway({
+    cors:{
+      origin:['http://localhost:3000'],
+    },  
+  }
+)
 export class PongGateway implements OnGatewayConnection {
 
   async handleConnection(client: Socket, ...args: any[]) : Promise<void> {
@@ -20,8 +31,18 @@ export class PongGateway implements OnGatewayConnection {
     //? Si tout c'est bien passer nous pourrons passer au restes des methodes ci-dessous
   }
 
+  @WebSocketServer()
+  server: Server;
+
   @SubscribeMessage(ClientEvents.CreateLobby)
-  onPing( client: AuthenticatedSocket, data : CreateLobbyDto ) {
+  onPing( ) {
+    
+    console.log('Client requested a lobby creation !');
+
+
+    this.server.emit(ServerEvents.LobbyState, { data: {
+      message: "Lobby created !",
+    }} )
 
   }
 
