@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { decode } from "jsonwebtoken";
 import { Message, User } from "src/typeorm";
 import Conv from "src/typeorm/conv.entity";
 import { DeleteResult, Repository } from "typeorm";
@@ -24,10 +25,10 @@ export class ChatService{
 
 	async newConv({user_id_1, user_id_2}:{user_id_1:number, user_id_2:number}, jwt:string){
 		try{
-			const conv = await this.convRepo.findOne({where:{
-				user_id_1: user_id_1 || user_id_2,
-				user_id_2: user_id_2 || user_id_1
-			}})
+			const conv = await this.convRepo.findOne({where:[
+				{user_id_1: user_id_1, user_id_2: user_id_2},
+				{user_id_1: user_id_2, user_id_2: user_id_1}]
+			})
 
 			const user = await this.userRepo.findOne({where: {
 				id: user_id_1
@@ -57,10 +58,10 @@ export class ChatService{
 		if (!message)
 			return false
 		try{
-			const conv = await this.convRepo.findOne({where:{
-				user_id_1: user_id_1 || user_id_2,
-				user_id_2: user_id_2 || user_id_1
-			}})
+			const conv = await this.convRepo.findOne({where:[
+				{user_id_1: user_id_1, user_id_2: user_id_2},
+				{user_id_1: user_id_2, user_id_2: user_id_1}]
+			})
 
 			if (!conv)
 				return 'This conv don\'t exist'
@@ -97,15 +98,17 @@ export class ChatService{
 		}
 	}
 
-	async getAllConv({user_id_1}:{user_id_1:number}, jwt:string){
+	async getAllConv(jwt:string){
+		let tokenUserInfo: any = decode(jwt)
 		try{
 
 			const conv = await this.convRepo.find({where:[
-				{user_id_1: user_id_1},
-				{user_id_2: user_id_1}
+				{user_id_1: tokenUserInfo.id},
+				{user_id_2: tokenUserInfo.id}
 			]})
 			
-			
+			console.log(JSON.stringify(conv))
+
 			let add_username = []
 			for (let i of conv){
 				let usr
@@ -122,7 +125,7 @@ export class ChatService{
 			return add_username
 		}
 		catch{
-			console.error(`Error when looking for user_id=${user_id_1} convs`)
+			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
 			return false
 		}
 	}

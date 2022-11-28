@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react"
 import LoginStateContext from "./LoginStateContext"
 
 
-const ChooseFriend = () => {
+const ChooseFriend = (props: {setPopup: (set: boolean) => void}) => {
 
 	const [list, setList] = useState([{
 		id: 0,
@@ -38,6 +38,7 @@ const ChooseFriend = () => {
 		})
 		try{
 			console.log(await axInst.post('new_conv', {user_id_1: logState, user_id_2: friend_id}).then((res) => (res.data)))
+			props.setPopup(false)
 			//close popup 
 			//redirect to conv
 		}
@@ -47,10 +48,8 @@ const ChooseFriend = () => {
 	}
 
 	return <div>
-		<ul>
-			{list.map((i) => <div onClick={() => {ClickOnFriend(i.friend_id)}} className="friendBox"><li key={i.friend_id}>{i.friend_username}</li></div>)}
-		</ul>
-	</div>
+			{list.map((i) => <div key={i.friend_id} onClick={() => {ClickOnFriend(i.friend_id)}} className="friendBox">{i.friend_username}</div>)}
+		</div>
 }
 
 export default ChooseFriend
