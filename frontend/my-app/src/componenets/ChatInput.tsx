@@ -10,8 +10,7 @@ type messageObj = {
 	message:string,
 }
 
-function ChatInput({friend_id}: {friend_id:number} ){
-	const {setRerender} = useContext(LoginStateContext)
+function ChatInput({friend_id, state}: {friend_id:number, state: (v:boolean)=>void} ){
 	const socket = io("localhost:3000", {
 		auth: (cb) => {
 			cb({
@@ -32,7 +31,8 @@ function ChatInput({friend_id}: {friend_id:number} ){
 		e.preventDefault()
 		socket.emit('message', payloadMsg)
 		setInputMessage('')
-		setRerender(true)
+		state(true)
+		console.log('yep true')
 	}
 	
 	// useEffect(() => {
