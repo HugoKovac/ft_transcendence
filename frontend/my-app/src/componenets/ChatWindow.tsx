@@ -38,7 +38,7 @@ const ChatWindow = () => {
 				<Message content='test7' own={false} />
 				<Message content='test8' own={true} />
 			</div>
-			<ChatInput friend_id={3}/>
+			<ChatInput friend_id={2}/>
 		</div>
 	</div>
 }

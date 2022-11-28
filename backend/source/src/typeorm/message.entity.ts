@@ -9,6 +9,9 @@ export class Message{
 	})
 	msg_id: number
 
+	@Column()
+	sender_id: number;
+
 	@Column({
 		nullable: false,
 		default: '',

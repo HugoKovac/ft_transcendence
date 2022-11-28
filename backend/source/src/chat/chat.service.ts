@@ -22,21 +22,6 @@ export class ChatService{
 		return result.affected === 0 ? "Don't exist" : `message: ${id} deleted`
 	}
 
-	// async getConv({user_id_1, user_id_2}: {user_id_1: number, user_id_2: number}, jwt: string) : Promise<Message[]>{
-	// 	try{
-	// 		const conv: Message[] = await this.messRepo.find({where:{
-	// 			user_id_1: user_id_1 | user_id_2,
-	// 			user_id_2: user_id_2 | user_id_1
-	// 		}})
-
-	// 		return conv
-	// 	}
-	// 	catch{
-	// 		console.log(undefined)
-	// 		return undefined
-	// 	}
-	// }
-
 	async newConv({user_id_1, user_id_2}:{user_id_1:number, user_id_2:number}, jwt:string){
 		try{
 			const conv = await this.convRepo.findOne({where:{
@@ -69,9 +54,8 @@ export class ChatService{
 	}
 
 	async newMsg({user_id_1, user_id_2, message}:{user_id_1:number, user_id_2:number, message:string}, jwt:string){
-		//Check if conv exist with user_id_1 et user_id_2 en sender et receveur
-		//if not exist return error
-		//create new message via the entity found
+		if (!message)
+			return false
 		try{
 			const conv = await this.convRepo.findOne({where:{
 				user_id_1: user_id_1 || user_id_2,
@@ -83,6 +67,7 @@ export class ChatService{
 				
 			const new_msg = this.messRepo.create({
 				message: message,
+				sender_id: user_id_1,
 				conv
 			})
 
@@ -95,20 +80,49 @@ export class ChatService{
 		}
 	}
 
-	//getConv
-	async getConv({user_id_1, user_id_2}:{user_id_1:number, user_id_2:number}, jwt:string){
+	async getConvMsg({user_id_1}:{user_id_1:number}, jwt:string){
 		try{
 
-			const conv = await this.convRepo.findOne({where:{
-				user_id_1: user_id_1 || user_id_2,
-				user_id_2: user_id_2 || user_id_1
-			}, relations:['message']})
+			const conv = await this.convRepo.find({where:[
+				{user_id_1: user_id_1},
+				{user_id_2: user_id_1}
+			], relations:['message']})
 			
-			// return 'test'
 			// console.log(JSON.stringify(conv))
-			return conv.message
+			return conv
 		}
 		catch{
+			console.error(`Error when looking for user_id=${user_id_1} convs`)
+			return false
+		}
+	}
+
+	async getAllConv({user_id_1}:{user_id_1:number}, jwt:string){
+		try{
+
+			const conv = await this.convRepo.find({where:[
+				{user_id_1: user_id_1},
+				{user_id_2: user_id_1}
+			]})
+			
+			
+			let add_username = []
+			for (let i of conv){
+				let usr
+				try{
+					let {username} = await this.userRepo.findOne({where: {id: i.user_id_2}})
+					usr = username
+				}catch{
+					usr = 'Deleted User'
+				}
+				console.log(add_username)
+				add_username.push({...i, username: usr})
+			}
+
+			return add_username
+		}
+		catch{
+			console.error(`Error when looking for user_id=${user_id_1} convs`)
 			return false
 		}
 	}

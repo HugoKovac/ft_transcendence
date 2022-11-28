@@ -30,9 +30,15 @@ export class ChatController{
 		return await this.chatService.newMsg(bod, req.cookies['jwt'])
 	}
 
-	@Post('get_conv')
+	@Post('get_conv_msg')
 	@UseGuards(AuthGuard('jwt'))
-	async getConv(@Body()bod: {user_id_1:number, user_id_2:number, message: string}, @Req() req){
-		return await this.chatService.getConv(bod, req.cookies['jwt'])
+	async getConvMsg(@Body()bod: {user_id_1:number}, @Req() req){
+		return await this.chatService.getConvMsg(bod, req.cookies['jwt'])
+	}
+
+	@Post('get_all_conv')
+	@UseGuards(AuthGuard('jwt'))
+	async getAllConv(@Body()bod: {user_id_1:number}, @Req() req){
+		return await this.chatService.getAllConv(bod, req.cookies['jwt'])
 	}
 }
