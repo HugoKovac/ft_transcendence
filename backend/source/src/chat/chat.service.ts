@@ -112,14 +112,17 @@ export class ChatService{
 			let add_username = []
 			for (let i of conv){
 				let usr
+				let pp
 				try{
-					let {username} = await this.userRepo.findOne({where: {id: i.user_id_2}})
+					let {username, pp} = await this.userRepo.findOne({where: {id: i.user_id_2}})
 					usr = username
+					pp = pp
 				}catch{
+					pp = ''//path to deleted user's pp
 					usr = 'Deleted User'
 				}
 				console.log(add_username)
-				add_username.push({...i, username: usr})
+				add_username.push({...i, username: usr, pp: pp})//the link to the pp is protected, can access only with marvin's credentials
 			}
 
 			return add_username

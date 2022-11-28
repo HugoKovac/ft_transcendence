@@ -28,7 +28,7 @@ const ChatWindow = () => {
 			const list = []
 
 			for (let i of res)
-				list.push(<Conv key={i.conv_id} name={i.username} img_path='https://upload.wikimedia.org/wikipedia/commons/1/11/Test-Logo.svg'/>)
+				list.push(<Conv key={i.conv_id} name={i.username} img_path={i.pp}/>)
 
 			setConvList(list)
 		}
