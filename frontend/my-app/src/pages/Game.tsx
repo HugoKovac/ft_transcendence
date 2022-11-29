@@ -1,9 +1,13 @@
-import GameLobby from '../componenets/GameLobby';
+import GameMenu from '../componenets/GameMenu';
+import NavBar from '../componenets/NavBar';
 
 const Game = () => {
 
     return (
-            <GameLobby/>
+        <div>
+            <NavBar />
+            <GameMenu/>
+        </div>
     );
 }
 

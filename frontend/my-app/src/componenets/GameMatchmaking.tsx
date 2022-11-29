@@ -5,7 +5,7 @@ import { ClientEvents } from '../shared/client/Client.Events'
 import NavBar from './NavBar';
 
 
-export default function GameLobby() {
+export default function GameMatchmaking() {
 
     const socket = io('http://localhost:3000');
     
@@ -26,16 +26,19 @@ export default function GameLobby() {
         }
     });
 
-    const emitLobby = () => {
-        socket.emit(ClientEvents.CreateLobby);  
+    const emitMatchmaking = () => {
+        socket.emit(ClientEvents.JoinMatchmaking);
     }
-
+    
     return (
+
         <div>
             <NavBar />
-            <h4>Create or join a lobby !</h4>
-            <button onClick={emitLobby}> Create Lobby </button>
+            <h4>Join Matchmaking !</h4>
+            <button onClick={emitMatchmaking}> Join Matchmaking </button>
+
         </div>
+
     );
 
 }

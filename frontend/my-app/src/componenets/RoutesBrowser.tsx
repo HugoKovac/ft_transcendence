@@ -9,6 +9,8 @@ import Profile from "../pages/Profile"
 import Unauthorized from "../pages/Unauthorized"
 import CheckTokenAfterLogin, { CheckTokenFirstMount } from "./CheckToken"
 import LoginStateContext from "./LoginStateContext"
+import GameLobby from "./GameLobby"
+import GameMatchmaking from "./GameMatchmaking"
 
 
 
@@ -42,6 +44,12 @@ const RoutesBrowser = () : React.ReactElement => {
 				</Route>
 				<Route path='/game' element={<ProtectedRoute />}>
 					<Route path='/game' element={<Game />}/>
+				</Route>
+				<Route path='/game/matchmaking' element={<ProtectedRoute />}>
+					<Route path='/game/matchmaking' element={<GameMatchmaking />}/>
+				</Route>
+				<Route path='/game/lobby' element={<ProtectedRoute />}>
+					<Route path='/game/lobby' element={<GameLobby/>}/>
 				</Route>
 				<Route path='/redirect/check_token' element={<CheckTokenAfterLogin />} />
 			</Routes>
