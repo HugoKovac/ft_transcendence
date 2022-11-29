@@ -1,18 +1,19 @@
 import { useContext, useEffect, useState } from 'react'
 import '../styles/Chat.scss'
-import ChatInput from './ChatInput'
 import Conv from './Conv'
 import Message from './Message'
 import Popup from './Popup'
 import ChooseFriend from './ChooseFriend'
 import axios from 'axios'
 import LoginStateContext from './LoginStateContext'
+import ChatRight from '../ChatRight'
 
 const ChatWindow = () => {
 	const {logState} = useContext(LoginStateContext)
 	const [popup, setPopup] = useState(false)
 	const [newMsg, setNewMsg] = useState(false)
-	const [convList, setConvList] = useState([<Conv key='' name='' img_path=''/>])
+	const [conv, setConv] = useState(0)
+	const [convList, setConvList] = useState([<Conv key='' name='' img_path='' user_id_2={0} setConv={()=>{}}/>])
 	const [msgList, setMsgList] = useState([<Message key='' content='' own={true} />])
 
 
@@ -28,10 +29,11 @@ const ChatWindow = () => {
 			})
 
 			const res = await axInst.post('get_all_conv').then(res => res.data)
+			console.log(res)
 			const list = []
 
 			for (let i of res)
-				list.push(<Conv key={i.conv_id} name={i.username} img_path={i.pp}/>)
+				list.push(<Conv key={i.conv_id} name={i.username} img_path={i.pp} user_id_2={i.user_id_2} setConv={setConv}/>)
 
 			setConvList(list)
 		}
@@ -39,25 +41,32 @@ const ChatWindow = () => {
 	}, [popup, setConvList])
 
 	useEffect(() =>{
+		if (conv === 0)
+			return
 		const fetchMsg = async () => {
 			const axInst = axios.create({
 				baseURL: 'http://localhost:3000/api/message/',
 				withCredentials: true
 			})
 
-			const res = await axInst.post('get_conv_msg',{user_id_2: 7}).then(res => res.data)
+			axInst.post('get_conv_msg',{user_id_2: conv}).then(res => {
+				const list = []
+				for (let i of res.data){
+					list.unshift(<Message key={i.msg_id} own={i.sender_id == logState ? true : false} content={i.message}/>)
+				}
+				setMsgList(list)
+			}).catch(e=> {console.error('error when fetch http://localhost:3000/api/message/get_conv_msg')})
 
-			const list = []
-
-			for (let i of res){
-				list.unshift(<Message key={i.msg_id} own={i.sender_id == logState ? true : false} content={i.message}/>)
-			}
-
-			setMsgList(list)
 			setNewMsg(false)
 		}
 		fetchMsg()
-	}, [newMsg, setNewMsg, logState, setMsgList])
+		console.log(msgList)
+	}, [newMsg, setNewMsg, logState, setMsgList, conv])
+
+
+	let right = <ChatRight msgList={msgList} setNewMsg={setNewMsg} />
+	if (conv == 0)
+		right = <div className='chatBox' />
 
 	return <div className="ChatWindow">
 		<div className='chatMenu'>
@@ -68,12 +77,7 @@ const ChatWindow = () => {
 				<ChooseFriend setPopup={setPopup} />
 			</Popup>
 		</div>
-		<div className='chatBox'>
-			<div className='msgArea'>
-				{msgList}
-			</div>
-			<ChatInput friend_id={7} state={setNewMsg}/>
-		</div>
+		{right}
 	</div>
 }
 
