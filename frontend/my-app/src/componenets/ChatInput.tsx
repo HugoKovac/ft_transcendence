@@ -32,7 +32,6 @@ function ChatInput({friend_id, state}: {friend_id:number, state: (v:boolean)=>vo
 		socket.emit('message', payloadMsg)
 		setInputMessage('')
 		state(true)
-		console.log('yep true')
 	}
 	
 	// useEffect(() => {

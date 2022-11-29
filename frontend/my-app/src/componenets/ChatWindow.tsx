@@ -29,7 +29,6 @@ const ChatWindow = () => {
 			})
 
 			const res = await axInst.post('get_all_conv').then(res => res.data)
-			console.log(res)
 			const list = []
 
 			for (let i of res)
@@ -60,11 +59,10 @@ const ChatWindow = () => {
 			setNewMsg(false)
 		}
 		fetchMsg()
-		console.log(msgList)
 	}, [newMsg, setNewMsg, logState, setMsgList, conv])
 
 
-	let right = <ChatRight msgList={msgList} setNewMsg={setNewMsg} />
+	let right = <ChatRight conv={conv} msgList={msgList} setNewMsg={setNewMsg} />
 	if (conv == 0)
 		right = <div className='chatBox' />
 
