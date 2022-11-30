@@ -9,6 +9,7 @@ import ChatRight from '../ChatRight'
 import NavBarChat from './NavBarChat'
 import Conv from './Conv'
 import SideBarChat from './SideBarChat'
+import ChatBox from './ChatBox'
 
 const ChatWindow = () => {
 	const {logState} = useContext(LoginStateContext)
@@ -24,30 +25,6 @@ const ChatWindow = () => {
 		setPopup(true)
 	}
 
-	useEffect(() =>{
-		if (conv === 0)
-			return
-		const fetchMsg = async () => {
-			const axInst = axios.create({
-				baseURL: 'http://localhost:3000/api/message/',
-				withCredentials: true
-			})
-
-			axInst.post('get_conv_msg',{user_id_2: conv}).then(res => {
-				console.log(res.data)
-				const list = []
-				for (let i of res.data.message){
-					const user = i.sender_id == res.data.user.id ? res.data.user : res.data.user2
-					list.unshift(<Message key={i.msg_id} own={i.sender_id === logState ? true : false} content={i.message} username={user.username} userPP={user.pp} date={i.send_at}/>)
-				}
-				setMsgList(list)
-			}).catch(e => {console.error('error when fetch http://localhost:3000/api/message/get_conv_msg')})
-
-			setNewMsg(false)
-		}
-		fetchMsg()
-	}, [newMsg, setNewMsg, logState, setMsgList, conv])
-
 	const convMode = () => {
 		setNav(1)
 	}
@@ -56,9 +33,7 @@ const ChatWindow = () => {
 		setNav(2)
 	}
 
-	let right = <ChatRight conv={conv} msgList={msgList} setNewMsg={setNewMsg} />
-	if (conv === 0)
-		right = <div className='chatBox' />
+	
 
 	return <div className="ChatWindow">
 		<div className='chatMenu'>
@@ -70,7 +45,7 @@ const ChatWindow = () => {
 				<ChooseFriend setPopup={setPopup} convList={convList}/>
 			</Popup>
 		</div>
-		{right}
+		<ChatBox conv={conv} logState={logState} newMsg={newMsg} setNewMsg={setNewMsg} msgList={msgList} setMsgList={setMsgList} />
 	</div>
 }
 
