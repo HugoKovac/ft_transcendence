@@ -21,11 +21,6 @@ const ChatWindow = () => {
 	const [msgList, setMsgList] = useState([<Message key='' content='' own={true} username='' userPP='' date='' />])
 	const [nav, setNav] = useState(1)
 
-
-	const handlePopup = () =>{
-		setPopup(true)
-	}
-
 	const convMode = () => {
 		setNav(1)
 	}
@@ -40,7 +35,7 @@ const ChatWindow = () => {
 		<div className='chatMenu'>
 			<NavBarChat nav={nav} convMode={convMode} groupMode={groupMode}/>
 			<SideBarChat conv={conv} setConv={setConv} convList={convList} setConvList={setConvList} popup={popup} />
-			<NewConvBtn popup={popup} setPopup={setPopup} convList={convList} handlePopup={handlePopup} />
+			<NewConvBtn popup={popup} setPopup={setPopup} convList={convList} />
 		</div>
 		<ChatBox conv={conv} logState={logState} newMsg={newMsg} setNewMsg={setNewMsg} msgList={msgList} setMsgList={setMsgList} />
 	</div>
