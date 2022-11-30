@@ -35,6 +35,10 @@ export class ChatService{
 				id: tokenUserInfo.id
 			}})
 
+			const user2 = await this.userRepo.findOne({where: {
+				id: user_id_2
+			}})
+
 			if (!user)
 				return false
 
@@ -42,7 +46,8 @@ export class ChatService{
 				const new_conv = this.convRepo.create({
 					user_id_1: tokenUserInfo.id,
 					user_id_2: user_id_2,
-					user: user
+					user: user,
+					user2: user2
 				})
 
 				await this.convRepo.save(new_conv)
@@ -91,10 +96,15 @@ export class ChatService{
 			const conv = await this.convRepo.findOne({where:[
 				{user_id_1: tokenUserInfo.id, user_id_2: user_id_2},
 				{user_id_2: tokenUserInfo.id, user_id_1: user_id_2}
-			], relations:['message']})
+			], relations:['message', 'user', 'user2']})
+
+			// const conv2 = await this.convRepo.findOne({where:[
+			// 	{user_id_1: tokenUserInfo.id, user_id_2: user_id_2},
+			// 	{user_id_2: tokenUserInfo.id, user_id_1: user_id_2}
+			// ], relations:['user']})
 			
-			// console.log(JSON.stringify(conv))
-			return conv.message
+			console.log(JSON.stringify(conv))
+			return conv
 		}
 		catch{
 			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
@@ -121,12 +131,12 @@ export class ChatService{
 					let {username, pp} = await this.userRepo.findOne({where: {id: i.user_id_2}})
 					usr = username
 					pp = pp
+					add_username.push({...i, username: usr, pp: pp})
 				}catch{
-					pp = ''//path to deleted user's pp
+					pp = 'https://i1.sndcdn.com/avatars-000380110130-s9jvkb-t500x500.jpg'//path to deleted user's pp
 					usr = 'Deleted User'
+					add_username.push({...i, username: usr, pp: pp})
 				}
-				console.log(add_username)
-				add_username.push({...i, username: usr, pp: pp})//the link to the pp is protected, can access only with marvin's credentials
 			}
 
 			return add_username

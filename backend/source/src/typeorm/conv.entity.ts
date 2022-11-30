@@ -26,6 +26,15 @@ class Conv{
 	})
 	user: User
 
+	@ManyToOne(
+		() => User,
+		user => user.conv
+	)
+	@JoinColumn({
+		name: 'userId2'
+	})
+	user2: User
+
 	@OneToMany(
 		() => Message,
 		message => message.conv

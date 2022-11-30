@@ -28,13 +28,18 @@ const ChatWindow = () => {
 				withCredentials: true
 			})
 
-			const res = await axInst.post('get_all_conv').then(res => res.data)
-			const list = []
+			const res = await axInst.post('get_all_conv').then(res => {
+				const list = []
 
-			for (let i of res)
-				list.push(<Conv key={i.conv_id} name={i.username} img_path={i.pp} user_id_2={i.user_id_2} setConv={setConv}/>)
+				for (let i of res.data){
+					console.log(i.username)
+					list.push(<Conv key={i.conv_id} name={i.username} img_path={i.pp} user_id_2={i.user_id_2} setConv={setConv}/>)
+				}
+				
+					setConvList(list)
+			})
 
-			setConvList(list)
+
 		}
 		fetchConvList()
 	}, [popup, setConvList])
@@ -49,12 +54,13 @@ const ChatWindow = () => {
 			})
 
 			axInst.post('get_conv_msg',{user_id_2: conv}).then(res => {
+				console.log(res.data)
 				const list = []
-				for (let i of res.data){
+				for (let i of res.data.message){
 					list.unshift(<Message key={i.msg_id} own={i.sender_id == logState ? true : false} content={i.message}/>)
 				}
 				setMsgList(list)
-			}).catch(e=> {console.error('error when fetch http://localhost:3000/api/message/get_conv_msg')})
+			}).catch(e => {console.error('error when fetch http://localhost:3000/api/message/get_conv_msg')})
 
 			setNewMsg(false)
 		}
