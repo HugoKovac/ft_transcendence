@@ -2,7 +2,7 @@ import React from "react"
 import ChooseFriend from "./ChooseFriend"
 import Popup from "./Popup"
 
-const NewConvBtn = (props: {popup:boolean, setPopup:(v:boolean)=>void, convList:JSX.Element[], nav:number}) => {
+const NewGroupConvBtn = (props: {popup:boolean, setPopup:(v:boolean)=>void, convList:JSX.Element[], nav:number}) => {
 	const handlePopup = () =>{
 		props.setPopup(true)
 	}
@@ -16,8 +16,8 @@ const NewConvBtn = (props: {popup:boolean, setPopup:(v:boolean)=>void, convList:
 	</React.Fragment>
 
 	return <React.Fragment>
-		{props.nav === 1 ? active : <></>}
+		{props.nav === 2 ? active : <></>}
 	</React.Fragment>
 }
 
-export default NewConvBtn
+export default NewGroupConvBtn

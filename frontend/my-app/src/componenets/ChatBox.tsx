@@ -26,7 +26,9 @@ const ChatBox = (props: {conv: number, logState: number, newMsg:boolean, setNewM
 			props.setNewMsg(false)
 		}
 		fetchMsg()
-	}, [props.newMsg, props.setNewMsg, props.logState, props.setMsgList, props.conv])
+	}, [props.newMsg, props.setNewMsg, props.logState, props.setMsgList, props.conv])//si conv ou newMsg
+
+	//Faire un new useEffect avec des states groupConv et newConvMsg
 
 	let right = <ChatRight conv={props.conv} msgList={props.msgList} setNewMsg={props.setNewMsg} />
 	if (props.conv === 0)

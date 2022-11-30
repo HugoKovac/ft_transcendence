@@ -1,16 +1,14 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useState } from 'react'
 import '../styles/Chat.scss'
 import Message from './Message'
-import Popup from './Popup'
-import ChooseFriend from './ChooseFriend'
-import axios from 'axios'
 import LoginStateContext from './LoginStateContext'
-import ChatRight from '../ChatRight'
 import NavBarChat from './NavBarChat'
 import Conv from './Conv'
 import SideBarChat from './SideBarChat'
 import ChatBox from './ChatBox'
 import NewConvBtn from './NewConvBtn'
+import SideBarGroupChat from './SideBarGroupChat'
+import NewGroupConvBtn from './NewGroupConvBtn'
 
 const ChatWindow = () => {
 	const {logState} = useContext(LoginStateContext)
@@ -34,8 +32,10 @@ const ChatWindow = () => {
 	return <div className="ChatWindow">
 		<div className='chatMenu'>
 			<NavBarChat nav={nav} convMode={convMode} groupMode={groupMode}/>
-			<SideBarChat conv={conv} setConv={setConv} convList={convList} setConvList={setConvList} popup={popup} />
-			<NewConvBtn popup={popup} setPopup={setPopup} convList={convList} />
+			<SideBarChat conv={conv} setConv={setConv} convList={convList} setConvList={setConvList} popup={popup} nav={nav} />
+			<SideBarGroupChat conv={conv} setConv={setConv} convList={convList} setConvList={setConvList} popup={popup} nav={nav} />
+			<NewConvBtn popup={popup} setPopup={setPopup} convList={convList} nav={nav} />
+			<NewGroupConvBtn popup={popup} setPopup={setPopup} convList={convList} nav={nav} />
 		</div>
 		<ChatBox conv={conv} logState={logState} newMsg={newMsg} setNewMsg={setNewMsg} msgList={msgList} setMsgList={setMsgList} />
 	</div>

@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import Conv from './Conv'
 import '../styles/Chat.scss'
 
-const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX.Element[], setConvList:(v:JSX.Element[])=>void, popup:boolean, nav:number}) => {
+const SideBarGroupChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX.Element[], setConvList:(v:JSX.Element[])=>void, popup:boolean, nav:number}) => {
 	useEffect(() =>{
 		const fetchConvList = async () => {
 			const axInst = axios.create({
@@ -29,8 +29,8 @@ const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX
 	}, [props.popup, props.setConvList])
 
 	return <div>
-		{props.nav === 1 ? props.convList : <></>}
+		{props.nav === 2 ? props.convList : <></>}
 	</div>
 }
 
-export default SideBarChat
+export default SideBarGroupChat
