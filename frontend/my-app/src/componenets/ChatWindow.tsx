@@ -30,8 +30,10 @@ const ChatWindow = () => {
 
 			await axInst.post('get_all_conv').then(res => {
 				const list = []
+				let localRmList = []
 
 				for (let i of res.data){
+					localRmList.push(i)
 					list.push(<Conv key={i.conv_id} name={i.username} img_path={i.pp} user_id_2={i.user_id_2} setConv={setConv}/>)
 				}
 				
@@ -78,7 +80,7 @@ const ChatWindow = () => {
 			<button className='btn-pup' onClick={handlePopup}>+ New Conversation</button>
 			<Popup trigger={popup} setter={{popup, setPopup}}>
 				<h1>Choose a friend :</h1>
-				<ChooseFriend setPopup={setPopup} />
+				<ChooseFriend setPopup={setPopup} convList={convList}/>
 			</Popup>
 		</div>
 		{right}

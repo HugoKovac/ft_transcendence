@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react"
 import LoginStateContext from "./LoginStateContext"
 
 
-const ChooseFriend = (props: {setPopup: (set: boolean) => void}) => {
+const ChooseFriend = (props: {setPopup: (set: boolean) => void, convList: JSX.Element[]}) => {
 
 	const [list, setList] = useState([{
 		id: 0,
@@ -19,8 +19,28 @@ const ChooseFriend = (props: {setPopup: (set: boolean) => void}) => {
 			withCredentials: true
 		})
 		try{
-			console.log('fetch')
-			setList(await axInst.get('list').then((res) => (res.data)))
+			await axInst.get('list').then((res) => {
+				let cpy = res.data
+
+				try{
+				for (let i of props.convList){
+					for (let j in cpy){
+						console.log(`${i.props.name} === ${cpy[j].friend_username}`)
+						if (i.props.name == cpy[j].friend_username){
+								delete cpy[j]
+							}
+						}
+					}
+				}
+				catch(e){
+					console.error(e)
+				}
+
+				console.log(res.data)
+				console.log(cpy)
+
+				setList(cpy)
+			})
 		}
 		catch{
 			console.error('Error with fetch of http://localhost:3000/api/friends/list')
