@@ -23,21 +23,17 @@ const ChooseFriend = (props: {setPopup: (set: boolean) => void, convList: JSX.El
 				let cpy = res.data
 
 				try{
-				for (let i of props.convList){
-					for (let j in cpy){
-						console.log(`${i.props.name} === ${cpy[j].friend_username}`)
-						if (i.props.name == cpy[j].friend_username){
-								delete cpy[j]
+					for (let i of props.convList){
+						for (let j in cpy){
+							if (i.props.name == cpy[j].friend_username){
+									delete cpy[j]
+								}
 							}
-						}
 					}
 				}
 				catch(e){
 					console.error(e)
 				}
-
-				console.log(res.data)
-				console.log(cpy)
 
 				setList(cpy)
 			})
@@ -59,8 +55,6 @@ const ChooseFriend = (props: {setPopup: (set: boolean) => void, convList: JSX.El
 		try{
 			console.log(await axInst.post('new_conv', {user_id_1: logState, user_id_2: friend_id}).then((res) => (res.data)))
 			props.setPopup(false)
-			//close popup 
-			//redirect to conv
 		}
 		catch{
 			console.error('Error with fetch of http://localhost:3000/api/message/new_conv')

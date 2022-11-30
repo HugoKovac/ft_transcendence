@@ -1,12 +1,14 @@
 import { useContext, useEffect, useState } from 'react'
 import '../styles/Chat.scss'
-import Conv from './Conv'
 import Message from './Message'
 import Popup from './Popup'
 import ChooseFriend from './ChooseFriend'
 import axios from 'axios'
 import LoginStateContext from './LoginStateContext'
 import ChatRight from '../ChatRight'
+import NavBarChat from './NavBarChat'
+import Conv from './Conv'
+import SideBarChat from './SideBarChat'
 
 const ChatWindow = () => {
 	const {logState} = useContext(LoginStateContext)
@@ -15,35 +17,12 @@ const ChatWindow = () => {
 	const [conv, setConv] = useState(0)
 	const [convList, setConvList] = useState([<Conv key='' name='' img_path='' user_id_2={0} setConv={()=>{}}/>])
 	const [msgList, setMsgList] = useState([<Message key='' content='' own={true} username='' userPP='' date='' />])
+	const [nav, setNav] = useState(1)
 
 
 	const handlePopup = () =>{
 		setPopup(true)
 	}
-
-	useEffect(() =>{
-		const fetchConvList = async () => {
-			const axInst = axios.create({
-				baseURL: 'http://localhost:3000/api/message/',
-				withCredentials: true
-			})
-
-			await axInst.post('get_all_conv').then(res => {
-				const list = []
-				let localRmList = []
-
-				for (let i of res.data){
-					localRmList.push(i)
-					list.push(<Conv key={i.conv_id} name={i.username} img_path={i.pp} user_id_2={i.user_id_2} setConv={setConv}/>)
-				}
-				
-				setConvList(list)
-			})
-
-
-		}
-		fetchConvList()
-	}, [popup, setConvList])
 
 	useEffect(() =>{
 		if (conv === 0)
@@ -69,6 +48,13 @@ const ChatWindow = () => {
 		fetchMsg()
 	}, [newMsg, setNewMsg, logState, setMsgList, conv])
 
+	const convMode = () => {
+		setNav(1)
+	}
+	
+	const groupMode = () => {
+		setNav(2)
+	}
 
 	let right = <ChatRight conv={conv} msgList={msgList} setNewMsg={setNewMsg} />
 	if (conv === 0)
@@ -76,7 +62,8 @@ const ChatWindow = () => {
 
 	return <div className="ChatWindow">
 		<div className='chatMenu'>
-			{convList}
+			<NavBarChat nav={nav} convMode={convMode} groupMode={groupMode}/>
+			<SideBarChat conv={conv} setConv={setConv} convList={convList} setConvList={setConvList} popup={popup} />
 			<button className='btn-pup' onClick={handlePopup}>+ New Conversation</button>
 			<Popup trigger={popup} setter={{popup, setPopup}}>
 				<h1>Choose a friend :</h1>
