@@ -14,7 +14,7 @@ const ChatWindow = () => {
 	const [newMsg, setNewMsg] = useState(false)
 	const [conv, setConv] = useState(0)
 	const [convList, setConvList] = useState([<Conv key='' name='' img_path='' user_id_2={0} setConv={()=>{}}/>])
-	const [msgList, setMsgList] = useState([<Message key='' content='' own={true} />])
+	const [msgList, setMsgList] = useState([<Message key='' content='' own={true} username='' userPP='' date={new Date()} />])
 
 
 	const handlePopup = () =>{
@@ -28,15 +28,14 @@ const ChatWindow = () => {
 				withCredentials: true
 			})
 
-			const res = await axInst.post('get_all_conv').then(res => {
+			await axInst.post('get_all_conv').then(res => {
 				const list = []
 
 				for (let i of res.data){
-					console.log(i.username)
 					list.push(<Conv key={i.conv_id} name={i.username} img_path={i.pp} user_id_2={i.user_id_2} setConv={setConv}/>)
 				}
 				
-					setConvList(list)
+				setConvList(list)
 			})
 
 
@@ -57,7 +56,8 @@ const ChatWindow = () => {
 				console.log(res.data)
 				const list = []
 				for (let i of res.data.message){
-					list.unshift(<Message key={i.msg_id} own={i.sender_id == logState ? true : false} content={i.message}/>)
+					const user = i.sender_id == res.data.user.id ? res.data.user : res.data.user2
+					list.unshift(<Message key={i.msg_id} own={i.sender_id === logState ? true : false} content={i.message} username={user.username} userPP={user.pp} date={i.send_at}/>)
 				}
 				setMsgList(list)
 			}).catch(e => {console.error('error when fetch http://localhost:3000/api/message/get_conv_msg')})
@@ -69,7 +69,7 @@ const ChatWindow = () => {
 
 
 	let right = <ChatRight conv={conv} msgList={msgList} setNewMsg={setNewMsg} />
-	if (conv == 0)
+	if (conv === 0)
 		right = <div className='chatBox' />
 
 	return <div className="ChatWindow">
