@@ -10,6 +10,7 @@ import NavBarChat from './NavBarChat'
 import Conv from './Conv'
 import SideBarChat from './SideBarChat'
 import ChatBox from './ChatBox'
+import NewConvBtn from './NewConvBtn'
 
 const ChatWindow = () => {
 	const {logState} = useContext(LoginStateContext)
@@ -39,11 +40,7 @@ const ChatWindow = () => {
 		<div className='chatMenu'>
 			<NavBarChat nav={nav} convMode={convMode} groupMode={groupMode}/>
 			<SideBarChat conv={conv} setConv={setConv} convList={convList} setConvList={setConvList} popup={popup} />
-			<button className='btn-pup' onClick={handlePopup}>+ New Conversation</button>
-			<Popup trigger={popup} setter={{popup, setPopup}}>
-				<h1>Choose a friend :</h1>
-				<ChooseFriend setPopup={setPopup} convList={convList}/>
-			</Popup>
+			<NewConvBtn popup={popup} setPopup={setPopup} convList={convList} handlePopup={handlePopup} />
 		</div>
 		<ChatBox conv={conv} logState={logState} newMsg={newMsg} setNewMsg={setNewMsg} msgList={msgList} setMsgList={setMsgList} />
 	</div>
