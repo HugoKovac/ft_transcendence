@@ -122,10 +122,12 @@ export class ChatService{
 			
 			let add_username = []
 			for (let i of rtn){
+				let id = i.user_id_1 == tokenUserInfo.id ? i.user_id_2 : i.user_id_1
+				console.log(i.user_id_1, tokenUserInfo.id, id)
 				let usr
 				let pp
 				try{
-					let {username, pp} = await this.userRepo.findOne({where: {id: i.user_id_2}})
+					let {username, pp} = await this.userRepo.findOne({where: {id: id}})
 					usr = username
 					pp = pp
 					add_username.push({...i, username: usr, pp: pp})
