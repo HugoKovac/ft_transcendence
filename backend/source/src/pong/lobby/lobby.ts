@@ -1,6 +1,8 @@
 import { v4 } from 'uuid';
 import { Server, Socket } from "socket.io";
-import { AuthenticatedSocket } from '../pong.gateway';
+import { AuthenticatedSocket, ServerPayload } from '../pong.gateway';
+import { ServerEvents } from 'src/shared/server/Server.Events';
+import { Instance } from '../instance/instance';
 
 
 export class Lobby 
@@ -9,8 +11,9 @@ export class Lobby
 
     public readonly clients: Map<Socket['id'], AuthenticatedSocket> = new Map<Socket['id'], AuthenticatedSocket>(); //? Where client are stored
 
-    // public readonly instance: Instance = new Instance(); //? The hole game logic is an instance, in a lobby
+    public readonly maxClient = 2;
 
+    public readonly instance: Instance = new Instance(); //? The hole game logic is an instance, in a lobby
 
     constructor( public readonly server: Server, public readonly skin: string ) { }
 
@@ -21,8 +24,10 @@ export class Lobby
        client.join(this.id);
 
        client.data.lobby = this; //? Client will store an address of their lobby instance
+       //! By the way this is a real low level practice, suprising for a typescript tutorial...
 
-
+       if ( this.clients.size >= this.maxClient )
+        console.log("Game start !");
 
     }
 
@@ -33,11 +38,17 @@ export class Lobby
         client.leave(this.id);
 
         client.data.lobby = null;
+
+
+        this.spreadLobby<ServerPayload[ServerEvents.LobbyCall]>(ServerEvents.LobbyCall, { 
+            message: 'The lobby say you Hi !', 
+        } );
+
     }
 
-    public sendAlert()
+    public spreadLobby<T>( event: ServerEvents, payload: T )
     {
-
+        this.server.to(this.id).emit(event, payload);
     }
 
 }

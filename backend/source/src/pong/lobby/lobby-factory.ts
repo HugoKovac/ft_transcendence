@@ -2,8 +2,6 @@ import { Server } from "socket.io";
 import { AuthenticatedSocket } from "src/pong/pong.gateway";
 import { Lobby } from "./lobby";
 
-
-
 export class LobbyFactory {
 
     public server: Server;

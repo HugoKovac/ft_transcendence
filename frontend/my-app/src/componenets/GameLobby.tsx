@@ -11,7 +11,7 @@ export default function GameLobby() {
     
     useEffect( () => {
 
-        socket.on('connect', () => {
+        socket.on('connect', () => {   
             console.log('Connected !'); 
         });
 
@@ -27,7 +27,9 @@ export default function GameLobby() {
     });
 
     const emitLobby = () => {
-        socket.emit(ClientEvents.CreateLobby);  
+        socket.emit(ClientEvents.CreateLobby, {
+              skin: "default",
+        });
     }
 
     return (
