@@ -1,5 +1,5 @@
 import axios from "axios"
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import ChatRight from "./ChatRight"
 import Message from "./Message"
 
@@ -9,6 +9,7 @@ const ChatBox = (props: {conv: number, logState: number, newMsg:boolean, setNewM
 	const logStateCpy = props.logState
 	const setMsgListCpy = props.setMsgList
 	const convCpy = props.conv
+	const [refresh, setRefresh] = useState(false)
 
 
 	useEffect(() =>{
@@ -20,17 +21,13 @@ const ChatBox = (props: {conv: number, logState: number, newMsg:boolean, setNewM
 				withCredentials: true
 			})
 
-			console.log(convCpy)
-
 			axInst.post('get_conv_msg',{conv_id: convCpy}).then(res => {
-				console.log(res.data)
 				const list = []
 				const ownMsg = res.data.user.id === logStateCpy ? res.data.user : res.data.user2
 				const otherMsg = res.data.user2.id === logStateCpy ? res.data.user2 : res.data.user
 
 				for (let i of res.data.message){
 					const user = i.sender_id == ownMsg.id ? ownMsg : otherMsg
-					console.log(i.sender_id, ownMsg.id)
 
 					list.unshift(<Message key={i.msg_id} own={i.sender_id === logStateCpy ? true : false} content={i.message} username={user.username} userPP={user.pp} date={i.send_at}/>)
 				}
@@ -40,11 +37,12 @@ const ChatBox = (props: {conv: number, logState: number, newMsg:boolean, setNewM
 			setNewMsgCpy(false)
 		}
 		fetchMsg()
-	}, [newMsgCpy, setNewMsgCpy, logStateCpy, setMsgListCpy, convCpy])//si conv ou newMsg
+		setRefresh(false)
+	}, [newMsgCpy, setNewMsgCpy, logStateCpy, setMsgListCpy, convCpy, refresh])//si conv ou newMsg
 
 	//Faire un new useEffect avec des states groupConv et newConvMsg
 
-	let right = <ChatRight conv={props.conv} msgList={props.msgList} setNewMsg={props.setNewMsg} />
+	let right = <ChatRight conv={props.conv} msgList={props.msgList} setNewMsg={props.setNewMsg} setRefresh={setRefresh} />
 	if (props.conv === 0)
 		right = <div className='chatBox' />
 

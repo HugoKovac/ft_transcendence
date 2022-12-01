@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client"
 import {LoginStateContext} from './LoginStateContext'
 import '../styles/Chat.scss'
@@ -9,7 +9,7 @@ type messageObj = {
 	message:string,
 }
 
-function ChatInput({conv_id, state}: {conv_id:number, state: (v:boolean)=>void} ){
+function ChatInput({conv_id, state, setRefresh}: {conv_id:number, state: (v:boolean)=>void, setRefresh:(v:boolean)=>void} ){
 	const socket = io("localhost:3000", {
 		auth: (cb) => {
 			cb({
@@ -19,7 +19,6 @@ function ChatInput({conv_id, state}: {conv_id:number, state: (v:boolean)=>void} 
 	})
 
 	const [inputMessage, setInputMessage] = useState<string>('')
-	const {logState} = useContext(LoginStateContext)
 	const payloadMsg: messageObj = {
 		conv_id: conv_id,
 		message: inputMessage
@@ -32,15 +31,10 @@ function ChatInput({conv_id, state}: {conv_id:number, state: (v:boolean)=>void} 
 		state(true)
 	}
 	
-	// useEffect(() => {
-	// 	socket.on("connect", () => {
-	// 		console.log(`connected : ${socket.connected}`);
-	// 	});
-		
-	// 	socket.on("disconnect", () => {
-	// 		console.log(`connected : ${socket.connected}`);
-	// 	});
-	// }, [])
+	socket.on("refresh", () => {
+		console.log(`refresh`);
+		setRefresh(true)
+	});
 
 	return <form onSubmit={SendMessage} className='chatInput'>
 			<input placeholder="type your message..." autoFocus autoComplete="off" onChange={(e) => {setInputMessage(e.target.value)}} value={inputMessage} type="text" name="msg"/>
