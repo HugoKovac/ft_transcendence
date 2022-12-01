@@ -12,38 +12,40 @@ const ChooseFriend = (props: {setPopup: (set: boolean) => void, convList: JSX.El
 		created: new Date()
 	}])
 
+		const convListCpy = props.convList
 
-	async function get() {
-		const axInst = axios.create({
-			baseURL: 'http://localhost:3000/api/friends/',
-			withCredentials: true
-		})
-		try{
-			await axInst.get('list').then((res) => {
-				let cpy = res.data
-
-				try{
-					for (let i of props.convList){
-						for (let j in cpy){
-							if (i.props.name == cpy[j].friend_username){
-									delete cpy[j]
-								}
-							}
-					}
-				}
-				catch(e){
-					console.error(e)
-				}
-
-				setList(cpy)
+	useEffect(() => {
+		async function get() {
+			const axInst = axios.create({
+				baseURL: 'http://localhost:3000/api/friends/',
+				withCredentials: true
 			})
+			try{
+				await axInst.get('list').then((res) => {
+					let cpy = res.data
+	
+					try{
+						for (let i of convListCpy){
+							for (let j in cpy){
+								if (i.props.name === cpy[j].friend_username){
+										delete cpy[j]
+									}
+								}
+						}
+					}
+					catch(e){
+						console.error(e)
+					}
+	
+					setList(cpy)
+				})
+			}
+			catch{
+				console.error('Error with fetch of http://localhost:3000/api/friends/list')
+			}
 		}
-		catch{
-			console.error('Error with fetch of http://localhost:3000/api/friends/list')
-		}
-	}
-
-	useEffect(() => {get()}, [])
+		get()
+	}, [convListCpy])
 
 	const {logState} = useContext(LoginStateContext)
 

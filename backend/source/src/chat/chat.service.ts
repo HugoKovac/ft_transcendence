@@ -88,22 +88,17 @@ export class ChatService{
 		}
 	}
 
-	async getConvMsg({user_id_2}:{user_id_2:number}, jwt:string){
-		let tokenUserInfo: any = decode(jwt)
+	async getConvMsg({conv_id}:{conv_id:number}, jwt:string){
+		let tokenUserInfo: any = decode(jwt)//!verifier si la conv est bien au user_id du token
 
 		try{
 
-			const conv = await this.convRepo.findOne({where:[
-				{user_id_1: tokenUserInfo.id, user_id_2: user_id_2},
-				{user_id_2: tokenUserInfo.id, user_id_1: user_id_2}
-			], relations:['message', 'user', 'user2']})
+			const conv = await this.convRepo.findOne({where:{
+				conv_id: conv_id
+			}, relations:['message', 'user', 'user2']})
 
-			// const conv2 = await this.convRepo.findOne({where:[
-			// 	{user_id_1: tokenUserInfo.id, user_id_2: user_id_2},
-			// 	{user_id_2: tokenUserInfo.id, user_id_1: user_id_2}
-			// ], relations:['user']})
+			console.log(`la : ${conv}`)
 			
-			console.log(JSON.stringify(conv))
 			return conv
 		}
 		catch{
@@ -119,12 +114,18 @@ export class ChatService{
 			const conv = await this.convRepo.find({where:[
 				{user_id_1: tokenUserInfo.id},
 				{user_id_2: tokenUserInfo.id}
-			]})
+			], relations:['message']})
+
+			let rtn = conv
+
+			for (let i in rtn)
+				if (!rtn[i].message && rtn[i].user_id_1 === tokenUserInfo.id)
+					delete rtn[i]
 			
-			console.log(JSON.stringify(conv))
+			console.log(rtn)
 
 			let add_username = []
-			for (let i of conv){
+			for (let i of rtn){
 				let usr
 				let pp
 				try{

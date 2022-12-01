@@ -15,7 +15,7 @@ const ChatWindow = () => {
 	const [popup, setPopup] = useState(false)
 	const [newMsg, setNewMsg] = useState(false)
 	const [conv, setConv] = useState(0)
-	const [convList, setConvList] = useState([<Conv key='' name='' img_path='' user_id_2={0} setConv={()=>{}}/>])
+	const [convList, setConvList] = useState([<Conv key='' name='' img_path='' conv_id={0} setConv={()=>{}}/>])
 	const [msgList, setMsgList] = useState([<Message key='' content='' own={true} username='' userPP='' date='' />])
 	const [nav, setNav] = useState(1)
 
