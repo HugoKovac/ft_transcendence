@@ -5,7 +5,7 @@ const ChatRight = (props : {conv:number, msgList : JSX.Element[], setNewMsg: (v:
 		<div className='msgArea'>
 			{props.msgList}
 		</div>
-		<ChatInput friend_id={props.conv} state={props.setNewMsg}/>
+		<ChatInput conv_id={props.conv} state={props.setNewMsg}/>
 	</div>
 }
 

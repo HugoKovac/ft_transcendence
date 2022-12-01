@@ -5,12 +5,11 @@ import {LoginStateContext} from './LoginStateContext'
 import '../styles/Chat.scss'
 
 type messageObj = {
-	user_id_1:number,
-	user_id_2:number,
+	conv_id:number,
 	message:string,
 }
 
-function ChatInput({friend_id, state}: {friend_id:number, state: (v:boolean)=>void} ){
+function ChatInput({conv_id, state}: {conv_id:number, state: (v:boolean)=>void} ){
 	const socket = io("localhost:3000", {
 		auth: (cb) => {
 			cb({
@@ -22,8 +21,7 @@ function ChatInput({friend_id, state}: {friend_id:number, state: (v:boolean)=>vo
 	const [inputMessage, setInputMessage] = useState<string>('')
 	const {logState} = useContext(LoginStateContext)
 	const payloadMsg: messageObj = {
-		user_id_1: logState,
-		user_id_2: friend_id,
+		conv_id: conv_id,
 		message: inputMessage
 	}
 

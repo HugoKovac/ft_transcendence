@@ -1,6 +1,5 @@
 import { WebSocketGateway, SubscribeMessage, ConnectedSocket, MessageBody, WebSocketServer } from '@nestjs/websockets'
 import {Socket, Server} from 'socket.io'
-import { CreateMessDto } from './message.dto'
 import { ChatService } from './chat.service'
 
 @WebSocketGateway({
@@ -20,7 +19,7 @@ export class ChatGateway{
 	serv: Server
 
 	@SubscribeMessage('message')
-	async handleMessage(@ConnectedSocket() client: Socket, @MessageBody()body: CreateMessDto){
+	async handleMessage(@ConnectedSocket() client: Socket, @MessageBody()body){
 
 		console.log(body)
 

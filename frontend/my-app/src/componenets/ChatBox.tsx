@@ -29,9 +29,9 @@ const ChatBox = (props: {conv: number, logState: number, newMsg:boolean, setNewM
 				const otherMsg = res.data.user2.id === logStateCpy ? res.data.user2 : res.data.user
 
 				for (let i of res.data.message){
-					const user = i.sender_id === ownMsg.id ? ownMsg : otherMsg
+					const user = i.sender_id == ownMsg.id ? ownMsg : otherMsg
+					console.log(i.sender_id, ownMsg.id)
 
-					console.log(ownMsg)
 					list.unshift(<Message key={i.msg_id} own={i.sender_id === logStateCpy ? true : false} content={i.message} username={user.username} userPP={user.pp} date={i.send_at}/>)
 				}
 				setMsgListCpy(list)

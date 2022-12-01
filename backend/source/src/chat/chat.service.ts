@@ -60,15 +60,12 @@ export class ChatService{
 		}
 	}
 
-	async newMsg({user_id_2, message}:{user_id_2:number, message:string}, jwt:string){
+	async newMsg({conv_id, message}:{conv_id:number, message:string}, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		if (!message)
 			return false
 		try{
-			const conv = await this.convRepo.findOne({where:[
-				{user_id_1:  tokenUserInfo.id, user_id_2: user_id_2},
-				{user_id_1: user_id_2, user_id_2: tokenUserInfo.id}]
-			})
+			const conv = await this.convRepo.findOne({where: {conv_id: conv_id}})
 
 			if (!conv)
 				return 'This conv don\'t exist'
@@ -83,7 +80,7 @@ export class ChatService{
 
 			return true
 		}catch{
-			console.error(`Can't find this conv with : user_id_1 {${tokenUserInfo.id}} and user_id_2 {${user_id_2}}`)
+			console.error(`Can't find this conv with : conv_id {${conv_id}}`)
 			return false
 		}
 	}
@@ -123,7 +120,6 @@ export class ChatService{
 			let add_username = []
 			for (let i of rtn){
 				let id = i.user_id_1 == tokenUserInfo.id ? i.user_id_2 : i.user_id_1
-				console.log(i.user_id_1, tokenUserInfo.id, id)
 				let usr
 				let pp
 				try{

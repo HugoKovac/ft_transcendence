@@ -26,7 +26,7 @@ export class ChatController{
 	
 	@Post('new_msg')
 	@UseGuards(AuthGuard('jwt'))
-	async newMsg(@Body()bod: {user_id_2:number, message: string}, @Req() req){
+	async newMsg(@Body()bod: {conv_id:number, message: string}, @Req() req){
 		return await this.chatService.newMsg(bod, req.cookies['jwt'])
 	}
 
