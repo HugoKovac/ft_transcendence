@@ -1,6 +1,6 @@
 import axios from "axios"
 import React, { useEffect } from "react"
-import ChatRight from "../ChatRight"
+import ChatRight from "./ChatRight"
 import Message from "./Message"
 
 const ChatBox = (props: {conv: number, logState: number, newMsg:boolean, setNewMsg:(v:boolean)=>void, msgList:JSX.Element[], setMsgList:(v:JSX.Element[])=>void}) => {
@@ -25,8 +25,13 @@ const ChatBox = (props: {conv: number, logState: number, newMsg:boolean, setNewM
 			axInst.post('get_conv_msg',{conv_id: convCpy}).then(res => {
 				console.log(res.data)
 				const list = []
+				const ownMsg = res.data.user.id === logStateCpy ? res.data.user : res.data.user2
+				const otherMsg = res.data.user2.id === logStateCpy ? res.data.user2 : res.data.user
+
 				for (let i of res.data.message){
-					const user = i.sender_id === res.data.user.id ? res.data.user : res.data.user2
+					const user = i.sender_id === ownMsg.id ? ownMsg : otherMsg
+
+					console.log(ownMsg)
 					list.unshift(<Message key={i.msg_id} own={i.sender_id === logStateCpy ? true : false} content={i.message} username={user.username} userPP={user.pp} date={i.send_at}/>)
 				}
 				setMsgListCpy(list)

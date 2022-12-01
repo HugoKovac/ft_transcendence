@@ -1,6 +1,6 @@
-import ChatInput from "./componenets/ChatInput"
-import ChooseFriend from "./componenets/ChooseFriend"
-import Popup from "./componenets/Popup"
+import ChatInput from "./ChatInput"
+import ChooseFriend from "./ChooseFriend"
+import Popup from "./Popup"
 
 const ChatRight = (props : {conv:number, msgList : JSX.Element[], setNewMsg: (v:boolean)=>void}) => {
 	return <div className='chatBox'>

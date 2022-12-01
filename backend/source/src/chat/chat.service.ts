@@ -97,8 +97,6 @@ export class ChatService{
 				conv_id: conv_id
 			}, relations:['message', 'user', 'user2']})
 
-			console.log(`la : ${conv}`)
-			
 			return conv
 		}
 		catch{
@@ -122,8 +120,6 @@ export class ChatService{
 				if (!rtn[i].message && rtn[i].user_id_1 === tokenUserInfo.id)
 					delete rtn[i]
 			
-			console.log(rtn)
-
 			let add_username = []
 			for (let i of rtn){
 				let usr
