@@ -3,13 +3,12 @@ import GameLobby from "./GameLobby";
 import { useContext, useEffect, useState } from 'react';
 import { ServerEvents } from '../../shared/server/Server.Events'
 import { WebsocketContext } from "./WebsocketContext";
-import { useRecoilState } from 'recoil';
 import { LobbyState } from "./LobbyState";
     
 export default function GamePrivateManager() {
 
     const socket = useContext(WebsocketContext);
-    const [lobby, setLobby] = useRecoilState(LobbyState);
+    // const [lobby, setLobby] = useRecoilState(LobbyState);
 
     useEffect( () => {
 
@@ -19,7 +18,7 @@ export default function GamePrivateManager() {
 
         socket.on(ServerEvents.LobbyState, (data) => {
 
-            setLobby(data);
+            // setLobby(data);
 
             console.log(data.message);
             console.log(data.lobbyid);
@@ -35,7 +34,7 @@ export default function GamePrivateManager() {
         }
     });
 
-    if ( lobby === null )
+    // if ( lobby === null )
         return <GameLobby/>
 
     console.log("GOING TO GAME !");
