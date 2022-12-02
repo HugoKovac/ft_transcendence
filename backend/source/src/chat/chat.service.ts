@@ -154,7 +154,39 @@ export class ChatService{
 		}
 	}
 
-	//add user to group
+	async delUserToGroup({group_conv_id, del_user_ids}:{group_conv_id:number, del_user_ids:number[]}){
+		try{
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations: ['users']})
+			if (!conv)
+				return false
+
+			let users: User[] = []
+
+			for (let i of conv.users){
+				let push: boolean = true
+				for (let j of del_user_ids)
+					if (j == i.id)
+						push = false
+
+				if (push)
+					users.push(i)
+			}
+
+			console.log(users)
+		
+
+			const newConv = this.groupConvRepo.create({...conv, users: users})
+
+			await this.groupConvRepo.save(newConv)
+			
+
+			return true
+		}
+		catch(e){
+			console.error(e)
+		}
+	}
+
 	//delete user to group
 	//change groupName
 

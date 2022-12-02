@@ -59,4 +59,11 @@ export class ChatController{
 	async addUserToGroup(@Body()bod){
 		return await this.chatService.addUserToGroup(bod)
 	}
+
+	@Post('del_user_to_group')
+	@UseGuards(AuthGuard('jwt'))
+	async delUserToGroup(@Body()bod){
+		return await this.chatService.delUserToGroup(bod)
+	}
+
 }
