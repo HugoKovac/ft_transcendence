@@ -81,6 +81,100 @@ export class ChatService{
 		}
 	}
 
+	// CONV GETTER
+
+	async getConvMsg({conv_id}:{conv_id:number}, jwt:string){
+		let tokenUserInfo: any = decode(jwt)//!verifier si la conv est bien au user_id du token
+
+		try{
+
+			const conv = await this.convRepo.findOne({where:{
+				conv_id: conv_id
+			}, relations:['message', 'user', 'user2']})
+
+			return conv
+		}
+		catch{
+			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
+			return false
+		}
+	}
+
+	async getAllConv(jwt:string){
+		let tokenUserInfo: any = decode(jwt)
+		try{
+
+			const conv = await this.convRepo.find({where:[
+				{user_id_1: tokenUserInfo.id},
+				{user_id_2: tokenUserInfo.id}
+			], relations:['message']})
+
+			let rtn = conv
+
+			for (let i in rtn)
+				if (!rtn[i].message && rtn[i].user_id_1 === tokenUserInfo.id)
+					delete rtn[i]
+			
+			let add_username = []
+			for (let i of rtn){
+				let id = i.user_id_1 == tokenUserInfo.id ? i.user_id_2 : i.user_id_1
+				let usr
+				let pp
+				try{
+					let {username, pp} = await this.userRepo.findOne({where: {id: id}})
+					usr = username
+					pp = pp
+					add_username.push({...i, username: usr, pp: pp})
+				}catch{
+					pp = 'https://i1.sndcdn.com/avatars-000380110130-s9jvkb-t500x500.jpg'//path to deleted user's pp
+					usr = 'Deleted User'
+					add_username.push({...i, username: usr, pp: pp})
+				}
+			}
+
+			return add_username
+		}
+		catch{
+			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
+			return false
+		}
+	}
+
+	// GROUP CONV GETTER
+
+	async getGroupConvMsg({group_conv_id}:{group_conv_id:number}, jwt:string){
+		let tokenUserInfo: any = decode(jwt)//!verifier si la conv est bien au user_id du token
+
+		try{
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages']})
+
+			if (!conv)
+				return false
+
+			return conv
+		}
+		catch{
+			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
+			return false
+		}
+	}
+
+	async getAllGroupConv(jwt:string){
+		let tokenUserInfo: any = decode(jwt)
+		try{
+			const conv: GroupConv[] = await this.groupConvRepo.find({relations: ['users']})
+
+			if (!conv)
+				return false
+
+			return conv
+		}
+		catch{
+			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
+			return false
+		}
+	}
+
 	// GROUP CONV SETTER
 
 	async newGroupConv({user_ids}:{user_ids:number[]}, jwt:string){//set a minimum of msg
@@ -194,97 +288,6 @@ export class ChatService{
 			return true
 		}catch(e){
 			console.error(e)
-			return false
-		}
-	}
-
-	// CONV GETTER
-
-	async getConvMsg({conv_id}:{conv_id:number}, jwt:string){
-		let tokenUserInfo: any = decode(jwt)//!verifier si la conv est bien au user_id du token
-
-		try{
-
-			const conv = await this.convRepo.findOne({where:{
-				conv_id: conv_id
-			}, relations:['message', 'user', 'user2']})
-
-			return conv
-		}
-		catch{
-			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
-			return false
-		}
-	}
-
-	async getAllConv(jwt:string){
-		let tokenUserInfo: any = decode(jwt)
-		try{
-
-			const conv = await this.convRepo.find({where:[
-				{user_id_1: tokenUserInfo.id},
-				{user_id_2: tokenUserInfo.id}
-			], relations:['message']})
-
-			let rtn = conv
-
-			for (let i in rtn)
-				if (!rtn[i].message && rtn[i].user_id_1 === tokenUserInfo.id)
-					delete rtn[i]
-			
-			let add_username = []
-			for (let i of rtn){
-				let id = i.user_id_1 == tokenUserInfo.id ? i.user_id_2 : i.user_id_1
-				let usr
-				let pp
-				try{
-					let {username, pp} = await this.userRepo.findOne({where: {id: id}})
-					usr = username
-					pp = pp
-					add_username.push({...i, username: usr, pp: pp})
-				}catch{
-					pp = 'https://i1.sndcdn.com/avatars-000380110130-s9jvkb-t500x500.jpg'//path to deleted user's pp
-					usr = 'Deleted User'
-					add_username.push({...i, username: usr, pp: pp})
-				}
-			}
-
-			return add_username
-		}
-		catch{
-			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
-			return false
-		}
-	}
-
-	// GROUP CONV GETTER
-
-	async getGroupConvMsg({group_conv_id}:{group_conv_id:number}, jwt:string){
-		let tokenUserInfo: any = decode(jwt)//!verifier si la conv est bien au user_id du token
-
-		try{
-			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages']})
-
-			if (!conv)
-				return false
-
-			return conv
-		}
-		catch{
-			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
-			return false
-		}
-	}
-
-	async getAllGroupConv(jwt:string){
-		let tokenUserInfo: any = decode(jwt)
-		try{
-
-			// Return all group conv with conv_id and infos like name and pp
-
-		}
-		catch{
-			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
 			return false
 		}
 	}
