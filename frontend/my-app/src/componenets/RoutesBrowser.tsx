@@ -9,8 +9,9 @@ import Profile from "../pages/Profile"
 import Unauthorized from "../pages/Unauthorized"
 import CheckTokenAfterLogin, { CheckTokenFirstMount } from "./CheckToken"
 import LoginStateContext from "./LoginStateContext"
-import GameLobby from "./GameLobby"
-import GameMatchmaking from "./GameMatchmaking"
+import GameLobby from "./Game/GameLobby"
+import GameMatchmaking from "./Game/GameMatchmaking"
+import GamePrivateManager from "./Game/GamePrivateManager"
 
 
 
@@ -49,7 +50,7 @@ const RoutesBrowser = () : React.ReactElement => {
 					<Route path='/game/matchmaking' element={<GameMatchmaking />}/>
 				</Route>
 				<Route path='/game/lobby' element={<ProtectedRoute />}>
-					<Route path='/game/lobby' element={<GameLobby/>}/>
+					<Route path='/game/lobby' element={<GamePrivateManager />}/>
 				</Route>
 				<Route path='/redirect/check_token' element={<CheckTokenAfterLogin />} />
 			</Routes>

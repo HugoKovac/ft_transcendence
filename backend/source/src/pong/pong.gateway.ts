@@ -66,16 +66,13 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
     onLobbyCreation( client: AuthenticatedSocket, data: LobbyCreateDto )
     {
       const lobby = this.lobbyManager.generateLobby(data.skin);
-
       lobby.addClient(client);
 
       this.server.emit(ServerEvents.LobbyState, { 
-          data: {
-            message: "Lobby created !",
+            message: "server_createlobby",
+            lobbyid: lobby.id,
           }
-        }
       )
-
     }
 
     @SubscribeMessage(ClientEvents.JoinLobby)

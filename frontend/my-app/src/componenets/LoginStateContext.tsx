@@ -8,7 +8,7 @@ type ObjLoginStateContext = {
 
 export const LoginStateContext = createContext<ObjLoginStateContext>({
 	logState: 0,
-	setLogState : () => {}
+	setLogState : () => {} 
 })
 
 async function ReqApiLogState(): Promise<number>{

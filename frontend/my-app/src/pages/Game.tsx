@@ -1,4 +1,5 @@
-import GameMenu from '../componenets/GameMenu';
+import GameMenu from '../componenets/Game/GameMenu';
+import { socket, WebsocketProvider } from '../componenets/Game/WebsocketContext';
 import NavBar from '../componenets/NavBar';
 
 const Game = () => {
@@ -6,7 +7,9 @@ const Game = () => {
     return (
         <div>
             <NavBar />
-            <GameMenu/>
+            <WebsocketProvider value={socket}>
+                <GameMenu/>
+            </WebsocketProvider>
         </div>
     );
 }
