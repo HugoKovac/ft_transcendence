@@ -115,7 +115,8 @@ export class ChatService{
 			if (!group_conv)
 				return false
 
-			const newMsg = this.messRepo.create({sender_id: tokenUserInfo.sender_id, message: message, group_conv: group_conv})
+			const newMsg = this.messRepo.create({sender_id: tokenUserInfo.id, message: message, group_conv: group_conv})
+			console.log(tokenUserInfo.id)
 			await this.messRepo.save(newMsg)
 
 			return true
@@ -258,13 +259,16 @@ export class ChatService{
 
 	// GROUP CONV GETTER
 
-	async getGroupConvMsg({conv_id}:{conv_id:number}, jwt:string){
+	async getGroupConvMsg({group_conv_id}:{group_conv_id:number}, jwt:string){
 		let tokenUserInfo: any = decode(jwt)//!verifier si la conv est bien au user_id du token
 
 		try{
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages']})
 
-			// return groupConv's messages and users info
+			if (!conv)
+				return false
 
+			return conv
 		}
 		catch{
 			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)

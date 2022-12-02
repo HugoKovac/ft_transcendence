@@ -42,7 +42,7 @@ export class ChatController{
 		return await this.chatService.getAllConv(req.cookies['jwt'])
 	}
 
-	@Post('get_group_conv_msg')
+	@Post('get_group_msg')
 	@UseGuards(AuthGuard('jwt'))
 	async getGroupConvMsg(@Body()bod, @Req() req){
 		return await this.chatService.getGroupConvMsg(bod, req.cookies['jwt'])
@@ -70,5 +70,4 @@ export class ChatController{
 	async changeGroupName(@Body()bod:{group_conv_id:number, new_name:string}){
 		return this.chatService.changeGroupName(bod)
 	}
-
 }
