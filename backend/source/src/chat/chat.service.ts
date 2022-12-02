@@ -83,7 +83,7 @@ export class ChatService{
 
 	// GROUP CONV SETTER
 
-	async newGroupConv({user_ids}:{user_ids:number[]}, jwt:string){
+	async newGroupConv({user_ids}:{user_ids:number[]}, jwt:string){//set a minimum of msg
 		let tokenUserInfo: any = decode(jwt)
 		try{
 			const msg: Message[] = await this.messRepo.find()
@@ -101,12 +101,11 @@ export class ChatService{
 			return true
 		}catch(e){
 			console.error(e)
-			console.error(`Can't find this conv with : user_ids {${user_ids}}`)
 			return false
 		}
 	}
 
-	async newGroupMsg({sender_id, group_conv_id, message}:{sender_id:number, group_conv_id:number, message:string}, jwt:string){
+	async newGroupMsg({group_conv_id, message}:{group_conv_id:number, message:string}, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		if (!message)
 			return false
@@ -116,13 +115,42 @@ export class ChatService{
 			if (!group_conv)
 				return false
 
-			const newMsg = this.messRepo.create({sender_id: sender_id, message: message, group_conv: group_conv})
+			const newMsg = this.messRepo.create({sender_id: tokenUserInfo.sender_id, message: message, group_conv: group_conv})
 			await this.messRepo.save(newMsg)
+
+			return true
 			
 		}catch(e){
 			console.error(e)
-			console.error(`Can't find this conv with : group_conv_id {${group_conv_id}}`)
 			return false
+		}
+	}
+
+	async addUserToGroup({group_conv_id, new_user_ids}:{group_conv_id:number, new_user_ids:number[]}){
+		try{
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations: ['users']})
+			if (!conv)
+				return false
+
+			let users: User[] = []
+			for (let i of new_user_ids){
+				const user: User = await this.userRepo.findOne({where: {id: i}})
+				if (user)
+					users.push(user)
+			}
+
+			for (let i of conv.users)
+				users.push(i)
+
+			const newConv = this.groupConvRepo.create({...conv, users: users})
+
+			await this.groupConvRepo.save(newConv)
+			
+
+			return true
+		}
+		catch(e){
+			console.error(e)
 		}
 	}
 

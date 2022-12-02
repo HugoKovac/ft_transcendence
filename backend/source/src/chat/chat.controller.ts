@@ -53,4 +53,10 @@ export class ChatController{
 	async getAllGroupConv(@Req() req){
 		return await this.chatService.getAllGroupConv(req.cookies['jwt'])
 	}
+
+	@Post('add_user_to_group')
+	@UseGuards(AuthGuard('jwt'))
+	async addUserToGroup(@Body()bod){
+		return await this.chatService.addUserToGroup(bod)
+	}
 }
