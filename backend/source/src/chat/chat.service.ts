@@ -98,10 +98,6 @@ export class ChatService{
 			
 			await this.groupConvRepo.save(newGroup)
 
-			//Check if the group conv already exist
-				//exist: return false
-				//don't exist: create the groupConv with all the user_ids; return true
-
 			return true
 		}catch(e){
 			console.error(e)
@@ -110,17 +106,29 @@ export class ChatService{
 		}
 	}
 
-	async newGroupMsg({conv_id, message}:{conv_id:number, message:string}, jwt:string){
+	async newGroupMsg({sender_id, group_conv_id, message}:{sender_id:number, group_conv_id:number, message:string}, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		if (!message)
 			return false
 		try{
-			// create the message with sender id (tokenUserInfo.id) and add it to the the groupConv
-		}catch{
-			console.error(`Can't find this conv with : conv_id {${conv_id}}`)
+			const group_conv: GroupConv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}})
+
+			if (!group_conv)
+				return false
+
+			const newMsg = this.messRepo.create({sender_id: sender_id, message: message, group_conv: group_conv})
+			await this.messRepo.save(newMsg)
+			
+		}catch(e){
+			console.error(e)
+			console.error(`Can't find this conv with : group_conv_id {${group_conv_id}}`)
 			return false
 		}
 	}
+
+	//add user to group
+	//delete user to group
+	//change groupName
 
 	// CONV GETTER
 

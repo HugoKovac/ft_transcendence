@@ -24,6 +24,12 @@ export class ChatController{
 		return await this.chatService.newGroupConv(bod, req.cookies['jwt'])
 	}
 
+	@Post('new_group_msg')
+	@UseGuards(AuthGuard('jwt'))
+	async newGroupMsg(@Body()bod: {sender_id:number, group_conv_id:number, message: string}, @Req() req){
+		return await this.chatService.newGroupMsg(bod, req.cookies['jwt'])
+	}
+
 	@Post('get_conv_msg')
 	@UseGuards(AuthGuard('jwt'))
 	async getConvMsg(@Body()bod, @Req() req){
