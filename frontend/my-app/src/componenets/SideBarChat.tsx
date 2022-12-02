@@ -17,10 +17,8 @@ const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX
 
 			await axInst.post('get_all_conv').then(res => {
 				const list = []
-				let localRmList = []
 
 				for (let i of res.data){
-					localRmList.push(i)
 					list.push(<Conv key={i.conv_id} name={i.username} img_path={i.pp} conv_id={i.conv_id} setConv={setConvCpy}/>)
 				}
 				

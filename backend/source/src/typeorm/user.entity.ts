@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, JoinColumn, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import Conv from "./conv.entity";
 import { Friends } from "./friends.entity";
+import { GroupConv } from "./groupConv.entity";
 
 @Entity()
 export class User {
@@ -52,4 +53,10 @@ export class User {
 		name: 'conv_list'
 	})
 	conv: Conv[]
+
+	@ManyToMany(
+		() => GroupConv,
+		group_conv => group_conv.users
+	)
+	group_conv: GroupConv[]
 }

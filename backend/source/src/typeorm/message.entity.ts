@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import Conv from "./conv.entity";
+import { GroupConv } from "./groupConv.entity";
 
 @Entity()
 export class Message{
@@ -30,4 +31,13 @@ export class Message{
 		name: 'conv'
 	})
 	conv: Conv
+
+	@ManyToOne(
+		() => GroupConv,
+		group_conv => group_conv.messages
+	)
+	@JoinColumn({
+		name: 'group_conv'
+	})
+	group_conv: GroupConv
 }

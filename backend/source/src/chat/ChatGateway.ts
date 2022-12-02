@@ -20,7 +20,7 @@ export class ChatGateway{
 
 	@SubscribeMessage('message')
 	async handleMessage(@ConnectedSocket() client: Socket, @MessageBody()body){
-		console.log(body)
+		// console.log(body)
 		console.log(await this.chatService.newMsg(body, client.handshake.auth.token))
 		this.serv.emit('refresh')
 	}

@@ -3,9 +3,9 @@ import { useEffect } from 'react'
 import Conv from './Conv'
 import '../styles/Chat.scss'
 
-const SideBarGroupChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX.Element[], setConvList:(v:JSX.Element[])=>void, popup:boolean, nav:number}) => {
+const SideBarGroupChat = (props:{conv:number, setConv: (v:number)=>void, convGroupList:JSX.Element[], setConvGroupList:(v:JSX.Element[])=>void, popup:boolean, nav:number}) => {
 	const popupCpy = props.popup
-	const setConvListCpy = props.setConvList
+	const setConvGroupListCpy = props.setConvGroupList
 	const setConvCpy = props.setConv
 
 	useEffect(() =>{
@@ -15,25 +15,24 @@ const SideBarGroupChat = (props:{conv:number, setConv: (v:number)=>void, convLis
 				withCredentials: true
 			})
 
-			await axInst.post('get_all_conv').then(res => {
+			await axInst.post('get_all_conv').then(res => {//get_all_group_conv
 				const list = []
-				let localRmList = []
 
 				for (let i of res.data){
-					localRmList.push(i)
 					list.push(<Conv key={i.conv_id} name={i.username} img_path={i.pp} conv_id={i.conv_id} setConv={setConvCpy}/>)
 				}
 				
-				setConvListCpy(list)
+				setConvGroupListCpy(list)
 			})
 
 
 		}
 		fetchConvList()
-	}, [popupCpy, setConvListCpy, setConvCpy])
+	}, [popupCpy, setConvGroupListCpy, setConvCpy])
 
+	/*Replace convList by convGroupConv*/
 	return <div>
-		{props.nav === 2 ? props.convList : <></>}
+		{props.nav === 2 ? props.convGroupList : <></>}
 	</div>
 }
 

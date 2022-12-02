@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { decode, JwtPayload } from 'jsonwebtoken';
-import { first } from 'rxjs';
 import { Friends, User } from 'src/typeorm';
 import { Repository } from 'typeorm';
 

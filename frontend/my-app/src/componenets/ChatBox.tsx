@@ -3,13 +3,13 @@ import React, { useEffect, useState } from "react"
 import ChatRight from "./ChatRight"
 import Message from "./Message"
 
-const ChatBox = (props: {conv: number, logState: number, newMsg:boolean, setNewMsg:(v:boolean)=>void, msgList:JSX.Element[], setMsgList:(v:JSX.Element[])=>void}) => {
+const ChatBox = (props: {conv: number, logState: number, newMsg:boolean, setNewMsg:(v:boolean)=>void}) => {
 	const newMsgCpy = props.newMsg
 	const setNewMsgCpy = props.setNewMsg
 	const logStateCpy = props.logState
-	const setMsgListCpy = props.setMsgList
 	const convCpy = props.conv
 	const [refresh, setRefresh] = useState(false)
+	const [msgList, setMsgList] = useState([<Message key='' content='' own={true} username='' userPP='' date='' />])
 
 
 	useEffect(() =>{
@@ -31,18 +31,18 @@ const ChatBox = (props: {conv: number, logState: number, newMsg:boolean, setNewM
 
 					list.unshift(<Message key={i.msg_id} own={i.sender_id === logStateCpy ? true : false} content={i.message} username={user.username} userPP={user.pp} date={i.send_at}/>)
 				}
-				setMsgListCpy(list)
+				setMsgList(list)
 			}).catch(e => {console.error('error when fetch http://localhost:3000/api/message/get_conv_msg')})
 
 			setNewMsgCpy(false)
 		}
 		fetchMsg()
 		setRefresh(false)
-	}, [newMsgCpy, setNewMsgCpy, logStateCpy, setMsgListCpy, convCpy, refresh])//si conv ou newMsg
+	}, [newMsgCpy, setNewMsgCpy, logStateCpy, setMsgList, convCpy, refresh])//si conv ou newMsg
 
 	//Faire un new useEffect avec des states groupConv et newConvMsg
 
-	let right = <ChatRight conv={props.conv} msgList={props.msgList} setNewMsg={props.setNewMsg} setRefresh={setRefresh} />
+	let right = <ChatRight conv={props.conv} msgList={msgList} setNewMsg={props.setNewMsg} setRefresh={setRefresh} />
 	if (props.conv === 0)
 		right = <div className='chatBox' />
 
