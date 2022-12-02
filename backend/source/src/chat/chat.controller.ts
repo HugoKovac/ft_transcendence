@@ -66,4 +66,9 @@ export class ChatController{
 		return await this.chatService.delUserToGroup(bod)
 	}
 
+	@Post('change_group_name')
+	async changeGroupName(@Body()bod:{group_conv_id:number, new_name:string}){
+		return this.chatService.changeGroupName(bod)
+	}
+
 }

@@ -151,6 +151,7 @@ export class ChatService{
 		}
 		catch(e){
 			console.error(e)
+			return false
 		}
 	}
 
@@ -161,7 +162,6 @@ export class ChatService{
 				return false
 
 			let users: User[] = []
-
 			for (let i of conv.users){
 				let push: boolean = true
 				for (let j of del_user_ids)
@@ -172,23 +172,30 @@ export class ChatService{
 					users.push(i)
 			}
 
-			console.log(users)
-		
-
 			const newConv = this.groupConvRepo.create({...conv, users: users})
-
 			await this.groupConvRepo.save(newConv)
-			
 
 			return true
 		}
 		catch(e){
 			console.error(e)
+			return false
 		}
 	}
 
-	//delete user to group
-	//change groupName
+	async changeGroupName({group_conv_id, new_name}:{group_conv_id:number, new_name:string}){
+		try{
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}})
+
+			const newConv = this.groupConvRepo.create({...conv, group_name: new_name})
+			await this.groupConvRepo.save(newConv)
+
+			return true
+		}catch(e){
+			console.error(e)
+			return false
+		}
+	}
 
 	// CONV GETTER
 
