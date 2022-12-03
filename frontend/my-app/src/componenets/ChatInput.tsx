@@ -1,7 +1,6 @@
 import Cookies from "js-cookie";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { io } from "socket.io-client"
-import {LoginStateContext} from './LoginStateContext'
 import '../styles/Chat.scss'
 
 type messageObj = {

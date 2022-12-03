@@ -14,6 +14,13 @@ export class GroupConv{
 	})
 	group_name: string
 
+	@Column({
+		nullable: false,
+		type: 'varchar',
+		default: ''
+	})
+	pp: string
+
 	@OneToMany(
 		() => Message,
 		message => message.group_conv

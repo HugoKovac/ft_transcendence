@@ -2,10 +2,6 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import '../styles/CreateGroupPopup.scss'
 
-//replace div by checkboxes
-//On click check or uncheck the box
-// {list.map((i) => <div key={i.friend_id} onClick={() => {ClickOnFriend(i.friend_id)}} className="friendBox">{i.friend_username}</div>)}
-
 type Friend = {
 	id:number,
 	friend_id: number,
@@ -17,16 +13,14 @@ const CreateGroupPopup = () => {
 	const [friendList, setFriendList] = useState([<label></label>])
 	const [checkboxState, setCheckboxState] = useState([false])
 	
-	const handleCheckedBox = (e:any) => {
-		//set state.value = !state.value
-		let tmp = checkboxState
-		tmp[e.target.value] = tmp[e.target.value] ? !tmp[e.target.value] : true
-		setCheckboxState(tmp)
-
-		console.log(checkboxState)
-	}
-
+	
 	useEffect(() => {
+		const handleCheckedBox = (e:any) => {
+			let tmp = checkboxState
+			tmp[e.target.value] = tmp[e.target.value] ? !tmp[e.target.value] : true
+			setCheckboxState(tmp)
+		}
+
 		async function get() {
 			const axInst = axios.create({
 				baseURL: 'http://localhost:3000/api/friends/',
@@ -44,10 +38,35 @@ const CreateGroupPopup = () => {
 			}
 		}
 		get()
-	}, [setFriendList])
+	}, [setFriendList, checkboxState])
 
-	const groupSubmit = () => {
-		//send all the firend id of checkboxState that are true
+	const groupSubmit = async () => {
+		console.log('here')
+		let addList:number[] = []
+
+		for (let i in checkboxState)
+			if (checkboxState[i] === true)
+				addList.push(parseInt(i))
+
+			const payload = {
+				user_ids: addList,
+				group_name: groupName
+			}
+
+			console.log(payload)
+
+		const axInst = axios.create({
+			baseURL: 'http://localhost:3000/api/message/',
+			withCredentials: true
+		})
+		try{
+			await axInst.post('new_group_conv', payload).then((res) => {
+				console.log(res.data)
+			})
+		}
+		catch{
+			console.error('Error with fetch of http://localhost:3000/api/message/new_group_conv')
+		}
 	}
 
 	return <div className='CreateGroupPopup'>
@@ -58,7 +77,7 @@ const CreateGroupPopup = () => {
 		<div className='friendList'>
 			{friendList}
 		</div>
-		<button onSubmit={groupSubmit}>Create Group</button>
+		<button onClick={groupSubmit}>Create Group</button>
 	</div>
 }
 

@@ -1,6 +1,5 @@
 import { useContext, useState } from 'react'
 import '../styles/Chat.scss'
-import Message from './Message'
 import LoginStateContext from './LoginStateContext'
 import NavBarChat from './NavBarChat'
 import Conv from './Conv'
@@ -31,7 +30,7 @@ const ChatWindow = () => {
 		<div className='chatMenu'>
 			<NavBarChat nav={nav} convMode={convMode} groupMode={groupMode}/>
 			<SideBarChat conv={conv} setConv={setConv} convList={convList} setConvList={setConvList} popup={popup} nav={nav} />
-			<SideBarGroupChat conv={conv} setConv={setConv} convGroupList={convGroupList} setConvGroupList={setConvGroupList} popup={popup} nav={nav} />
+			<SideBarGroupChat groupConv={conv} setGroupConv={setConv} convGroupList={convGroupList} setConvGroupList={setConvGroupList} popup={popup} nav={nav} />
 			<NewConvBtn popup={popup} setPopup={setPopup} convList={convList} nav={nav} />
 			<NewGroupConvBtn popup={popup} setPopup={setPopup} convList={convList} nav={nav} />
 		</div>

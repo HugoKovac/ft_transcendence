@@ -146,7 +146,7 @@ export class ChatService{
 		let tokenUserInfo: any = decode(jwt)//!verifier si la conv est bien au user_id du token
 
 		try{
-			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages']})
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users']})
 
 			if (!conv)
 				return false
@@ -159,7 +159,7 @@ export class ChatService{
 		}
 	}
 
-	async getAllGroupConv(jwt:string){
+	async getAllGroupConv(jwt:string){//with user id init
 		let tokenUserInfo: any = decode(jwt)
 		try{
 			const conv: GroupConv[] = await this.groupConvRepo.find({relations: ['users']})
@@ -177,9 +177,11 @@ export class ChatService{
 
 	// GROUP CONV SETTER
 
-	async newGroupConv({user_ids}:{user_ids:number[]}, jwt:string){//set a minimum of msg, set pp link whene create
+	async newGroupConv({user_ids, group_name}:{user_ids:number[], group_name:string}, jwt:string){//set a minimum of msg, set pp link whene create
 		let tokenUserInfo: any = decode(jwt)
 		try{
+			if (!group_name)
+				return false
 			const msg: Message[] = await this.messRepo.find()
 			let users: User[] = []
 			for (let i of user_ids){
@@ -188,7 +190,9 @@ export class ChatService{
 					users.push(user)
 			}
 
-			const newGroup = this.groupConvRepo.create({group_name: 'Test Group', messages: msg, users: users})
+			console.log(group_name)
+			const newGroup = this.groupConvRepo.create({group_name: group_name, messages: msg, users: users})
+			console.log(newGroup)
 			
 			await this.groupConvRepo.save(newGroup)
 
