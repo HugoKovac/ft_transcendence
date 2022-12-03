@@ -12,7 +12,7 @@ const ChooseFriend = (props: {setPopup: (set: boolean) => void, convList: JSX.El
 		created: new Date()
 	}])
 
-		const convListCpy = props.convList
+	const convListCpy = props.convList
 
 	useEffect(() => {
 		async function get() {

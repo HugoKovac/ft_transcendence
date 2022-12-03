@@ -1,5 +1,5 @@
 import React from "react"
-import ChooseFriend from "./ChooseFriend"
+import CreateGroupPopup from "./CreateGroupPopup"
 import Popup from "./Popup"
 
 const NewGroupConvBtn = (props: {popup:boolean, setPopup:(v:boolean)=>void, convList:JSX.Element[], nav:number}) => {
@@ -8,10 +8,10 @@ const NewGroupConvBtn = (props: {popup:boolean, setPopup:(v:boolean)=>void, conv
 	}
 
 	const active = <React.Fragment>
-		<button className='btn-pup' onClick={handlePopup}>+ New Conversation</button>
+		<button className='btn-pup' onClick={handlePopup}>+ New Group</button>
 		<Popup trigger={props.popup} setter={{popup: props.popup, setPopup: props.setPopup}}>
-			<h1>Choose a friend :</h1>
-			<ChooseFriend setPopup={props.setPopup} convList={props.convList}/>
+			<h1>Create a group :</h1>
+			<CreateGroupPopup />
 		</Popup>
 	</React.Fragment>
 

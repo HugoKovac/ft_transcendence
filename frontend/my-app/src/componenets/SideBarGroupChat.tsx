@@ -15,11 +15,11 @@ const SideBarGroupChat = (props:{conv:number, setConv: (v:number)=>void, convGro
 				withCredentials: true
 			})
 
-			await axInst.post('get_all_conv').then(res => {//get_all_group_conv
+			await axInst.post('get_all_group_conv').then(res => {//get_all_group_conv
 				const list = []
 
 				for (let i of res.data){
-					list.push(<Conv key={i.conv_id} name={i.username} img_path={i.pp} conv_id={i.conv_id} setConv={setConvCpy}/>)
+					list.push(<Conv key={i.group_conv_id} name={i.group_name} img_path={''} conv_id={i.group_conv_id} setConv={setConvCpy}/>)
 				}
 				
 				setConvGroupListCpy(list)

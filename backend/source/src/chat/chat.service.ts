@@ -177,7 +177,7 @@ export class ChatService{
 
 	// GROUP CONV SETTER
 
-	async newGroupConv({user_ids}:{user_ids:number[]}, jwt:string){//set a minimum of msg
+	async newGroupConv({user_ids}:{user_ids:number[]}, jwt:string){//set a minimum of msg, set pp link whene create
 		let tokenUserInfo: any = decode(jwt)
 		try{
 			const msg: Message[] = await this.messRepo.find()
