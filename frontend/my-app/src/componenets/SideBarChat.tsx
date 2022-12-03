@@ -7,6 +7,8 @@ const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX
 	const setConvCpy = props.setConv
 	const setConvListCpy = props.setConvList
 	const popupCpy = props.popup
+	const navCpy = props.nav
+	const request = props.nav === 1 ? 'get_all_conv' : 'get_all_group_conv'
 
 	useEffect(() =>{
 		const fetchConvList = async () => {
@@ -15,21 +17,24 @@ const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX
 				withCredentials: true
 			})
 
-			await axInst.post('get_all_conv').then(res => {
+			await axInst.post(request).then(res => {
 				const list = []
 
 				for (let i of res.data){
-					list.push(<Conv key={i.conv_id} name={i.username} img_path={i.pp} conv_id={i.conv_id} setConv={setConvCpy}/>)
+					if (navCpy === 1)
+						list.push(<Conv key={i.conv_id} name={i.username} img_path={i.pp} conv_id={i.conv_id} setConv={setConvCpy}/>)
+					else
+					list.push(<Conv key={i.group_conv_id} name={i.group_name} img_path={''} conv_id={i.group_conv_id} setConv={setConvCpy}/>)
 				}
 				
 				setConvListCpy(list)
 			})
 		}
 		fetchConvList()
-	}, [popupCpy, setConvListCpy, setConvCpy])
+	}, [popupCpy, setConvListCpy, setConvCpy, navCpy])
 
 	return <div>
-		{props.nav === 1 ? props.convList : <></>}
+		{props.convList}
 	</div>
 }
 
