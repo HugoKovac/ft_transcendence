@@ -28,12 +28,19 @@ function FriendsButton(){
 	return ( <Button path='/friends' content='Friends'/> )
 }
 
+function GameButton(){
+	return ( <Button path='/game' content='Game'/> )
+}
+
 function LeftBar(){
 	const {logState} = useContext(LoginStateContext)
 	let button
 	
 	if (logState !== 0)
-	button = <ChatButton />
+		button = <div>
+			<ChatButton />
+			<GameButton />
+		</div> 
 
 	return (
 		<ul className="left-NavBar">
