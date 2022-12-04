@@ -1,6 +1,7 @@
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import '../styles/CreateGroupPopup.scss'
+import LoginStateContext from './LoginStateContext'
 
 type Friend = {
 	id:number,
@@ -12,6 +13,7 @@ const CreateGroupPopup = () => {
 	const [groupName, setGroupName] = useState('')
 	const [friendList, setFriendList] = useState([<label></label>])
 	const [checkboxState, setCheckboxState] = useState([false])
+	const {logState} = useContext(LoginStateContext)
 	
 	
 	useEffect(() => {
@@ -48,12 +50,14 @@ const CreateGroupPopup = () => {
 			if (checkboxState[i] === true)
 				addList.push(parseInt(i))
 
-			const payload = {
-				user_ids: addList,
-				group_name: groupName
-			}
+		addList.push(logState)
 
-			console.log(payload)
+		const payload = {
+			user_ids: addList,
+			group_name: groupName
+		}
+
+		console.log(payload)
 
 		const axInst = axios.create({
 			baseURL: 'http://localhost:3000/api/message/',

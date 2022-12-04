@@ -15,7 +15,6 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 
 
 	useEffect(() =>{
-		console.log(convCpy)
 		if (convCpy === 0)
 			return
 		const fetchMsg = async () => {
@@ -23,10 +22,11 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 				baseURL: 'http://localhost:3000/api/message/',
 				withCredentials: true
 			})
-
+			
 			axInst.post(request, {conv_id: convCpy}).then(res => {
 				const list = []
-
+				
+				console.log(res.data)
 				if (navCpy === 1){
 					const ownMsg = res.data.user.id === logStateCpy ? res.data.user : res.data.user2
 					const otherMsg = res.data.user2.id === logStateCpy ? res.data.user2 : res.data.user
@@ -42,12 +42,12 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 
 					for (let i of res.data.messages){
 						for (let j of res.data.users){
-							if (i.sender_id === j.id){
+							if (i.sender_id === parseInt(j.id)){
 								user = j
 								break
 							}
 						}
-
+						
 						list.unshift(<Message key={i.msg_id} own={i.sender_id === logStateCpy ? true : false} content={i.message} username={user.username} userPP={user.pp} date={i.send_at}/>)
 					}
 				}
@@ -63,7 +63,7 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 
 	//Faire un new useEffect avec des states groupConv et newConvMsg
 
-	let right = <ChatRight conv={props.conv} msgList={msgList} setNewMsg={props.setNewMsg} setRefresh={setRefresh} />
+	let right = <ChatRight conv={props.conv} msgList={msgList} setNewMsg={props.setNewMsg} setRefresh={setRefresh} nav={props.nav} />
 	if (props.conv === 0)
 		right = <div className='chatBox' />
 

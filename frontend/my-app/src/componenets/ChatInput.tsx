@@ -8,7 +8,12 @@ type messageObj = {
 	message:string,
 }
 
-function ChatInput({conv_id, state, setRefresh}: {conv_id:number, state: (v:boolean)=>void, setRefresh:(v:boolean)=>void} ){
+type groupMessageObj = {
+	group_conv_id:number,
+	message:string,
+}
+
+function ChatInput({conv_id, state, setRefresh, nav}: {conv_id:number, state: (v:boolean)=>void, setRefresh:(v:boolean)=>void, nav:number} ){
 	const socket = io("localhost:3000", {
 		auth: (cb) => {
 			cb({
@@ -23,9 +28,21 @@ function ChatInput({conv_id, state, setRefresh}: {conv_id:number, state: (v:bool
 		message: inputMessage
 	}
 
+	const payloadGroupMsg: groupMessageObj = {
+		group_conv_id: conv_id,
+		message: inputMessage
+	}
+
 	const SendMessage = async (e: any) => {
 		e.preventDefault()
 		socket.emit('message', payloadMsg)
+		setInputMessage('')
+		state(true)
+	}
+
+	const SendGroupMessage = async (e: any) => {
+		e.preventDefault()
+		socket.emit('groupMessage', payloadGroupMsg)//change payload
 		setInputMessage('')
 		state(true)
 	}
@@ -35,7 +52,7 @@ function ChatInput({conv_id, state, setRefresh}: {conv_id:number, state: (v:bool
 		setRefresh(true)
 	});
 
-	return <form onSubmit={SendMessage} className='chatInput'>
+	return <form onSubmit={nav === 1 ? SendMessage : SendGroupMessage} className='chatInput'>
 			<input placeholder="type your message..." autoFocus autoComplete="off" onChange={(e) => {setInputMessage(e.target.value)}} value={inputMessage} type="text" name="msg"/>
 			<button>Send</button>
 		</form>
