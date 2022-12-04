@@ -7,9 +7,9 @@ const Game = () => {
     return (
         <div>
             <NavBar />
-            <WebsocketProvider value={socket}>
-                <GameMenu/>
-            </WebsocketProvider>
+                <WebsocketProvider value={socket}>
+                    <GameMenu/>
+                </WebsocketProvider>
         </div>
     );
 }

@@ -29,10 +29,20 @@ export class Lobby
        if ( this.clients.size >= this.maxClient )
         console.log("Game start !");
 
-    }
+        //? Prevenir le front que le lobby a ete modifier
+        
+        console.log(this.id);   
 
+        this.server.emit(ServerEvents.LobbyState, { 
+            message: "Added a client !",
+            lobbyid: this.id,
+          });
+
+    }
     public removeClient( client: AuthenticatedSocket )
     {
+        console.log("REMOVING CLIENT NUMBER : ");
+        console.log(client.id);
         this.clients.delete(client.id);
 
         client.leave(this.id);
@@ -40,9 +50,9 @@ export class Lobby
         client.data.lobby = null;
 
 
-        this.spreadLobby<ServerPayload[ServerEvents.LobbyCall]>(ServerEvents.LobbyCall, { 
-            message: 'The lobby say you Hi !', 
-        } );
+        // this.spreadLobby<ServerPayload[ServerEvents.LobbyCall]>(ServerEvents.LobbyCall, { 
+        //     message: 'The lobby say you Hi !', 
+        // } );
 
     }
 

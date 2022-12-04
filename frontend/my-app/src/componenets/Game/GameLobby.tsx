@@ -5,14 +5,26 @@ import { ClientEvents } from '../../shared/client/Client.Events'
 import NavBar from '../NavBar';
 import GameInstance from './GameInstance';
 import { WebsocketContext } from './WebsocketContext';
+import { useSearchParams } from 'react-router-dom';
 
 export default function GameLobby() {
 
     const socket = useContext(WebsocketContext);
-    
+    const [searchParams] = useSearchParams();
+    const searchParamsString = searchParams.get('id');
+
+
     useEffect( () => {
+
+        if ( searchParamsString )
+        {
+            console.log(searchParamsString);
+            socket.emit(ClientEvents.JoinLobby, {
+                lobbyId: searchParamsString,
+          });
+        }
         
-    });
+    }, [searchParamsString]);
 
     const emitLobby = () => {
         socket.emit(ClientEvents.CreateLobby, {

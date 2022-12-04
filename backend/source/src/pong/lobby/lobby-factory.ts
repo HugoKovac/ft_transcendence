@@ -35,13 +35,15 @@ export class LobbyFactory {
     //? Otherwise if the client doesn't create a lobby he will join one
     public joinLobby( lobbyId: string, client: AuthenticatedSocket )
     {
-        if (!this.lobbies[lobbyId]) //! Handle this errors
+        const lobby = this.lobbies.get(lobbyId);
+
+        if (!lobby) //! Handle this errors
             console.log("Lobby don't exist abort"); 
 
-        else if ( this.lobbies[lobbyId].clients.size >= 2 ) //! Handle this errors
+        else if ( lobby.clients.size >= 2 ) //! Handle this errors
             console.log("Lobby is full gtf bro "); 
 
-        this.lobbies[lobbyId].addClient(client);
+        lobby.addClient(client);
     }
 
     // @Cron('*/5 * * * *') //? Execute this method every 5 minutes (pretty cool)

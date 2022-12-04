@@ -21,8 +21,6 @@ export type ServerPayload = {
     [ServerEvents.LobbyCall]: {
       message: 'The lobby say you Hi !';
     };
-
-
 };
 
 @WebSocketGateway({
@@ -31,14 +29,23 @@ export type ServerPayload = {
     },  
   }
 )
-export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGatewayDisconnect {
 
+    //! Vraiment besoin de refaire cette partie du code
+    //! J'utilise un serveur pour envoyer les event, et un serveur pour le lobby manager
+    //! Je devrais en utiliser qu'un seul pour les deux, mais probleme de syntaxe....
+    
     @WebSocketServer() 
     server: Server;
 
     constructor( private readonly lobbyManager: LobbyFactory )
     {
-      this.lobbyManager.server = this.server;
+    }
+
+    afterInit(server: Server) {
+      
+      this.lobbyManager.server = server;
+
     }
  
 
@@ -74,6 +81,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
           }
       )
     }
+    
 
     @SubscribeMessage(ClientEvents.JoinLobby)
     onLobbyJoin( client: AuthenticatedSocket, data: LobbyJoinDto )

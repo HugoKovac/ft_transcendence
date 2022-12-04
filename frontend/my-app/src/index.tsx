@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom/client';
 import { LoginStateProvider } from './componenets/LoginStateContext';
 import RoutesBrowser from './componenets/RoutesBrowser';
+import { RecoilRoot } from 'recoil';
 import './styles/index.css';
 
 const root = ReactDOM.createRoot(
@@ -9,6 +10,8 @@ const root = ReactDOM.createRoot(
 
 root.render(
 	<LoginStateProvider>
-		<RoutesBrowser />
+		<RecoilRoot>
+			<RoutesBrowser />
+		</RecoilRoot>
 	</LoginStateProvider>
 );
