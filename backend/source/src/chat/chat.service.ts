@@ -159,10 +159,10 @@ export class ChatService{
 		}
 	}
 
-	async getAllGroupConv(jwt:string){//with user id init
+	async getAllGroupConv(jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		try{
-			const conv: GroupConv[] = await this.groupConvRepo.find({relations: ['users']})
+			const conv: GroupConv[] = await this.groupConvRepo.find({relations: ['users'], where: {users:{id: tokenUserInfo.id}}})
 
 			if (!conv)
 				return false
