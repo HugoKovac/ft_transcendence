@@ -26,7 +26,7 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 			
 			axInst.post(request, payload).then(res => {
 				const list = []
-				
+
 				if (navCpy === 1){
 					const ownMsg = res.data.user.id === logStateCpy ? res.data.user : res.data.user2
 					const otherMsg = res.data.user2.id === logStateCpy ? res.data.user2 : res.data.user

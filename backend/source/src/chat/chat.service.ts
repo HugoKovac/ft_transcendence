@@ -91,7 +91,12 @@ export class ChatService{
 
 			const conv = await this.convRepo.findOne({where:{
 				conv_id: conv_id
-			}, relations:['message', 'user', 'user2']})
+			}, relations:['message', 'user', 'user2'],
+			order:{
+				message:{
+					msg_id: 'ASC'
+				}
+			}})
 
 			return conv
 		}
@@ -147,7 +152,7 @@ export class ChatService{
 		let tokenUserInfo: any = decode(jwt)//!verifier si la conv est bien au user_id du token
 
 		try{
-			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users']})
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users'], order:{messages:{msg_id: 'ASC'}}})
 
 			if (!conv)
 				return false
