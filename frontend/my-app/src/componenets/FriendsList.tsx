@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useContext, useEffect, useState } from "react"
-import LoginStateContext from "./LoginStateContext"
+import LoginStateContext from "./Login/LoginStateContext"
 
 const FriendsList = () => {
 	const {rerender, setRerender, logState} = useContext(LoginStateContext)

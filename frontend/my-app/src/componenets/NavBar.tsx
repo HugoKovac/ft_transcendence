@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom"
 import "../styles/NavBar.css"
 import { useContext } from "react"
-import LoginStateContext from "./LoginStateContext"
+import LoginStateContext from "./Login/LoginStateContext"
 
 
 export function Button(props: any){

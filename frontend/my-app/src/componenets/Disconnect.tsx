@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie'
 import { useEffect, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LoginStateContext, { CheckLogState } from './LoginStateContext';
+import LoginStateContext, { CheckLogState } from './Login/LoginStateContext';
 
 function RemoveJWT(setLog: (log:boolean)=>void){
 	Cookies.remove('jwt', { sameSite: 'strict' })

@@ -1,4 +1,4 @@
-import "../styles/Button_42_connect.css"
+import "./Button_42_connect.css"
 
 const Button42Connect = () => {
 	return (

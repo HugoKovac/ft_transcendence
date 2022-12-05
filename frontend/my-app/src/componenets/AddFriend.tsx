@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useContext, useState } from "react"
-import LoginStateContext from "./LoginStateContext"
+import LoginStateContext from "./Login/LoginStateContext"
 
 const AddFriend = () => {
 	const [username, setUsername] = useState('')

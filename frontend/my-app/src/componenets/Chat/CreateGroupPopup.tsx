@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useContext, useEffect, useState } from 'react'
 import './CreateGroupPopup.scss'
-import LoginStateContext from '../LoginStateContext'
+import LoginStateContext from '../Login/LoginStateContext'
 
 type Friend = {
 	id:number,

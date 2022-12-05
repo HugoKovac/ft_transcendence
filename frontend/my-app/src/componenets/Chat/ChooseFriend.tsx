@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useContext, useEffect, useState } from "react"
-import LoginStateContext from "../LoginStateContext"
+import LoginStateContext from "../Login/LoginStateContext"
 
 
 const ChooseFriend = (props: {setPopup: (set: boolean) => void, convList: JSX.Element[]}) => {
