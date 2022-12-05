@@ -76,7 +76,7 @@ const CreateGroupPopup = () => {
 	return <div className='CreateGroupPopup'>
 		<div className='groupName'>
 			<label htmlFor='groupName'>Group Name :</label>
-			<input id='groupName' name='groupName' type="text" placeholder="Group Name" onChange={(e) => (setGroupName(e.target.value))} autoFocus />
+			<input id='groupName' name='groupName' type="text" placeholder="Group Name" maxLength={35} onChange={(e) => (setGroupName(e.target.value))} autoFocus />
 		</div>
 		<div className='friendList'>
 			{friendList}

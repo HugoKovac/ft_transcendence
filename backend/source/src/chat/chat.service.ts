@@ -5,6 +5,7 @@ import { Message, User } from "src/typeorm";
 import Conv from "src/typeorm/conv.entity";
 import { GroupConv } from "src/typeorm/groupConv.entity";
 import { Repository } from "typeorm";
+import * as DTO from './input.dto'
 
 @Injectable()
 export class ChatService{
@@ -19,7 +20,7 @@ export class ChatService{
 
 	// CONV SETTER
 
-	async newConv({user_id_2}:{user_id_2:number}, jwt:string){
+	async newConv({user_id_2}:DTO.newConvDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		try{
 			const conv = await this.convRepo.findOne({where:[
@@ -56,7 +57,7 @@ export class ChatService{
 		}
 	}
 
-	async newMsg({conv_id, message}:{conv_id:number, message:string}, jwt:string){
+	async newMsg({conv_id, message}:DTO.newMsgDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		if (!message)
 			return false
@@ -83,7 +84,7 @@ export class ChatService{
 
 	// CONV GETTER
 
-	async getConvMsg({conv_id}:{conv_id:number}, jwt:string){
+	async getConvMsg({conv_id}:DTO.getConvMsgDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)//!verifier si la conv est bien au user_id du token
 
 		try{
@@ -142,7 +143,7 @@ export class ChatService{
 
 	// GROUP CONV GETTER
 
-	async getGroupConvMsg({group_conv_id}:{group_conv_id:number}, jwt:string){
+	async getGroupConvMsg({group_conv_id}:DTO.getGroupConvMsgDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)//!verifier si la conv est bien au user_id du token
 
 		try{
@@ -177,7 +178,7 @@ export class ChatService{
 
 	// GROUP CONV SETTER
 
-	async newGroupConv({user_ids, group_name}:{user_ids:number[], group_name:string}, jwt:string){//set a minimum of msg, set pp link whene create
+	async newGroupConv({user_ids, group_name}:DTO.newGroupConvDTO, jwt:string){//set a minimum of msg, set pp link whene create
 		let tokenUserInfo: any = decode(jwt)
 		try{
 			if (!group_name)
@@ -203,7 +204,7 @@ export class ChatService{
 		}
 	}
 
-	async newGroupMsg({group_conv_id, message}:{group_conv_id:number, message:string}, jwt:string){
+	async newGroupMsg({group_conv_id, message}:DTO.newGroupMsgDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		if (!message)
 			return false
@@ -225,7 +226,7 @@ export class ChatService{
 		}
 	}
 
-	async addUserToGroup({group_conv_id, new_user_ids}:{group_conv_id:number, new_user_ids:number[]}){
+	async addUserToGroup({group_conv_id, new_user_ids}:DTO.addUserToGroupDTO){
 		try{
 			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations: ['users']})
 			if (!conv)
@@ -254,7 +255,7 @@ export class ChatService{
 		}
 	}
 
-	async delUserToGroup({group_conv_id, del_user_ids}:{group_conv_id:number, del_user_ids:number[]}){
+	async delUserToGroup({group_conv_id, del_user_ids}:DTO.delUserToGroupDTO){
 		try{
 			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations: ['users']})
 			if (!conv)
@@ -282,7 +283,7 @@ export class ChatService{
 		}
 	}
 
-	async changeGroupName({group_conv_id, new_name}:{group_conv_id:number, new_name:string}){
+	async changeGroupName({group_conv_id, new_name}:DTO.changeGroupNameDTO){
 		try{
 			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}})
 

@@ -53,7 +53,7 @@ function ChatInput({conv_id, state, setRefresh, nav}: {conv_id:number, state: (v
 	});
 
 	return <form onSubmit={nav === 1 ? SendMessage : SendGroupMessage} className='chatInput'>
-			<input placeholder="type your message..." autoFocus autoComplete="off" onChange={(e) => {setInputMessage(e.target.value)}} value={inputMessage} type="text" name="msg"/>
+			<input placeholder="type your message..." autoFocus maxLength={300} autoComplete="off" onChange={(e) => {setInputMessage(e.target.value)}} value={inputMessage} type="text" name="msg"/>
 			<button>Send</button>
 		</form>
 }
