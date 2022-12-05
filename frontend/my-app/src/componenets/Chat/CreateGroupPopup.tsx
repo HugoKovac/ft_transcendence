@@ -43,7 +43,6 @@ const CreateGroupPopup = () => {
 	}, [setFriendList, checkboxState])
 
 	const groupSubmit = async () => {
-		console.log('here')
 		let addList:number[] = []
 
 		for (let i in checkboxState)

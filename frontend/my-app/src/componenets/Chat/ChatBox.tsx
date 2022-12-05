@@ -3,6 +3,14 @@ import React, { useEffect, useState } from "react"
 import ChatRight from "./ChatRight"
 import Message from "./Message"
 
+export type userType = {
+	id:number,
+	username:string,
+	email:string,
+	pp:string,
+	providerId:string,
+}
+
 const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg:(v:boolean)=>void, nav:number}) => {
 	const newMsgCpy = props.newMsg
 	const setNewMsgCpy = props.setNewMsg
@@ -13,6 +21,7 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 	const navCpy = props.nav
 	const request:string = props.nav === 1 ? 'get_conv_msg' : 'get_group_msg'
 	const payload = props.nav === 1 ? {conv_id: convCpy} : {group_conv_id: convCpy}
+	const [userGroupList, setUserGroupList] = useState<userType[]>([])
 
 
 	useEffect(() =>{
@@ -40,6 +49,8 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 				else{
 					let user
 
+					setUserGroupList(res.data.users)
+					console.log(res.data.users)
 					for (let i of res.data.messages){
 						for (let j of res.data.users){
 							if (i.sender_id === parseInt(j.id)){
@@ -59,11 +70,11 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 		}
 		fetchMsg()
 		setRefresh(false)
-	}, [newMsgCpy, navCpy, setNewMsgCpy, logStateCpy, setMsgList, convCpy, refresh])//si conv ou newMsg
+	}, [newMsgCpy, navCpy, setNewMsgCpy, logStateCpy, setMsgList, convCpy, refresh, setUserGroupList])//si conv ou newMsg
 
 	//Faire un new useEffect avec des states groupConv et newConvMsg
 
-	let right = <ChatRight conv={props.conv} msgList={msgList} setNewMsg={props.setNewMsg} setRefresh={setRefresh} nav={props.nav} />
+	let right = <ChatRight conv={props.conv} msgList={msgList} setNewMsg={props.setNewMsg} setRefresh={setRefresh} nav={props.nav} userGroupList={userGroupList} />
 	if (props.conv === 0)
 		right = <div className='chatBox' />
 

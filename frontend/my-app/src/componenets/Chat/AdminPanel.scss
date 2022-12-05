@@ -24,12 +24,16 @@
 	.infoWrap{
 		flex: 5;
 		.add-users{
+			overflow-y: auto;
 			margin-left: auto;
 			margin-right: auto;
 			margin: 20px;
 			width: 560px;
 			height: 500px;
 			background-color: rgba(0, 0, 0, 0.082);
+			label{
+				display: block;
+			}
 		}
 	}
 

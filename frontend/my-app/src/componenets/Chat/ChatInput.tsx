@@ -4,6 +4,7 @@ import { io } from "socket.io-client"
 import Popup from "../Popup";
 import AdminPanel from "./AdminPanel";
 import './Chat.scss'
+import { userType } from "./ChatBox";
 
 type messageObj = {
 	conv_id:number,
@@ -15,7 +16,7 @@ type groupMessageObj = {
 	message:string,
 }
 
-function ChatInput({conv_id, state, setRefresh, nav}: {conv_id:number, state: (v:boolean)=>void, setRefresh:(v:boolean)=>void, nav:number} ){
+function ChatInput({conv_id, state, setRefresh, nav, userGroupList}: {conv_id:number, state: (v:boolean)=>void, setRefresh:(v:boolean)=>void, nav:number, userGroupList:userType[]} ){
 	const socket = io("localhost:3000", {
 		auth: (cb) => {
 			cb({
@@ -58,7 +59,7 @@ function ChatInput({conv_id, state, setRefresh, nav}: {conv_id:number, state: (v
 	const admin_btn_panel = <button className="adminBtnPanel" onClick={() => {setPanelTrigger(true)}}>Manage</button>
 	const panelPopup = <Popup trigger={panelTrigger} setter={{popup: panelTrigger, setPopup: setPanelTrigger}}> 
 		<h1>Manage Group</h1>
-		<AdminPanel />
+		<AdminPanel nav={nav} userGroupList={userGroupList} />
 	 </Popup>
 
 	return <form onSubmit={nav === 1 ? SendMessage : SendGroupMessage} className='chatInput'>
