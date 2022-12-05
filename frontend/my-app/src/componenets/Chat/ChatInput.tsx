@@ -1,6 +1,8 @@
 import Cookies from "js-cookie";
 import { useState } from "react";
 import { io } from "socket.io-client"
+import Popup from "../Popup";
+import AdminPanel from "./AdminPanel";
 import './Chat.scss'
 
 type messageObj = {
@@ -52,9 +54,18 @@ function ChatInput({conv_id, state, setRefresh, nav}: {conv_id:number, state: (v
 		setRefresh(true)
 	});
 
+	const [panelTrigger, setPanelTrigger] = useState(false)
+	const admin_btn_panel = <button className="adminBtnPanel" onClick={() => {setPanelTrigger(true)}}>Manage</button>
+	const panelPopup = <Popup trigger={panelTrigger} setter={{popup: panelTrigger, setPopup: setPanelTrigger}}> 
+		<h1>Manage Group</h1>
+		<AdminPanel />
+	 </Popup>
+
 	return <form onSubmit={nav === 1 ? SendMessage : SendGroupMessage} className='chatInput'>
-			<input placeholder="type your message..." autoFocus maxLength={300} autoComplete="off" onChange={(e) => {setInputMessage(e.target.value)}} value={inputMessage} type="text" name="msg"/>
+			<input className="chat-input" placeholder="type your message..." autoFocus maxLength={300} autoComplete="off" onChange={(e) => {setInputMessage(e.target.value)}} value={inputMessage} type="text" name="msg"/>
 			<button>Send</button>
+			{admin_btn_panel}
+			{panelPopup}
 		</form>
 }
 
