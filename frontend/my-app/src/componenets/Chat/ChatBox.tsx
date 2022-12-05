@@ -12,6 +12,7 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 	const [msgList, setMsgList] = useState([<Message key='' content='' own={true} username='' userPP='' date='' />])
 	const navCpy = props.nav
 	const request:string = props.nav === 1 ? 'get_conv_msg' : 'get_group_msg'
+	const payload = props.nav === 1 ? {conv_id: convCpy} : {group_conv_id: convCpy}
 
 
 	useEffect(() =>{
@@ -23,10 +24,9 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 				withCredentials: true
 			})
 			
-			axInst.post(request, {conv_id: convCpy}).then(res => {
+			axInst.post(request, payload).then(res => {
 				const list = []
 				
-				console.log(res.data)
 				if (navCpy === 1){
 					const ownMsg = res.data.user.id === logStateCpy ? res.data.user : res.data.user2
 					const otherMsg = res.data.user2.id === logStateCpy ? res.data.user2 : res.data.user

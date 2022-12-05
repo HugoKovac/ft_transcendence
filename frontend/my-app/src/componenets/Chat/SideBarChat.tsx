@@ -24,7 +24,7 @@ const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX
 					if (navCpy === 1)
 						list.push(<Conv key={i.conv_id} name={i.username} img_path={i.pp} conv_id={i.conv_id} setConv={setConvCpy}/>)
 					else
-					list.push(<Conv key={i.group_conv_id} name={i.group_name} img_path={''} conv_id={i.group_conv_id} setConv={setConvCpy}/>)
+						list.push(<Conv key={i.group_conv_id} name={i.group_name} img_path={''} conv_id={i.group_conv_id} setConv={setConvCpy}/>)
 				}
 				
 				setConvListCpy(list)
