@@ -1,7 +1,7 @@
 import React from "react"
 import ChooseFriend from "./ChooseFriend"
 import CreateGroupPopup from "./CreateGroupPopup"
-import Popup from "./Popup"
+import Popup from "../Popup"
 
 const NewConvBtn = (props: {popup:boolean, setPopup:(v:boolean)=>void, convList:JSX.Element[], nav:number}) => {
 	const handlePopup = () =>{

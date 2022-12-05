@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useEffect } from 'react'
 import Conv from './Conv'
-import '../styles/Chat.scss'
+import './Chat.scss'
 
 const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX.Element[], setConvList:(v:JSX.Element[])=>void, popup:boolean, nav:number}) => {
 	const setConvCpy = props.setConv

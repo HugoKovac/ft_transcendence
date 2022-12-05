@@ -1,4 +1,4 @@
-import '../styles/Chat.scss'
+import './Chat.scss'
 
 const Conv = (props: { name: string, img_path:string, conv_id:number, setConv:(v:number)=>void}) => {
 	const convClicked = (conv_id:number) => {

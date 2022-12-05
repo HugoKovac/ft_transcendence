@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react'
-import '../styles/Chat.scss'
-import LoginStateContext from './LoginStateContext'
+import './Chat.scss'
+import LoginStateContext from '../LoginStateContext'
 import NavBarChat from './NavBarChat'
 import Conv from './Conv'
 import SideBarChat from './SideBarChat'

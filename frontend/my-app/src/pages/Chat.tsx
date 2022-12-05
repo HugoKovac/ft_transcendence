@@ -1,5 +1,5 @@
 import NavBar from "../componenets/NavBar"
-import ChatWindow from "../componenets/ChatWindow"
+import ChatWindow from "../componenets/Chat/ChatWindow"
 
 const Chat = () => {
 	

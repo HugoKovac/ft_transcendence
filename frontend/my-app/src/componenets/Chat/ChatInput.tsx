@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
 import { useState } from "react";
 import { io } from "socket.io-client"
-import '../styles/Chat.scss'
+import './Chat.scss'
 
 type messageObj = {
 	conv_id:number,
