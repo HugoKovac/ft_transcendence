@@ -1,7 +1,7 @@
 .CreateGroupPopup{
 	display: flex;
 	flex-direction: column;
-	height: calc(100% - (45px + 20px * 3));
+	height: calc(100% - (45px + 9px * 3));
 	.groupName{
 		width: 100%;
 		display: flex;
