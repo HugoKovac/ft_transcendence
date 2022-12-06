@@ -3,12 +3,14 @@ import { useEffect } from 'react'
 import Conv from './Conv'
 import './Chat.scss'
 
-const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX.Element[], setConvList:(v:JSX.Element[])=>void, popup:boolean, nav:number}) => {
+const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX.Element[], setConvList:(v:JSX.Element[])=>void, popup:boolean, nav:number, refreshConvList: boolean,setRefreshConvList: (v:boolean)=>void}) => {
 	const setConvCpy = props.setConv
 	const setConvListCpy = props.setConvList
 	const popupCpy = props.popup
 	const navCpy = props.nav
 	const request = props.nav === 1 ? 'get_all_conv' : 'get_all_group_conv'
+	const refreshConvListCpy = props.refreshConvList
+	const setRefreshConvListCpy = props.setRefreshConvList
 
 	useEffect(() =>{
 		const fetchConvList = async () => {
@@ -31,7 +33,8 @@ const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX
 			})
 		}
 		fetchConvList()
-	}, [popupCpy, setConvListCpy, setConvCpy, navCpy])
+		setRefreshConvListCpy(false)
+	}, [popupCpy, setConvListCpy, setConvCpy, navCpy, refreshConvListCpy, setRefreshConvListCpy])
 
 	return <div>
 		{props.convList}

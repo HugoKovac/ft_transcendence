@@ -1,15 +1,13 @@
 import axios from 'axios'
-import { useState, useContext, useEffect } from 'react'
-import LoginStateContext from '../Login/LoginStateContext'
+import { useState, useContext, useEffect, FormEventHandler, FormEvent } from 'react'
 import './AdminPanel.scss'
 import { userType } from './ChatBox'
 
-const AdminPanel = (props: {nav: number, userGroupList:userType[]}) => {
+const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelTrigger: (v:boolean)=>void, setRefreshConvList: (v:boolean)=>void}) => {
 
 	const [groupName, setGroupName] = useState('')
 	const [friendList, setFriendList] = useState([<label></label>])
 	const [checkboxState, setCheckboxState] = useState([false])
-	const {logState} = useContext(LoginStateContext)
 	const userGroupListCpy = props.userGroupList
 	
 	
@@ -49,54 +47,51 @@ const AdminPanel = (props: {nav: number, userGroupList:userType[]}) => {
 	}, [setFriendList, checkboxState, userGroupListCpy])
 
 	const updateSubmit = async () => {
-		alert(1)
-		let addList:number[] = []
-
-		for (let i in checkboxState)
-			if (checkboxState[i] === true)
-				addList.push(parseInt(i))
-
-		addList.push(logState)
-
-		const payload = {
-			user_ids: addList,
-			group_name: groupName
-		}
-
-		console.log(payload)
-
 		const axInst = axios.create({
 			baseURL: 'http://localhost:3000/api/message/',
 			withCredentials: true
 		})
 		try{
-			await axInst.post('new_group_conv', payload).then((res) => {
+			let addList:number[] = []
+
+			for (let i in checkboxState)
+				if (checkboxState[i] === true)
+					addList.push(parseInt(i))
+
+			await axInst.post('add_user_to_group', {group_conv_id: props.conv_id, new_user_ids: addList}).then((res) => {
+				// console.log(res.data)
+			})
+
+			await axInst.post('change_group_name', {group_conv_id: props.conv_id, new_name: groupName}).then((res) => {
 				console.log(res.data)
 			})
+
+			props.setPanelTrigger(false)
+			props.setRefreshConvList(true)
 		}
 		catch{
-			console.error('Error with fetch of http://localhost:3000/api/message/new_group_conv')
+			console.error('Error with fetch of http://localhost:3000/api/message/addList || change_group_name')
 		}
 	}
 
-
-	const addFriends = props.nav === 2 ? <div className='add-users'>
-			<h2>Select User(s) to add :</h2>
-			{friendList}
-	</div>
-	: <></>
+	function prevDef(e: FormEvent){
+		e.preventDefault()
+	}
 
 	return <div className="AdminPanel">
 		<div className='infoWrap'>
-			<form>
+			<form onSubmit={prevDef}>
 				<label htmlFor="changeName">Change Group Name : </label>
-				<input type="text" maxLength={35} placeholder='Group Name' id="changeName" />
+				<input type="text" maxLength={35} placeholder='Group Name' id="changeName" onChange={(e) => {setGroupName(e.target.value)}}/>
 			</form>
-			<form>
+			<form onSubmit={prevDef}>
 				<label htmlFor="isPrivate">Private : </label>
 				<input type="checkbox" id="isPrivate" />
 			</form>
-			{addFriends}
+			<div className='add-users'>
+				<h2>Select User(s) to add :</h2>
+				{friendList}
+			</div>
 		</div>
 		<button className='save-btn' onClick={updateSubmit}>Save</button>
 	</div>

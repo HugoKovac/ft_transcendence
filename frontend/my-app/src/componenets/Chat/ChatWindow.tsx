@@ -14,6 +14,7 @@ const ChatWindow = () => {
 	const [conv, setConv] = useState(0)
 	const [convList, setConvList] = useState([<Conv key='' name='' img_path='' conv_id={0} setConv={()=>{}}/>])
 	const [nav, setNav] = useState(1)
+	const [refreshConvList, setRefreshConvList] = useState(false)
 
 	const convMode = () => {
 		setConv(0)
@@ -28,10 +29,10 @@ const ChatWindow = () => {
 	return <div className="ChatWindow">
 		<div className='chatMenu'>
 			<NavBarChat nav={nav} convMode={convMode} groupMode={groupMode}/>
-			<SideBarChat conv={conv} setConv={setConv} convList={convList} setConvList={setConvList} popup={popup} nav={nav} />
+			<SideBarChat conv={conv} setConv={setConv} convList={convList} setConvList={setConvList} popup={popup} nav={nav} refreshConvList={refreshConvList} setRefreshConvList={setRefreshConvList} />
 			<NewConvBtn popup={popup} setPopup={setPopup} convList={convList} nav={nav} />
 		</div>
-		<ChatBox conv={conv} logState={logState} newMsg={newMsg} setNewMsg={setNewMsg} nav={nav}/>
+		<ChatBox conv={conv} logState={logState} newMsg={newMsg} setNewMsg={setNewMsg} nav={nav} setRefreshConvList={setRefreshConvList}/>
 	</div>
 }
 

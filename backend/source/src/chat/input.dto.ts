@@ -61,8 +61,7 @@ export class addUserToGroupDTO{
 	@IsNumber()
 	group_conv_id:number
 
-	@IsNotEmpty()
-	@IsNumber()
+	@IsArray()
 	new_user_ids:number[]
 }
 
@@ -71,8 +70,7 @@ export class delUserToGroupDTO{
 	@IsNumber()
 	group_conv_id:number
 
-	@IsNotEmpty()
-	@IsNumber()
+	@IsArray()
 	del_user_ids:number[]
 }
 

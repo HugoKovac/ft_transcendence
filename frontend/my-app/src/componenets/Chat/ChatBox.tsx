@@ -11,7 +11,7 @@ export type userType = {
 	providerId:string,
 }
 
-const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg:(v:boolean)=>void, nav:number}) => {
+const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg:(v:boolean)=>void, nav:number, setRefreshConvList: (v:boolean)=>void}) => {
 	const newMsgCpy = props.newMsg
 	const setNewMsgCpy = props.setNewMsg
 	const logStateCpy = props.logState
@@ -74,7 +74,7 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 
 	//Faire un new useEffect avec des states groupConv et newConvMsg
 
-	let right = <ChatRight conv={props.conv} msgList={msgList} setNewMsg={props.setNewMsg} setRefresh={setRefresh} nav={props.nav} userGroupList={userGroupList} />
+	let right = <ChatRight conv={props.conv} msgList={msgList} setNewMsg={props.setNewMsg} setRefresh={setRefresh} nav={props.nav} userGroupList={userGroupList} setRefreshConvList={props.setRefreshConvList} />
 	if (props.conv === 0)
 		right = <div className='chatBox' />
 
