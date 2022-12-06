@@ -20,11 +20,11 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 	const [msgList, setMsgList] = useState([<Message key='' content='' own={true} username='' userPP='' date='' />])
 	const navCpy = props.nav
 	const request:string = props.nav === 1 ? 'get_conv_msg' : 'get_group_msg'
-	const payload = props.nav === 1 ? {conv_id: convCpy} : {group_conv_id: convCpy}
 	const [userGroupList, setUserGroupList] = useState<userType[]>([])
-
-
+	
+	
 	useEffect(() =>{
+		const payload = navCpy === 1 ? {conv_id: convCpy} : {group_conv_id: convCpy}
 		if (convCpy === 0)
 			return
 		const fetchMsg = async () => {
@@ -69,7 +69,7 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 		}
 		fetchMsg()
 		setRefresh(false)
-	}, [newMsgCpy, navCpy, setNewMsgCpy, logStateCpy, setMsgList, convCpy, refresh, setUserGroupList])//si conv ou newMsg
+	}, [newMsgCpy, navCpy, setNewMsgCpy, logStateCpy, setMsgList, convCpy, refresh, setUserGroupList, request])
 
 	//Faire un new useEffect avec des states groupConv et newConvMsg
 

@@ -59,11 +59,11 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelT
 
 		let list = []
 			for (let i of userGroupListCpy)
-				if (i.id != logState)
+				if (parseInt(i.id.toString()) !== logState)
 					list.push(<label key={i.id}><input onChange={handleCheckedBox} value={i.id} type="checkbox" /> {i.username}</label>)
 		
 		setDelList(list)
-	}, [setDelList, setDelCheckboxState, userGroupListCpy])
+	}, [setDelList, setDelCheckboxState, userGroupListCpy, delCheckboxState, logState])
 
 	const updateSubmit = async () => {
 		const axInst = axios.create({

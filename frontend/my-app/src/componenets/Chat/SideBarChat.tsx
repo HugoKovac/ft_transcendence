@@ -34,7 +34,7 @@ const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX
 		}
 		fetchConvList()
 		setRefreshConvListCpy(false)
-	}, [popupCpy, setConvListCpy, setConvCpy, navCpy, refreshConvListCpy, setRefreshConvListCpy])
+	}, [popupCpy, setConvListCpy, setConvCpy, navCpy, refreshConvListCpy, setRefreshConvListCpy, request])
 
 	return <div>
 		{props.convList}
