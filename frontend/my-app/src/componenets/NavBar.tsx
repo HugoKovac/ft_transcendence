@@ -37,10 +37,10 @@ function LeftBar(){
 	let button
 	
 	if (logState !== 0)
-		button = <div>
+		button = <>
 			<ChatButton />
 			<GameButton />
-		</div> 
+		</> 
 
 	return (
 		<ul className="left-NavBar">
@@ -55,10 +55,10 @@ function RightBar(){
 	let button
 
 	if (logState !== 0)
-		button = <div>
+		button = <>
 			<FriendsButton />
 			<ProfileButton />
-		</div>
+		</>
 	else
 		button = <LoginButton />
 
