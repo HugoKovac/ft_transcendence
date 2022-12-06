@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { useState, useContext, useEffect, FormEventHandler, FormEvent } from 'react'
+import { useState, useContext, useEffect } from 'react'
+import LoginStateContext from '../Login/LoginStateContext'
 import './AdminPanel.scss'
 import { userType } from './ChatBox'
 
@@ -7,9 +8,11 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelT
 
 	const [groupName, setGroupName] = useState('')
 	const [friendList, setFriendList] = useState([<label></label>])
+	const [delList, setDelList] = useState([<label></label>])
 	const [checkboxState, setCheckboxState] = useState([false])
+	const [delCheckboxState, setDelCheckboxState] = useState([false])
 	const userGroupListCpy = props.userGroupList
-	const userGroupListHTML = userGroupListCpy.map(i => (i.username))
+	const {logState} = useContext(LoginStateContext)
 	
 	
 	useEffect(() => {
@@ -25,7 +28,6 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelT
 				withCredentials: true
 			})
 			try{
-				console.log(userGroupListCpy)
 				await axInst.get('list').then((res) => {
 					let list = []
 					for (let i of res.data){
@@ -47,6 +49,22 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelT
 		get()
 	}, [setFriendList, checkboxState, userGroupListCpy])
 
+	useEffect(() => {
+		const handleCheckedBox = (e:any) => {
+			let tmp = delCheckboxState
+			tmp[e.target.value] = tmp[e.target.value] ? !tmp[e.target.value] : true
+			setDelCheckboxState(tmp)
+			console.log(delCheckboxState)
+		}
+
+		let list = []
+			for (let i of userGroupListCpy)
+				if (i.id != logState)
+					list.push(<label key={i.id}><input onChange={handleCheckedBox} value={i.id} type="checkbox" /> {i.username}</label>)
+		
+		setDelList(list)
+	}, [setDelList, setDelCheckboxState, userGroupListCpy])
+
 	const updateSubmit = async () => {
 		const axInst = axios.create({
 			baseURL: 'http://localhost:3000/api/message/',
@@ -54,29 +72,38 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelT
 		})
 		try{
 			let addList:number[] = []
+			let delList:number[] = []
 
-			for (let i in checkboxState)
+			for (let i in checkboxState){
+				console.log(i, checkboxState[i])
 				if (checkboxState[i] === true)
 					addList.push(parseInt(i))
-
+			}
+			
 			await axInst.post('add_user_to_group', {group_conv_id: props.conv_id, new_user_ids: addList}).then((res) => {
 				// console.log(res.data)
 			})
 
+			for (let i in delCheckboxState){
+				console.log(i, delCheckboxState[i])
+				if (delCheckboxState[i] === true)
+					delList.push(parseInt(i))
+			}
+
+			await axInst.post('del_user_to_group', {group_conv_id: props.conv_id, del_user_ids: delList}).then((res) => {
+				// console.log(res.data)
+			})
+
 			await axInst.post('change_group_name', {group_conv_id: props.conv_id, new_name: groupName}).then((res) => {
-				console.log(res.data)
+				// console.log(res.data)
 			})
 
 			props.setPanelTrigger(false)
 			props.setRefreshConvList(true)
 		}
 		catch{
-			console.error('Error with fetch of http://localhost:3000/api/message/addList || change_group_name')
+			console.error('Error with fetch of http://localhost:3000/api/message/ addList || delList || change_group_name')
 		}
-	}
-
-	function prevDef(e: FormEvent){
-		e.preventDefault()
 	}
 
 	return <div className="AdminPanel">
@@ -95,7 +122,7 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelT
 			</div>
 			<div className='del-users'>
 				<h2>Select User(s) to remove :</h2>
-				{userGroupListHTML}
+				{delList}
 			</div>
 		</div>
 		<button className='save-btn' onClick={updateSubmit}>Save</button>

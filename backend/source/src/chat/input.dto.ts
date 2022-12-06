@@ -1,5 +1,4 @@
-import { ArrayMinSize, IsArray, IsNotEmpty, IsNumber, IsNumberString, IsString, MaxLength, MinLength, ValidateNested } from "class-validator";
-import { Type } from "class-transformer";
+import { ArrayMinSize, IsArray, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString, MaxLength } from "class-validator";
 
 export class newConvDTO{
 	@IsNotEmpty()
@@ -61,6 +60,7 @@ export class addUserToGroupDTO{
 	@IsNumber()
 	group_conv_id:number
 
+	@IsOptional()
 	@IsArray()
 	new_user_ids:number[]
 }
@@ -70,6 +70,7 @@ export class delUserToGroupDTO{
 	@IsNumber()
 	group_conv_id:number
 
+	@IsOptional()
 	@IsArray()
 	del_user_ids:number[]
 }
@@ -79,7 +80,7 @@ export class changeGroupNameDTO{
 	@IsNumber()
 	group_conv_id:number
 
-	@IsNotEmpty()
+	@IsOptional()
 	@IsString()
 	@MaxLength(35)
 	new_name:string

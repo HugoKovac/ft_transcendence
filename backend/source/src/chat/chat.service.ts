@@ -153,9 +153,6 @@ export class ChatService{
 
 		try{
 			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users'], order:{messages:{msg_id: 'ASC'}}})
-			
-			console.log('group_conv_id', group_conv_id)
-			console.log('conv', conv)
 
 			if (!conv)
 				return false
@@ -198,9 +195,7 @@ export class ChatService{
 					users.push(user)
 			}
 
-			console.log(group_name)
 			const newGroup = this.groupConvRepo.create({group_name: group_name, users: users})
-			console.log(newGroup)
 			
 			await this.groupConvRepo.save(newGroup)
 
@@ -222,7 +217,6 @@ export class ChatService{
 				return false
 
 			const newMsg = this.messRepo.create({sender_id: tokenUserInfo.id, message: message, group_conv: group_conv})
-			console.log(tokenUserInfo.id)
 			await this.messRepo.save(newMsg)
 
 			return true
@@ -234,6 +228,8 @@ export class ChatService{
 	}
 
 	async addUserToGroup({group_conv_id, new_user_ids}:DTO.addUserToGroupDTO){
+		if (!new_user_ids || !new_user_ids.length)
+			return true
 		try{
 			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations: ['users']})
 			if (!conv)
@@ -250,7 +246,6 @@ export class ChatService{
 				users.push(i)
 
 			const newConv = this.groupConvRepo.create({...conv, users: users})
-
 			await this.groupConvRepo.save(newConv)
 			
 
@@ -263,6 +258,9 @@ export class ChatService{
 	}
 
 	async delUserToGroup({group_conv_id, del_user_ids}:DTO.delUserToGroupDTO){
+		console.log(del_user_ids)
+		if (!del_user_ids || !del_user_ids.length)
+			return true
 		try{
 			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations: ['users']})
 			if (!conv)
@@ -281,7 +279,7 @@ export class ChatService{
 
 			const newConv = this.groupConvRepo.create({...conv, users: users})
 			await this.groupConvRepo.save(newConv)
-
+			
 			return true
 		}
 		catch(e){
@@ -291,6 +289,8 @@ export class ChatService{
 	}
 
 	async changeGroupName({group_conv_id, new_name}:DTO.changeGroupNameDTO){
+		if (!new_name)
+			return true
 		try{
 			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}})
 
