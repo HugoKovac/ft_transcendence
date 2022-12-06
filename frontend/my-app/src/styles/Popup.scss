@@ -9,9 +9,9 @@
 	flex-direction: column;
 	.popup-content{
 		position: fixed;
-		top: calc(50% - 400px);
+		top: calc(50% - 350px);
 		left: calc(50% - 300px);
-		height: 800px;
+		height: 700px;
 		width: 600px;
 		background-color: white;
 		border-radius: 20px;
@@ -20,8 +20,8 @@
 			width: 20px;
 			height: 20px;
 			border: 0;
-			margin-top: 20px;
-			margin-left: 560px;
+			margin-top: 8px;
+			margin-left: 568px;
 			&:hover{
 				color: #00babc;
 			}
@@ -29,8 +29,8 @@
 		h1{
 			margin-top: 0;
 			margin-left: 30px;
-			margin-bottom: 20px;
-			height: 45px;
+			margin-bottom: 9px;
+			height: 35px;
 		}
 		ul{
 			margin: 0;

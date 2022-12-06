@@ -9,6 +9,7 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelT
 	const [friendList, setFriendList] = useState([<label></label>])
 	const [checkboxState, setCheckboxState] = useState([false])
 	const userGroupListCpy = props.userGroupList
+	const userGroupListHTML = userGroupListCpy.map(i => (i.username))
 	
 	
 	useEffect(() => {
@@ -80,17 +81,21 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelT
 
 	return <div className="AdminPanel">
 		<div className='infoWrap'>
-			<form onSubmit={prevDef}>
+			<div className='form'>
 				<label htmlFor="changeName">Change Group Name : </label>
 				<input type="text" maxLength={35} placeholder='Group Name' id="changeName" onChange={(e) => {setGroupName(e.target.value)}}/>
-			</form>
-			<form onSubmit={prevDef}>
+			</div>
+			<div className='form'>
 				<label htmlFor="isPrivate">Private : </label>
 				<input type="checkbox" id="isPrivate" />
-			</form>
+			</div>
 			<div className='add-users'>
 				<h2>Select User(s) to add :</h2>
 				{friendList}
+			</div>
+			<div className='del-users'>
+				<h2>Select User(s) to remove :</h2>
+				{userGroupListHTML}
 			</div>
 		</div>
 		<button className='save-btn' onClick={updateSubmit}>Save</button>
