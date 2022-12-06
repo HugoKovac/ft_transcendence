@@ -50,7 +50,6 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 					let user
 
 					setUserGroupList(res.data.users)
-					console.log(res.data.users)
 					for (let i of res.data.messages){
 						for (let j of res.data.users){
 							if (i.sender_id === parseInt(j.id)){

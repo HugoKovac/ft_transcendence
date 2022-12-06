@@ -51,7 +51,6 @@ function ChatInput({conv_id, state, setRefresh, nav, userGroupList, setRefreshCo
 	}
 	
 	socket.on("refresh", () => {
-		console.log(`refresh`);
 		setRefresh(true)
 	});
 
