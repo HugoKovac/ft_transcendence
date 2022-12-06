@@ -9,7 +9,7 @@ type Friend = {
 	friend_username: string
 }
 
-const CreateGroupPopup = () => {
+const CreateGroupPopup = (props: {setPopup: (v:boolean)=>void}) => {
 	const [groupName, setGroupName] = useState('')
 	const [friendList, setFriendList] = useState([<label></label>])
 	const [checkboxState, setCheckboxState] = useState([false])
@@ -66,6 +66,7 @@ const CreateGroupPopup = () => {
 			await axInst.post('new_group_conv', payload).then((res) => {
 				console.log(res.data)
 			})
+			props.setPopup(false)
 		}
 		catch{
 			console.error('Error with fetch of http://localhost:3000/api/message/new_group_conv')

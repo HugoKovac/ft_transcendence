@@ -153,6 +153,9 @@ export class ChatService{
 
 		try{
 			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users'], order:{messages:{msg_id: 'ASC'}}})
+			
+			console.log('group_conv_id', group_conv_id)
+			console.log('conv', conv)
 
 			if (!conv)
 				return false
@@ -183,12 +186,11 @@ export class ChatService{
 
 	// GROUP CONV SETTER
 
-	async newGroupConv({user_ids, group_name}:DTO.newGroupConvDTO, jwt:string){//set a minimum of msg, set pp link whene create
+	async newGroupConv({user_ids, group_name}:DTO.newGroupConvDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		try{
 			if (!group_name)
 				return false
-			const msg: Message[] = await this.messRepo.find()
 			let users: User[] = []
 			for (let i of user_ids){
 				const user: User = await this.userRepo.findOne({where: {id: i}})
@@ -197,7 +199,7 @@ export class ChatService{
 			}
 
 			console.log(group_name)
-			const newGroup = this.groupConvRepo.create({group_name: group_name, messages: msg, users: users})
+			const newGroup = this.groupConvRepo.create({group_name: group_name, users: users})
 			console.log(newGroup)
 			
 			await this.groupConvRepo.save(newGroup)

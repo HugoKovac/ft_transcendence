@@ -81,6 +81,7 @@ const AdminPanel = (props: {nav: number, userGroupList:userType[]}) => {
 
 
 	const addFriends = props.nav === 2 ? <div className='add-users'>
+			<h2>Select User(s) to add :</h2>
 			{friendList}
 	</div>
 	: <></>

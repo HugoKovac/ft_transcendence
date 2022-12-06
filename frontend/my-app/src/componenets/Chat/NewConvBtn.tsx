@@ -9,7 +9,7 @@ const NewConvBtn = (props: {popup:boolean, setPopup:(v:boolean)=>void, convList:
 	}
 	const btnContent: string = props.nav === 1 ? '+ New Conversation' : '+ New Group'
 	const content: string = props.nav === 1 ? 'Choose a friend :' : 'Create a group :'
-	const popup: JSX.Element = props.nav === 1 ? <ChooseFriend setPopup={props.setPopup} convList={props.convList}/> : <CreateGroupPopup />
+	const popup: JSX.Element = props.nav === 1 ? <ChooseFriend setPopup={props.setPopup} convList={props.convList} /> : <CreateGroupPopup setPopup={props.setPopup}/>
 
 	const active = <React.Fragment>
 		<button className='btn-pup' onClick={handlePopup}>{btnContent}</button>
