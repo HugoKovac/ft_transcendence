@@ -79,4 +79,11 @@ export class ChatController{
 		console.log(bod)
 		return await this.chatService.changeVisibility(bod)
 	}
+
+	@Post('group_visibility')
+	@UseGuards(AuthGuard('jwt'))
+	async groupVisibility(@Body()bod: DTO.groupVisibilityDTO){
+		console.log(bod)
+		return await this.chatService.groupVisibility(bod)
+	}
 }

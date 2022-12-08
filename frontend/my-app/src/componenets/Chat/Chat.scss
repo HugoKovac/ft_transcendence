@@ -32,7 +32,9 @@
 	.chatMenuTop{
 		// overflow: auto;
 		.body-nav-bar{
-
+			h2{
+				margin-left: 20px;
+			}
 			.public{
 				overflow: auto;
 				height: calc((100vh / 2) - (45px * 2));

@@ -4,14 +4,14 @@ import LoginStateContext from '../Login/LoginStateContext'
 import './AdminPanel.scss'
 import { userType } from './ChatBox'
 
-const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelTrigger: (v:boolean)=>void, setRefreshConvList: (v:boolean)=>void}) => {
+const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelTrigger: (v:boolean)=>void, setRefreshConvList: (v:boolean)=>void, isConvSecret:boolean}) => {
 
 	const [groupName, setGroupName] = useState('')
 	const [friendList, setFriendList] = useState([<label></label>])
 	const [delList, setDelList] = useState([<label></label>])
 	const [checkboxState, setCheckboxState] = useState([false])
 	const [delCheckboxState, setDelCheckboxState] = useState([false])
-	const [privateState, setPrivateState] = useState(false)
+	const [privateState, setPrivateState] = useState(props.isConvSecret)
 	const userGroupListCpy = props.userGroupList
 	const {logState} = useContext(LoginStateContext)
 	
@@ -119,7 +119,7 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelT
 			</div>
 			<div className='form'>
 				<label htmlFor="isPrivate">Private : </label>
-				<input type="checkbox" id="isPrivate" onChange={(e) => {setPrivateState(!privateState)}} />
+				<input type="checkbox" id="isPrivate" checked={privateState} onChange={(e) => {console.log(e.target); setPrivateState(!privateState)}} />
 			</div>
 			<div className='add-users'>
 				<h2>Select User(s) to add :</h2>

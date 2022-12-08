@@ -11,7 +11,7 @@ export type userType = {
 	providerId:string,
 }
 
-const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg:(v:boolean)=>void, nav:number, setRefreshConvList: (v:boolean)=>void}) => {
+const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg:(v:boolean)=>void, nav:number, setRefreshConvList: (v:boolean)=>void, isConvSecret:boolean}) => {
 	const newMsgCpy = props.newMsg
 	const setNewMsgCpy = props.setNewMsg
 	const logStateCpy = props.logState
@@ -43,7 +43,12 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 					for (let i of res.data.message){
 						const user = i.sender_id === parseInt(ownMsg.id) ? ownMsg : otherMsg
 						
-						list.unshift(<Message key={i.msg_id} own={i.sender_id === logStateCpy ? true : false} content={i.message} username={user.username} userPP={user.pp} date={i.send_at}/>)
+						list.unshift(
+							<Message 
+								key={i.msg_id} own={i.sender_id === logStateCpy ? true : false}
+								content={i.message} username={user.username} userPP={user.pp} date={i.send_at}
+							/>
+						)
 					}
 				}
 				else{
@@ -58,7 +63,12 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 							}
 						}
 						
-						list.unshift(<Message key={i.msg_id} own={i.sender_id === logStateCpy ? true : false} content={i.message} username={user.username} userPP={user.pp} date={i.send_at}/>)
+						list.unshift(
+							<Message
+								key={i.msg_id} own={i.sender_id === logStateCpy ? true : false}
+								content={i.message} username={user.username} userPP={user.pp} date={i.send_at}
+							/>
+						)
 					}
 				}
 
@@ -73,7 +83,11 @@ const ChatBox = (props: {conv:number, logState:number, newMsg:boolean, setNewMsg
 
 	//Faire un new useEffect avec des states groupConv et newConvMsg
 
-	let right = <ChatRight conv={props.conv} msgList={msgList} setNewMsg={props.setNewMsg} setRefresh={setRefresh} nav={props.nav} userGroupList={userGroupList} setRefreshConvList={props.setRefreshConvList} />
+	let right = <ChatRight conv={props.conv} msgList={msgList}
+		setNewMsg={props.setNewMsg} setRefresh={setRefresh} nav={props.nav}
+		userGroupList={userGroupList} setRefreshConvList={props.setRefreshConvList}
+		isConvSecret={props.isConvSecret}
+	/>
 	if (props.conv === 0)
 		right = <div className='chatBox' />
 

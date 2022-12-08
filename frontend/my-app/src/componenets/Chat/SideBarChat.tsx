@@ -3,9 +3,10 @@ import { useEffect } from 'react'
 import Conv from './Conv'
 import './Chat.scss'
 
-const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX.Element[], setConvList:(v:JSX.Element[])=>void, popup:boolean, nav:number, refreshConvList: boolean,setRefreshConvList: (v:boolean)=>void}) => {
+const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX.Element[], setConvList:(v:JSX.Element[])=>void, convListPrivate:JSX.Element[], setConvListPrivate:(v:JSX.Element[])=>void, popup:boolean, nav:number, refreshConvList: boolean,setRefreshConvList: (v:boolean)=>void, setIsConvSecret:(v:boolean)=>void}) => {
 	const setConvCpy = props.setConv
 	const setConvListCpy = props.setConvList
+	const setConvListPrivateCpy = props.setConvListPrivate
 	const popupCpy = props.popup
 	const navCpy = props.nav
 	const request = props.nav === 1 ? 'get_all_conv' : 'get_all_group_conv'
@@ -21,15 +22,30 @@ const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX
 
 			await axInst.post(request).then(res => {
 				const list = []
+				const listPrivate = []
 
 				for (let i of res.data){
 					if (navCpy === 1)
-						list.push(<Conv key={i.conv_id} name={i.username} img_path={i.pp} conv_id={i.conv_id} setConv={setConvCpy}/>)
-					else
-						list.push(<Conv key={i.group_conv_id} name={i.group_name} img_path={''} conv_id={i.group_conv_id} setConv={setConvCpy}/>)
+						list.push(<Conv
+							key={i.conv_id} name={i.username} img_path={i.pp} conv_id={i.conv_id}
+							setConv={setConvCpy} isPrivate={i.isPrivate} setIsConvSecret={props.setIsConvSecret}
+						/>)
+					else{
+						if (i.isPrivate)
+							listPrivate.push(<Conv
+								key={i.group_conv_id} name={i.group_name} img_path={''} conv_id={i.group_conv_id}
+								setConv={setConvCpy} isPrivate={i.isPrivate} setIsConvSecret={props.setIsConvSecret}
+							/>)
+						else
+							list.push(<Conv
+								key={i.group_conv_id} name={i.group_name} img_path={''} conv_id={i.group_conv_id}
+								setConv={setConvCpy} isPrivate={i.isPrivate} setIsConvSecret={props.setIsConvSecret}
+							/>)
+					}
 				}
 				
 				setConvListCpy(list)
+				setConvListPrivateCpy(listPrivate)
 			})
 		}
 		fetchConvList()
@@ -46,7 +62,7 @@ const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX
 		</div>
 		<div className='private'>
 			<h2>Private</h2>
-			{props.convList}
+			{props.convListPrivate}
 		</div>
 	</div>
 

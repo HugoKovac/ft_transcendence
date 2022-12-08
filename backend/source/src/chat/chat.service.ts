@@ -320,4 +320,15 @@ export class ChatService{
 			return false
 		}
 	}
+
+	async groupVisibility({group_conv_id}:DTO.groupVisibilityDTO){
+		try{
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}})
+
+			return conv.isPrivate
+		}catch(e){
+			console.error(e)
+			return false
+		}
+	}
 }

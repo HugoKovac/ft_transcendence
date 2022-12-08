@@ -95,3 +95,9 @@ export class changeVisibilityDTO{
 	@IsBoolean()
 	isPrivate:boolean
 }
+
+export class groupVisibilityDTO{
+	@IsNotEmpty()
+	@IsNumber()
+	group_conv_id:number
+}

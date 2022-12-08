@@ -16,7 +16,8 @@ type groupMessageObj = {
 	message:string,
 }
 
-function ChatInput({conv_id, state, setRefresh, nav, userGroupList, setRefreshConvList}: {conv_id:number, state: (v:boolean)=>void, setRefresh:(v:boolean)=>void, nav:number, userGroupList:userType[], setRefreshConvList: (v:boolean)=>void} ){
+function ChatInput({conv_id, state, setRefresh, nav, userGroupList, setRefreshConvList, isConvSecret}:
+	{conv_id:number, state: (v:boolean)=>void, setRefresh:(v:boolean)=>void, nav:number, userGroupList:userType[], setRefreshConvList: (v:boolean)=>void, isConvSecret:boolean} ){
 	const socket = io("localhost:3000", {
 		auth: (cb) => {
 			cb({
@@ -60,12 +61,16 @@ function ChatInput({conv_id, state, setRefresh, nav, userGroupList, setRefreshCo
 	//! and if admin role
 	const panelPopup = nav === 2 ? <Popup trigger={panelTrigger} setter={{popup: panelTrigger, setPopup: setPanelTrigger}}> 
 		<h1>Manage Group</h1>
-		<AdminPanel userGroupList={userGroupList} conv_id={conv_id} setPanelTrigger={setPanelTrigger} setRefreshConvList={setRefreshConvList} />
+		<AdminPanel userGroupList={userGroupList} conv_id={conv_id} setPanelTrigger={setPanelTrigger} setRefreshConvList={setRefreshConvList} isConvSecret={isConvSecret}/>
 	 </Popup>
 	 : <></>
 
 	return <form onSubmit={nav === 1 ? SendMessage : SendGroupMessage} className='chatInput'>
-			<input className="chat-input" placeholder="type your message..." autoFocus maxLength={300} autoComplete="off" onChange={(e) => {setInputMessage(e.target.value)}} value={inputMessage} type="text" name="msg"/>
+			<input
+				className="chat-input" placeholder="type your message..." autoFocus maxLength={300}
+				autoComplete="off" onChange={(e) => {setInputMessage(e.target.value)}}
+				value={inputMessage} type="text" name="msg"
+			/>
 			<button>Send</button>
 			{admin_btn_panel}
 			{panelPopup}
