@@ -1,6 +1,6 @@
 all:
 	docker-compose build
-	docker-compose up
+	docker-compose up -d
 
 install:
 	npm install --prefix ./frontend/my-app 

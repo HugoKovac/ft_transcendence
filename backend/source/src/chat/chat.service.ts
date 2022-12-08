@@ -303,4 +303,21 @@ export class ChatService{
 			return false
 		}
 	}
+
+	async changeVisibility({group_conv_id, isPrivate}:DTO.changeVisibilityDTO){
+		if (isPrivate === undefined)
+			return true
+
+		try{
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}})
+
+			const newConv = this.groupConvRepo.create({...conv, isPrivate: isPrivate})
+			await this.groupConvRepo.save(newConv)
+
+			return true
+		}catch(e){
+			console.error(e)
+			return false
+		}
+	}
 }

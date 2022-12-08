@@ -1,4 +1,4 @@
-import { ArrayMinSize, IsArray, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString, MaxLength } from "class-validator";
+import { ArrayMinSize, IsArray, IsBoolean, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString, MaxLength } from "class-validator";
 
 export class newConvDTO{
 	@IsNotEmpty()
@@ -84,4 +84,14 @@ export class changeGroupNameDTO{
 	@IsString()
 	@MaxLength(35)
 	new_name:string
+}
+
+export class changeVisibilityDTO{
+	@IsNotEmpty()
+	@IsNumber()
+	group_conv_id:number
+
+	@IsOptional()
+	@IsBoolean()
+	isPrivate:boolean
 }

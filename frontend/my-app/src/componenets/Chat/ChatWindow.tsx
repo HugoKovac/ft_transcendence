@@ -28,8 +28,10 @@ const ChatWindow = () => {
 
 	return <div className="ChatWindow">
 		<div className='chatMenu'>
-			<NavBarChat nav={nav} convMode={convMode} groupMode={groupMode}/>
-			<SideBarChat conv={conv} setConv={setConv} convList={convList} setConvList={setConvList} popup={popup} nav={nav} refreshConvList={refreshConvList} setRefreshConvList={setRefreshConvList} />
+			<div className='chatMenuTop'>
+				<NavBarChat nav={nav} convMode={convMode} groupMode={groupMode}/>
+				<SideBarChat conv={conv} setConv={setConv} convList={convList} setConvList={setConvList} popup={popup} nav={nav} refreshConvList={refreshConvList} setRefreshConvList={setRefreshConvList} />
+			</div>
 			<NewConvBtn popup={popup} setPopup={setPopup} convList={convList} nav={nav} />
 		</div>
 		<ChatBox conv={conv} logState={logState} newMsg={newMsg} setNewMsg={setNewMsg} nav={nav} setRefreshConvList={setRefreshConvList}/>

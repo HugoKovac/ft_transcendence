@@ -15,11 +15,9 @@ export class GroupConv{
 	group_name: string
 
 	@Column({
-		nullable: false,
-		type: 'varchar',
-		default: ''
+		default: false
 	})
-	pp: string
+	isPrivate: boolean
 
 	@OneToMany(
 		() => Message,

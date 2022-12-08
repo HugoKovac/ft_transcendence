@@ -70,6 +70,13 @@ export class ChatController{
 	@Post('change_group_name')
 	@UseGuards(AuthGuard('jwt'))
 	async changeGroupName(@Body()bod: DTO.changeGroupNameDTO){
-		return this.chatService.changeGroupName(bod)
+		return await this.chatService.changeGroupName(bod)
+	}
+
+	@Post('change_group_visibility')
+	@UseGuards(AuthGuard('jwt'))
+	async changeVisibility(@Body()bod: DTO.changeVisibilityDTO){
+		console.log(bod)
+		return await this.chatService.changeVisibility(bod)
 	}
 }
