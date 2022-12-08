@@ -13,7 +13,7 @@ const NewConvBtn = (props: {popup:boolean, setPopup:(v:boolean)=>void, convList:
 
 	const active = <React.Fragment>
 		<button className='btn-pup' onClick={handlePopup}>{btnContent}</button>
-		<Popup trigger={props.popup} setter={{popup: props.popup, setPopup: props.setPopup}}>
+		<Popup trigger={props.popup} setPopup={props.setPopup}>
 			<h1>{content}</h1>
 			{popup}
 		</Popup>

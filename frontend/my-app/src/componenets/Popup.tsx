@@ -1,9 +1,9 @@
 import { PropsWithChildren } from 'react'
 import '../styles/Popup.scss'
 
-const Popup = (props: PropsWithChildren<{trigger:boolean, setter:{popup:boolean, setPopup:(state: boolean)=>void}}>) => {
+const Popup = (props: PropsWithChildren<{trigger:boolean, setPopup:(state: boolean)=>void}>) => {
 	const handleClose = () =>{
-		props.setter.setPopup(false)
+		props.setPopup(false)
 	}
 	
 	return props.trigger ?

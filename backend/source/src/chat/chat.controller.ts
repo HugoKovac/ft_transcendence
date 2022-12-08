@@ -75,15 +75,26 @@ export class ChatController{
 
 	@Post('change_group_visibility')
 	@UseGuards(AuthGuard('jwt'))
-	async changeVisibility(@Body()bod: DTO.changeVisibilityDTO){
-		console.log(bod)
-		return await this.chatService.changeVisibility(bod)
+	async changeVisibility(@Req()req, @Body()bod: DTO.changeVisibilityDTO){
+		return await this.chatService.changeVisibility(bod, req.cookies['jwt'])
 	}
 
 	@Post('group_visibility')
 	@UseGuards(AuthGuard('jwt'))
 	async groupVisibility(@Body()bod: DTO.groupVisibilityDTO){
-		console.log(bod)
 		return await this.chatService.groupVisibility(bod)
 	}
+
+	@Post('set_password')
+	@UseGuards(AuthGuard('jwt'))
+	async setPassword(@Body()bod: DTO.setPasswordDTO, @Req() req){
+		return await this.chatService.setPassword(bod, req.cookies['jwt'])
+	}
+
+	@Post('get_group_secret_conv_msg')
+	@UseGuards(AuthGuard('jwt'))
+	async getGroupSecretConvMsg(@Body()bod: DTO.getGroupSecretConvMsgDTO, @Req() req){
+		return await this.chatService.getGroupSecretConvMsg(bod, req.cookies['jwt'])
+	}
+	
 }

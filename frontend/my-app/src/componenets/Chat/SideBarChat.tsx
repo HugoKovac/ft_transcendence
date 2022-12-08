@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import Conv from './Conv'
 import './Chat.scss'
 
-const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX.Element[], setConvList:(v:JSX.Element[])=>void, convListPrivate:JSX.Element[], setConvListPrivate:(v:JSX.Element[])=>void, popup:boolean, nav:number, refreshConvList: boolean,setRefreshConvList: (v:boolean)=>void, setIsConvSecret:(v:boolean)=>void}) => {
+const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX.Element[], setConvList:(v:JSX.Element[])=>void, convListPrivate:JSX.Element[], setConvListPrivate:(v:JSX.Element[])=>void, popup:boolean, nav:number, refreshConvList: boolean,setRefreshConvList: (v:boolean)=>void, setisConvPrivate:(v:boolean)=>void}) => {
 	const setConvCpy = props.setConv
 	const setConvListCpy = props.setConvList
 	const setConvListPrivateCpy = props.setConvListPrivate
@@ -28,18 +28,18 @@ const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX
 					if (navCpy === 1)
 						list.push(<Conv
 							key={i.conv_id} name={i.username} img_path={i.pp} conv_id={i.conv_id}
-							setConv={setConvCpy} isPrivate={i.isPrivate} setIsConvSecret={props.setIsConvSecret}
+							setConv={setConvCpy} isPrivate={i.isPrivate} setisConvPrivate={props.setisConvPrivate}
 						/>)
 					else{
 						if (i.isPrivate)
 							listPrivate.push(<Conv
 								key={i.group_conv_id} name={i.group_name} img_path={''} conv_id={i.group_conv_id}
-								setConv={setConvCpy} isPrivate={i.isPrivate} setIsConvSecret={props.setIsConvSecret}
+								setConv={setConvCpy} isPrivate={i.isPrivate} setisConvPrivate={props.setisConvPrivate}
 							/>)
 						else
 							list.push(<Conv
 								key={i.group_conv_id} name={i.group_name} img_path={''} conv_id={i.group_conv_id}
-								setConv={setConvCpy} isPrivate={i.isPrivate} setIsConvSecret={props.setIsConvSecret}
+								setConv={setConvCpy} isPrivate={i.isPrivate} setisConvPrivate={props.setisConvPrivate}
 							/>)
 					}
 				}

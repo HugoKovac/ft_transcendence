@@ -12,9 +12,9 @@ const ChatWindow = () => {
 	const [popup, setPopup] = useState(false)
 	const [newMsg, setNewMsg] = useState(false)
 	const [conv, setConv] = useState(0)
-	const [isConvSecret, setIsConvSecret] = useState(false)
-	const [convList, setConvList] = useState([<Conv key='' name='' img_path='' conv_id={0} setConv={()=>{}} isPrivate={false} setIsConvSecret={()=>{}}/>])
-	const [convListPrivate, setConvListPrivate] = useState([<Conv key='' name='' img_path='' conv_id={0} setConv={()=>{}} isPrivate={false} setIsConvSecret={()=>{}}/>])
+	const [isConvPrivate, setisConvPrivate] = useState(false)
+	const [convList, setConvList] = useState([<Conv key='' name='' img_path='' conv_id={0} setConv={()=>{}} isPrivate={false} setisConvPrivate={()=>{}}/>])
+	const [convListPrivate, setConvListPrivate] = useState([<Conv key='' name='' img_path='' conv_id={0} setConv={()=>{}} isPrivate={false} setisConvPrivate={()=>{}}/>])
 	const [nav, setNav] = useState(1)
 	const [refreshConvList, setRefreshConvList] = useState(false)
 
@@ -36,13 +36,13 @@ const ChatWindow = () => {
 					conv={conv} setConv={setConv} convList={convList} setConvList={setConvList}
 					convListPrivate={convListPrivate} setConvListPrivate={setConvListPrivate}
 					popup={popup} nav={nav} refreshConvList={refreshConvList}
-					setRefreshConvList={setRefreshConvList} setIsConvSecret={setIsConvSecret}
+					setRefreshConvList={setRefreshConvList} setisConvPrivate={setisConvPrivate}
 				/>
 			</div>
 			<NewConvBtn popup={popup} setPopup={setPopup} convList={convList} nav={nav} />
 		</div>
 		<ChatBox conv={conv} logState={logState} newMsg={newMsg} setNewMsg={setNewMsg}
-			nav={nav} setRefreshConvList={setRefreshConvList} isConvSecret={isConvSecret}
+			nav={nav} setRefreshConvList={setRefreshConvList} isConvPrivate={isConvPrivate}
 		/>
 	</div>
 }

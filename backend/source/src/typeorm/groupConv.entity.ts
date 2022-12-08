@@ -36,4 +36,11 @@ export class GroupConv{
 		name: 'users_list'
 	})
 	users: User[]
+
+	@Column({
+		nullable: false,
+		type: 'varchar',
+		default: ''
+	})
+	password: string
 }

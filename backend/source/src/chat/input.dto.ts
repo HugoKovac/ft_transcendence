@@ -1,4 +1,4 @@
-import { ArrayMinSize, IsArray, IsBoolean, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString, MaxLength } from "class-validator";
+import { ArrayMinSize, IsArray, IsBoolean, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
 
 export class newConvDTO{
 	@IsNotEmpty()
@@ -55,6 +55,16 @@ export class getGroupConvMsgDTO{
 	group_conv_id:number
 }
 
+export class getGroupSecretConvMsgDTO{
+	@IsNotEmpty()
+	@IsNumber()
+	group_conv_id:number
+
+	@IsNotEmpty()
+	@IsString()
+	password:string
+}
+
 export class addUserToGroupDTO{
 	@IsNotEmpty()
 	@IsNumber()
@@ -100,4 +110,16 @@ export class groupVisibilityDTO{
 	@IsNotEmpty()
 	@IsNumber()
 	group_conv_id:number
+}
+
+export class setPasswordDTO{
+	@IsNotEmpty()
+	@IsNumber()
+	group_conv_id:number
+
+	@IsNotEmpty()
+	@IsString()
+	@MaxLength(35)
+	@MinLength(12)
+	password:string
 }

@@ -4,14 +4,14 @@ import LoginStateContext from '../Login/LoginStateContext'
 import './AdminPanel.scss'
 import { userType } from './ChatBox'
 
-const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelTrigger: (v:boolean)=>void, setRefreshConvList: (v:boolean)=>void, isConvSecret:boolean}) => {
+const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelTrigger: (v:boolean)=>void, setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void}) => {
 
 	const [groupName, setGroupName] = useState('')
 	const [friendList, setFriendList] = useState([<label></label>])
 	const [delList, setDelList] = useState([<label></label>])
 	const [checkboxState, setCheckboxState] = useState([false])
 	const [delCheckboxState, setDelCheckboxState] = useState([false])
-	const [privateState, setPrivateState] = useState(props.isConvSecret)
+	const [privateState, setPrivateState] = useState(props.isConvPrivate)
 	const userGroupListCpy = props.userGroupList
 	const {logState} = useContext(LoginStateContext)
 	
@@ -100,8 +100,14 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelT
 			})
 
 			await axInst.post('change_group_visibility', {group_conv_id: props.conv_id, isPrivate: privateState}).then((res) => {
-				// console.log(privateState)
+				// console.log(res.data)
 			})
+
+			if (privateState === true){
+				await axInst.post('set_password', {group_conv_id: props.conv_id, password: props.passwordInput}).then((res) => {
+					console.log(res.data)
+				})
+			}
 
 			props.setPanelTrigger(false)
 			props.setRefreshConvList(true)
@@ -111,6 +117,11 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelT
 		}
 	}
 
+	const groupPass = privateState === true
+	? <><label htmlFor="isPrivate">Password : </label>
+		<input type="password" id="password" placeholder='Required If Private' minLength={12} maxLength={35} onChange={(e) => {props.setPasswordInput(e.target.value)}}/></>
+	: <></>
+
 	return <div className="AdminPanel">
 		<div className='infoWrap'>
 			<div className='form'>
@@ -119,7 +130,8 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelT
 			</div>
 			<div className='form'>
 				<label htmlFor="isPrivate">Private : </label>
-				<input type="checkbox" id="isPrivate" checked={privateState} onChange={(e) => {console.log(e.target); setPrivateState(!privateState)}} />
+				<input type="checkbox" id="isPrivate" checked={privateState} onChange={(e) => {setPrivateState(!privateState)}} />
+				{groupPass}
 			</div>
 			<div className='add-users'>
 				<h2>Select User(s) to add :</h2>

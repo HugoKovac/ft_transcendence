@@ -6,6 +6,7 @@ import Conv from "src/typeorm/conv.entity";
 import { GroupConv } from "src/typeorm/groupConv.entity";
 import { Repository } from "typeorm";
 import * as DTO from './input.dto'
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ChatService{
@@ -149,12 +150,39 @@ export class ChatService{
 	// GROUP CONV GETTER
 
 	async getGroupConvMsg({group_conv_id}:DTO.getGroupConvMsgDTO, jwt:string){
-		let tokenUserInfo: any = decode(jwt)//!verifier si la conv est bien au user_id du token
+		let tokenUserInfo: any = decode(jwt)
 
 		try{
 			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users'], order:{messages:{msg_id: 'ASC'}}})
 
-			if (!conv)
+			if (!conv || conv.isPrivate === true)
+				return false
+
+			return conv
+		}
+		catch{
+			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
+			return false
+		}
+	}
+	/**
+	 * getGroupConvMsg return conv if not private
+	 * Pour les private convs passer par un autre service qui return la conv si le message passe en payload est le bon
+	 * check le hash du password pour tous les messages envoye
+	 */
+
+	 async getGroupSecretConvMsg({group_conv_id, password}:DTO.getGroupSecretConvMsgDTO, jwt:string){
+		let tokenUserInfo: any = decode(jwt)
+
+		try{
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users'], order:{messages:{msg_id: 'ASC'}}})
+
+			let kick = true
+			for (let i of conv.users)
+				if (i.id === tokenUserInfo.id)
+					kick = false
+
+			if (!conv || kick || !await bcrypt.compare(password, conv.password))
 				return false
 
 			return conv
@@ -213,7 +241,7 @@ export class ChatService{
 		try{
 			const group_conv: GroupConv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}})
 
-			if (!group_conv)
+			if (!group_conv || group_conv.isPrivate)
 				return false
 
 			const newMsg = this.messRepo.create({sender_id: tokenUserInfo.id, message: message, group_conv: group_conv})
@@ -258,7 +286,6 @@ export class ChatService{
 	}
 
 	async delUserToGroup({group_conv_id, del_user_ids}:DTO.delUserToGroupDTO){
-		console.log(del_user_ids)
 		if (!del_user_ids || !del_user_ids.length)
 			return true
 		try{
@@ -304,12 +331,21 @@ export class ChatService{
 		}
 	}
 
-	async changeVisibility({group_conv_id, isPrivate}:DTO.changeVisibilityDTO){
+	async changeVisibility({group_conv_id, isPrivate}:DTO.changeVisibilityDTO, jwt:string){
+		const tokenUserInfo:any = decode(jwt)
 		if (isPrivate === undefined)
 			return true
 
 		try{
-			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}})
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations: ['users']})
+
+			let kick = true
+			for (let i of conv.users)
+				if (i.id === tokenUserInfo.id)
+					kick = false
+			
+			if (kick)
+				return false
 
 			const newConv = this.groupConvRepo.create({...conv, isPrivate: isPrivate})
 			await this.groupConvRepo.save(newConv)
@@ -326,6 +362,33 @@ export class ChatService{
 			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}})
 
 			return conv.isPrivate
+		}catch(e){
+			console.error(e)
+			return false
+		}
+	}
+
+	async setPassword({group_conv_id, password}:DTO.setPasswordDTO, jwt:string){
+		let tokenUserInfo: any = decode(jwt)
+		
+		try{
+			const conv = await this.groupConvRepo.findOne({where:{group_conv_id: group_conv_id}, relations: ['users']})
+			
+			let kick = true
+			for (let i of conv.users)
+				if (i.id === tokenUserInfo.id)
+					kick = false
+			
+			if (kick)
+				return false
+			
+			const salt = await bcrypt.genSalt()
+			const hash = await bcrypt.hash(password, salt)
+
+			const new_conv = this.groupConvRepo.create({...conv, password: hash})
+			await this.groupConvRepo.save(new_conv)
+
+			return true
 		}catch(e){
 			console.error(e)
 			return false

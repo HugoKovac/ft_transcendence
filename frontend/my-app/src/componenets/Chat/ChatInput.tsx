@@ -16,8 +16,8 @@ type groupMessageObj = {
 	message:string,
 }
 
-function ChatInput({conv_id, state, setRefresh, nav, userGroupList, setRefreshConvList, isConvSecret}:
-	{conv_id:number, state: (v:boolean)=>void, setRefresh:(v:boolean)=>void, nav:number, userGroupList:userType[], setRefreshConvList: (v:boolean)=>void, isConvSecret:boolean} ){
+function ChatInput({conv_id, state, setRefresh, nav, userGroupList, setRefreshConvList, isConvPrivate, passwordInput, setPasswordInput}:
+	{conv_id:number, state: (v:boolean)=>void, setRefresh:(v:boolean)=>void, nav:number, userGroupList:userType[], setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void} ){
 	const socket = io("localhost:3000", {
 		auth: (cb) => {
 			cb({
@@ -56,12 +56,14 @@ function ChatInput({conv_id, state, setRefresh, nav, userGroupList, setRefreshCo
 	});
 
 	const [panelTrigger, setPanelTrigger] = useState(false)
-	//! and if admin role
+	//! and if admin role and if private check if log
 	const admin_btn_panel =  nav === 2 ? <button className="adminBtnPanel" onClick={() => {setPanelTrigger(true)}}>Manage</button> : <></> 
-	//! and if admin role
-	const panelPopup = nav === 2 ? <Popup trigger={panelTrigger} setter={{popup: panelTrigger, setPopup: setPanelTrigger}}> 
+	//! and if admin role and if private check if log
+	const panelPopup = nav === 2 ? <Popup trigger={panelTrigger} setPopup={setPanelTrigger}> 
 		<h1>Manage Group</h1>
-		<AdminPanel userGroupList={userGroupList} conv_id={conv_id} setPanelTrigger={setPanelTrigger} setRefreshConvList={setRefreshConvList} isConvSecret={isConvSecret}/>
+		<AdminPanel userGroupList={userGroupList} conv_id={conv_id} setPanelTrigger={setPanelTrigger}
+		setRefreshConvList={setRefreshConvList} isConvPrivate={isConvPrivate}
+		passwordInput={passwordInput} setPasswordInput={setPasswordInput}/>
 	 </Popup>
 	 : <></>
 
