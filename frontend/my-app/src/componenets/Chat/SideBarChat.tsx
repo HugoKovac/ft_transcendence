@@ -36,9 +36,21 @@ const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX
 		setRefreshConvListCpy(false)
 	}, [popupCpy, setConvListCpy, setConvCpy, navCpy, refreshConvListCpy, setRefreshConvListCpy, request])
 
-	return <div>
+	const body = props.nav === 1 ? <div className='body-nav-bar'>
 		{props.convList}
 	</div>
+	: <div className='body-nav-bar'>
+		<div className='public'>
+			<h2>Public</h2>
+			{props.convList}
+		</div>
+		<div className='private'>
+			<h2>Private</h2>
+			{props.convList}
+		</div>
+	</div>
+
+	return <>{body}</>
 }
 
 export default SideBarChat
