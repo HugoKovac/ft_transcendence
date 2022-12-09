@@ -16,8 +16,8 @@ type groupMessageObj = {
 	message:string,
 }
 
-function ChatInput({conv_id, state, setRefresh, nav, userGroupList, setRefreshConvList, isConvPrivate, passwordInput, setPasswordInput}:
-	{conv_id:number, state: (v:boolean)=>void, setRefresh:(v:boolean)=>void, nav:number, userGroupList:userType[], setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void} ){
+function ChatInput({conv_id, setRefresh, nav, userGroupList, setRefreshConvList, isConvPrivate, passwordInput, setPasswordInput}:
+	{conv_id:number, setRefresh:(v:boolean)=>void, nav:number, userGroupList:userType[], setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void} ){
 	const socket = io("localhost:3000", {
 		auth: (cb) => {
 			cb({
@@ -41,14 +41,12 @@ function ChatInput({conv_id, state, setRefresh, nav, userGroupList, setRefreshCo
 		e.preventDefault()
 		socket.emit('message', payloadMsg)
 		setInputMessage('')
-		state(true)
 	}
 
 	const SendGroupMessage = async (e: any) => {
 		e.preventDefault()
 		socket.emit('groupMessage', payloadGroupMsg)
 		setInputMessage('')
-		state(true)
 	}
 	
 	socket.on("refresh", () => {

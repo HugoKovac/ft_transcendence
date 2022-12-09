@@ -10,7 +10,6 @@ import NewConvBtn from './NewConvBtn'
 const ChatWindow = () => {
 	const {logState} = useContext(LoginStateContext)
 	const [popup, setPopup] = useState(false)
-	const [newMsg, setNewMsg] = useState(false)
 	const [conv, setConv] = useState(0)
 	const [isConvPrivate, setisConvPrivate] = useState(false)
 	const [convList, setConvList] = useState([<Conv key='' name='' img_path='' conv_id={0} setConv={()=>{}} isPrivate={false} setisConvPrivate={()=>{}}/>])
@@ -41,7 +40,7 @@ const ChatWindow = () => {
 			</div>
 			<NewConvBtn popup={popup} setPopup={setPopup} convList={convList} nav={nav} />
 		</div>
-		<ChatBox conv={conv} logState={logState} newMsg={newMsg} setNewMsg={setNewMsg}
+		<ChatBox conv={conv} logState={logState}
 			nav={nav} setRefreshConvList={setRefreshConvList} isConvPrivate={isConvPrivate}
 		/>
 	</div>
