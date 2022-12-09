@@ -24,7 +24,7 @@ const ChatBox = (props: {conv:number, logState:number, nav:number, setRefreshCon
 	const [passwordPopupState, setPasswordPopupState] = useState(false)
 	const [passwordInput, setPasswordInput] = useState('')
 	const [requestPrivate, setRequestPrivate] = useState(false)
-	const [goodPass, setGoodPass] = useState(false)
+	const [goodPass, setGoodPass] = useState([{conv_id: 0, passState: true, password:''}])//faire de good pass une structure de donné qui associe le conv_id avec le bool good pass et le pass pour le donne en payload
 
 	let passwordPopup = <Popup trigger={passwordPopupState} setPopup={setPasswordPopupState}>
 		<label htmlFor="password" id='password'><h1>Password :</h1></label>
@@ -32,11 +32,30 @@ const ChatBox = (props: {conv:number, logState:number, nav:number, setRefreshCon
 		<button onClick={(e) => {e.preventDefault(); setRequestPrivate(true)}}>Verify</button>
 	</Popup>
 
+	const findGoodPass = (conv_id:number) => {
+		for (let i of goodPass)
+			if (i.conv_id === conv_id)
+				return i
+		return undefined
+	}
+
+	const ChangeGoodPass = (conv_id:number, val:boolean, pass:string) => {
+		const cpy = goodPass
+		for (let i of cpy)
+			if (i.conv_id === conv_id){
+				i.passState = val
+				i.password = pass
+				return cpy
+			}
+		return cpy
+	}
+
 	useEffect(() => {//* DM
 		if (navCpy !== 1 || convCpy === 0)
 			return
 
-		setGoodPass(true)
+		if (!findGoodPass(convCpy))
+			setGoodPass(goodPass.concat({conv_id: convCpy, passState: true, password:''}))
 
 		const asyncFetch = async ()=>{
 			const axInst = axios.create({
@@ -74,7 +93,8 @@ const ChatBox = (props: {conv:number, logState:number, nav:number, setRefreshCon
 		if (navCpy !== 2 || isConvPrivateCpy !== false || convCpy === 0)
 			return
 
-		setGoodPass(true)
+		if (!findGoodPass(convCpy))
+			setGoodPass(goodPass.concat({conv_id: convCpy, passState: true, password:''}))
 
 		const asyncFetch = async ()=>{
 			const axInst = axios.create({
@@ -117,10 +137,12 @@ const ChatBox = (props: {conv:number, logState:number, nav:number, setRefreshCon
 	useEffect(() => {//* PRIVATE GROUP
 		if (navCpy !== 2 || isConvPrivateCpy !== true)
 			return
-		setGoodPass(false)
+		if (!findGoodPass(convCpy))
+			setGoodPass(goodPass.concat({conv_id: convCpy, passState: false, password:''}))
 		setPasswordPopupState(true)//si group private afficher la popup du password
-		if (!convCpy || !requestPrivate)
-			return
+		if (!findGoodPass(convCpy)?.passState)
+			if (!convCpy || !requestPrivate)//l'input du password et submit
+				return
 			
 		setRequestPrivate(false)
 		const asyncFetch = async ()=>{
@@ -130,10 +152,12 @@ const ChatBox = (props: {conv:number, logState:number, nav:number, setRefreshCon
 			})//axios create
 			
 			await axInst.post('get_group_secret_conv_msg', {group_conv_id: convCpy, password: passwordInput}).then(res => {
-				if (!res.data)
+				if (!res.data){
+					setGoodPass(ChangeGoodPass(convCpy, false, ''))
 					return //* wrong password
-				setGoodPass(true)
-				setPasswordPopupState(false)
+				}
+				setGoodPass(ChangeGoodPass(convCpy, true, passwordInput))
+				setPasswordPopupState(false)//si good pass retirer le popup
 				const list:JSX.Element[] = []
 				let user
 				
@@ -172,7 +196,7 @@ const ChatBox = (props: {conv:number, logState:number, nav:number, setRefreshCon
 		isConvPrivate={props.isConvPrivate} passwordInput={passwordInput}
 		setPasswordInput={setPasswordInput}
 	/>
-	if (props.conv === 0 || !goodPass)
+	if (props.conv === 0 || !findGoodPass(convCpy)?.passState)
 		right = <div className='chatBox' />
 
 	return <React.Fragment>
