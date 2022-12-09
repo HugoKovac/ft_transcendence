@@ -33,12 +33,9 @@ export class Lobby
         
         console.log(this.id);   
 
-        this.server.emit(ServerEvents.LobbyState, { 
-            message: "Added a client !",
-            lobbyid: this.id,
-          });
-
+        this.refreshLobby();
     }
+
     public removeClient( client: AuthenticatedSocket )
     {
         console.log("REMOVING CLIENT NUMBER : ");
@@ -49,11 +46,16 @@ export class Lobby
 
         client.data.lobby = null;
 
+        this.refreshLobby();
+    }
 
-        // this.spreadLobby<ServerPayload[ServerEvents.LobbyCall]>(ServerEvents.LobbyCall, { 
-        //     message: 'The lobby say you Hi !', 
-        // } );
-
+    public refreshLobby()
+    {
+        const payload: ServerPayload[ServerEvents.LobbyState] = {
+            message: "Refreshed Lobby",
+            lobbyid: this.id,
+        }
+        this.spreadLobby(ServerEvents.LobbyState, payload);
     }
 
     public spreadLobby<T>( event: ServerEvents, payload: T )

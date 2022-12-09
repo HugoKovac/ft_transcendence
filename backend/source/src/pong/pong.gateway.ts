@@ -1,4 +1,4 @@
-import { OnGatewayConnection, OnGatewayInit, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { OnGatewayConnection, OnGatewayInit, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
 import { ClientEvents } from '../shared/client/Client.Events'
 import { ServerEvents } from '../shared/server/Server.Events'
 import { Server, Socket } from 'socket.io'
@@ -21,6 +21,11 @@ export type ServerPayload = {
     [ServerEvents.LobbyCall]: {
       message: 'The lobby say you Hi !';
     };
+
+    [ServerEvents.LobbyState]: {
+      message: string;
+      lobbyid : string,
+    };
 };
 
 @WebSocketGateway({
@@ -30,13 +35,6 @@ export type ServerPayload = {
   }
 )
 export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGatewayDisconnect {
-
-    //! Vraiment besoin de refaire cette partie du code
-    //! J'utilise un serveur pour envoyer les event, et un serveur pour le lobby manager
-    //! Je devrais en utiliser qu'un seul pour les deux, mais probleme de syntaxe....
-    
-    @WebSocketServer() 
-    server: Server;
 
     constructor( private readonly lobbyManager: LobbyFactory )
     {
@@ -70,14 +68,14 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
 
     //? Blind mode 
     @SubscribeMessage(ClientEvents.CreateLobby)
-    onLobbyCreation( client: AuthenticatedSocket, data: LobbyCreateDto )
+    onLobbyCreation( client: AuthenticatedSocket, data: LobbyCreateDto ) : WsResponse<ServerPayload[ServerEvents.LobbyState]> 
     {
       const lobby = this.lobbyManager.generateLobby(data.skin);
       lobby.addClient(client);
 
-      this.server.emit(ServerEvents.LobbyState, { 
-            message: "server_createlobby",
-            lobbyid: lobby.id,
+      return (ServerEvents.LobbyState, {
+            event: ServerEvents.LobbyState,
+            data: { message: "server_createlobby", lobbyid: lobby.id }
           }
       )
     }
@@ -100,17 +98,15 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
 
 
     //? Ranked mode 
-    @SubscribeMessage(ClientEvents.JoinMatchmaking)
-    onJoinMatchmaking() : void
-    {
-      this.server.emit(ServerEvents.LobbyState, { 
-        data: {
-          message: "Matchmaking joined !",
-        }
-      }
-    )
-
-    }
+    // @SubscribeMessage(ClientEvents.JoinMatchmaking)
+    // onJoinMatchmaking() : 
+    // {
+    //   return (ServerEvents.LobbyState, {
+    //     event: ServerEvents.LobbyState,
+    //     data: { message: "server_createlobby", lobbyid: lobby.id }
+    //   }
+    // )
+    // }
     //? Ranked mode 
 
 }
