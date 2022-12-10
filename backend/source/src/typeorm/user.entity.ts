@@ -1,7 +1,9 @@
 import { Column, Entity, JoinColumn, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { BlockPeople } from "./blockPeople.entity";
 import Conv from "./conv.entity";
 import { Friends } from "./friends.entity";
 import { GroupConv } from "./groupConv.entity";
+import { ReqFriend } from "./ReqFriend.entity";
 
 @Entity()
 export class User {
@@ -28,13 +30,13 @@ export class User {
         nullable: false,
         default: '',
     })
-	pp: string
+	pp: string;
 
 	@Column({
         nullable: false,
         default: '',
     })
-	providerId: string
+	providerId: string;
 
 	@OneToMany(
 		() => Friends,
@@ -43,7 +45,42 @@ export class User {
 	@JoinColumn({
 		name: 'friend_list'
 	})
-	friends: Friends[]
+	friends: Friends[];
+	@OneToMany(
+		() => ReqFriend,
+		reqFriend => reqFriend.owner
+	)
+	@JoinColumn({
+		name: 'request_friend_list'
+	})
+	sendReqFriend: ReqFriend[];
+	
+	@OneToMany(
+		() => BlockPeople,
+		blockPeople => blockPeople.dest
+	)
+	@JoinColumn({
+		name: 'block_me'
+	})
+	block_me: BlockPeople[];
+
+	@OneToMany(
+		() => BlockPeople,
+		blockPeople => blockPeople.owner
+	)
+	@JoinColumn({
+		name: 'blocked'
+	})
+blocked: BlockPeople[];
+	
+	@OneToMany(
+		() => ReqFriend,
+		reqFriend => reqFriend.dest
+	)
+	@JoinColumn({
+		name: 'wait_request_friend_list'
+	})
+	recvReqFriend: ReqFriend[];
 
 	@OneToMany(
 		() => Conv,
@@ -52,11 +89,11 @@ export class User {
 	@JoinColumn({
 		name: 'conv_list'
 	})
-	conv: Conv[]
+	conv: Conv[];
 
 	@ManyToMany(
 		() => GroupConv,
 		group_conv => group_conv.users
 	)
-	group_conv: GroupConv[]
+	group_conv: GroupConv[];
 }
