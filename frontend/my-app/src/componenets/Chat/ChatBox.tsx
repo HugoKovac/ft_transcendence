@@ -12,7 +12,7 @@ export type userType = {
 	providerId:string,
 }
 
-const ChatBox = (props: {conv:number, logState:number, nav:number, setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean}) => {
+const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void, nav:number, setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean}) => {
 	const logStateCpy = props.logState
 	const convCpy = props.conv
 	const navCpy = props.nav
@@ -191,7 +191,7 @@ const ChatBox = (props: {conv:number, logState:number, nav:number, setRefreshCon
 	}, [navCpy, refresh, logStateCpy, convCpy, requestPrivate, setPasswordPopupState, setRequestPrivate, setGoodPass])
 
 	let right = <ChatRight conv={props.conv} msgList={msgList}
-		setRefresh={setRefresh} nav={props.nav}
+		setRefresh={setRefresh} nav={props.nav} setConv={props.setConv}
 		userGroupList={userGroupList} setRefreshConvList={props.setRefreshConvList}
 		isConvPrivate={props.isConvPrivate} passwordInput={passwordInput}
 		setPasswordInput={setPasswordInput} goodPass={goodPass}

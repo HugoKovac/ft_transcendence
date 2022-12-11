@@ -4,7 +4,7 @@ import LoginStateContext from '../Login/LoginStateContext'
 import './AdminPanel.scss'
 import { userType } from './ChatBox'
 
-const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelTrigger: (v:boolean)=>void, setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void}) => {
+const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: (v:number)=>void, setPanelTrigger: (v:boolean)=>void, setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void}) => {
 
 	const [groupName, setGroupName] = useState('')
 	const [friendList, setFriendList] = useState([<label></label>])
@@ -107,6 +107,7 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setPanelT
 				await axInst.post('set_password', {group_conv_id: props.conv_id, password: props.passwordInput}).then((res) => {
 					console.log(res.data)
 				})
+				props.setConv(0)
 			}
 
 			props.setPanelTrigger(false)

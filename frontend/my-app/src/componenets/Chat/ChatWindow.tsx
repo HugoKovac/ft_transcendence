@@ -40,7 +40,7 @@ const ChatWindow = () => {
 			</div>
 			<NewConvBtn popup={popup} setPopup={setPopup} convList={convList} nav={nav} />
 		</div>
-		<ChatBox conv={conv} logState={logState}
+		<ChatBox conv={conv} logState={logState} setConv={setConv}
 			nav={nav} setRefreshConvList={setRefreshConvList} isConvPrivate={isConvPrivate}
 		/>
 	</div>

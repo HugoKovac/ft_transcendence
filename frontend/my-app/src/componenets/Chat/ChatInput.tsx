@@ -22,8 +22,8 @@ type privateGroupMessageObj = {
 	password:string,
 }
 
-function ChatInput({conv_id, setRefresh, nav, userGroupList, setRefreshConvList, isConvPrivate, passwordInput, setPasswordInput, goodPass}:
-	{conv_id:number, setRefresh:(v:boolean)=>void, nav:number, userGroupList:userType[], setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void, goodPass: {conv_id:number, passState:boolean, password:string}[]} ){
+function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefreshConvList, isConvPrivate, passwordInput, setPasswordInput, goodPass}:
+	{conv_id:number, setRefresh:(v:boolean)=>void, nav:number, userGroupList:userType[], setConv: (v:number)=>void, setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void, goodPass: {conv_id:number, passState:boolean, password:string}[]} ){
 	const socket = io("localhost:3000", {
 		auth: (cb) => {
 			cb({
@@ -85,7 +85,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setRefreshConvList,
 	const panelPopup = nav === 2 ? <Popup trigger={panelTrigger} setPopup={setPanelTrigger}> 
 		<h1>Manage Group</h1>
 		<AdminPanel userGroupList={userGroupList} conv_id={conv_id} setPanelTrigger={setPanelTrigger}
-		setRefreshConvList={setRefreshConvList} isConvPrivate={isConvPrivate}
+		setRefreshConvList={setRefreshConvList} isConvPrivate={isConvPrivate} setConv={setConv}
 		passwordInput={passwordInput} setPasswordInput={setPasswordInput}/>
 	 </Popup>
 	 : <></>
