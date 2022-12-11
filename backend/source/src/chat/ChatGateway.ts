@@ -1,7 +1,7 @@
 import { WebSocketGateway, SubscribeMessage, ConnectedSocket, MessageBody, WebSocketServer } from '@nestjs/websockets'
 import {Socket, Server} from 'socket.io'
 import { ChatService } from './chat.service'
-import { newGroupMsgDTO, newMsgDTO } from './input.dto'
+import { newGroupMsgDTO, newMsgDTO, newPrivateGroupMsgDTO } from './input.dto'
 
 @WebSocketGateway({
 	cors: {
@@ -30,6 +30,13 @@ export class ChatGateway{
 	async handleGroupMessage(@ConnectedSocket() client: Socket, @MessageBody()body: newGroupMsgDTO){
 		// console.log(body)
 		console.log(await this.chatService.newGroupMsg(body, client.handshake.auth.token))
+		this.serv.emit('refresh')
+	}
+
+	@SubscribeMessage('privateGroupMessage')
+	async handlePrivateGroupMessage(@ConnectedSocket() client: Socket, @MessageBody()body: newPrivateGroupMsgDTO){
+		console.log(body)
+		console.log(await this.chatService.newPrivateGroupMsg(body, client.handshake.auth.token))
 		this.serv.emit('refresh')
 	}
 }

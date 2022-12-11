@@ -16,8 +16,14 @@ type groupMessageObj = {
 	message:string,
 }
 
-function ChatInput({conv_id, setRefresh, nav, userGroupList, setRefreshConvList, isConvPrivate, passwordInput, setPasswordInput}:
-	{conv_id:number, setRefresh:(v:boolean)=>void, nav:number, userGroupList:userType[], setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void} ){
+type privateGroupMessageObj = {
+	group_conv_id:number,
+	message:string,
+	password:string,
+}
+
+function ChatInput({conv_id, setRefresh, nav, userGroupList, setRefreshConvList, isConvPrivate, passwordInput, setPasswordInput, goodPass}:
+	{conv_id:number, setRefresh:(v:boolean)=>void, nav:number, userGroupList:userType[], setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void, goodPass: {conv_id:number, passState:boolean, password:string}[]} ){
 	const socket = io("localhost:3000", {
 		auth: (cb) => {
 			cb({
@@ -25,6 +31,13 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setRefreshConvList,
 			});
 		  }
 	})
+
+	const findGoodPass = (conv_id:number) => {
+		for (let i of goodPass)
+			if (i.conv_id === conv_id)
+				return i
+		return goodPass[0]
+	}
 
 	const [inputMessage, setInputMessage] = useState<string>('')
 	const payloadMsg: messageObj = {
@@ -37,6 +50,12 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setRefreshConvList,
 		message: inputMessage
 	}
 
+	const payloadPrivateGroupMsg: privateGroupMessageObj = {
+		group_conv_id: conv_id,
+		message: inputMessage,
+		password: findGoodPass(conv_id)?.password
+	}
+
 	const SendMessage = async (e: any) => {
 		e.preventDefault()
 		socket.emit('message', payloadMsg)
@@ -46,6 +65,12 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setRefreshConvList,
 	const SendGroupMessage = async (e: any) => {
 		e.preventDefault()
 		socket.emit('groupMessage', payloadGroupMsg)
+		setInputMessage('')
+	}
+
+	const SendPrivateGroupMessage = async (e: any) => {
+		e.preventDefault()
+		socket.emit('privateGroupMessage', payloadPrivateGroupMsg)
 		setInputMessage('')
 	}
 	
@@ -65,7 +90,11 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setRefreshConvList,
 	 </Popup>
 	 : <></>
 
-	return <form onSubmit={nav === 1 ? SendMessage : SendGroupMessage} className='chatInput'>
+	let submitHandler = nav === 1 ? SendMessage : SendGroupMessage
+	if (isConvPrivate)
+		submitHandler = SendPrivateGroupMessage
+
+	return <form onSubmit={submitHandler} className='chatInput'>
 			<input
 				className="chat-input" placeholder="type your message..." autoFocus maxLength={300}
 				autoComplete="off" onChange={(e) => {setInputMessage(e.target.value)}}

@@ -255,6 +255,30 @@ export class ChatService{
 		}
 	}
 
+	async newPrivateGroupMsg({group_conv_id, message, password}:DTO.newPrivateGroupMsgDTO, jwt:string){
+		let tokenUserInfo: any = decode(jwt)
+		if (!message)
+			return false
+		try{
+			const group_conv: GroupConv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}})
+
+			if (!group_conv || !group_conv.isPrivate)
+				return false
+
+			if (!await bcrypt.compare(password, group_conv.password))
+				return false
+
+			const newMsg = this.messRepo.create({sender_id: tokenUserInfo.id, message: message, group_conv: group_conv})
+			await this.messRepo.save(newMsg)
+
+			return true
+			
+		}catch(e){
+			console.error(e)
+			return false
+		}
+	}
+
 	async addUserToGroup({group_conv_id, new_user_ids}:DTO.addUserToGroupDTO){
 		if (!new_user_ids || !new_user_ids.length)
 			return true

@@ -43,6 +43,26 @@ export class newGroupMsgDTO{
 	message: string
 }
 
+export class newPrivateGroupMsgDTO{
+	@IsNotEmpty()
+	@IsNumber()
+	sender_id:number
+	
+	@IsNotEmpty()
+	@IsNumber()
+	group_conv_id:number
+	
+	@IsNotEmpty()
+	@IsString()
+	@MaxLength(300)
+	message: string
+
+	@IsNotEmpty()
+	@IsString()
+	@MaxLength(35)
+	password: string
+}
+
 export class getConvMsgDTO{
 	@IsNotEmpty()
 	@IsNumber()

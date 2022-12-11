@@ -194,7 +194,7 @@ const ChatBox = (props: {conv:number, logState:number, nav:number, setRefreshCon
 		setRefresh={setRefresh} nav={props.nav}
 		userGroupList={userGroupList} setRefreshConvList={props.setRefreshConvList}
 		isConvPrivate={props.isConvPrivate} passwordInput={passwordInput}
-		setPasswordInput={setPasswordInput}
+		setPasswordInput={setPasswordInput} goodPass={goodPass}
 	/>
 	if (props.conv === 0 || !findGoodPass(convCpy)?.passState)
 		right = <div className='chatBox' />
