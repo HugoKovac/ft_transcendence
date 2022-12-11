@@ -18,7 +18,6 @@ export default function GameLobby() {
 
         if ( searchParamsString )
         {
-            console.log(searchParamsString);
             socket.emit(ClientEvents.JoinLobby, {
                 lobbyId: searchParamsString,
           });

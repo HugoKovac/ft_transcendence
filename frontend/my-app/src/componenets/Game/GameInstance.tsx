@@ -2,6 +2,11 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { WebsocketContext } from "./WebsocketContext";
 import '../../styles/GameInstance.css';
 import NavBar from '../../componenets/NavBar';
+import { clearInterval } from "timers";
+import { ServerEvents } from "../../shared/server/Server.Events";
+import { LobbyState } from "./LobbyState";
+import { useRecoilValue } from "recoil";
+import { ClientEvents } from "../../shared/client/Client.Events";
 
 interface Paddle
 {
@@ -12,6 +17,7 @@ interface Paddle
     color : string;
     speed : number;
     gravity : number;
+    ready : boolean;
 }
 
 interface Ball
@@ -40,7 +46,8 @@ const BALLGRAVITY = 4;
 
 export default function GameInstance()
 {
-    // const socket = useContext(WebsocketContext);
+    const CurrentLobbyState = useRecoilValue(LobbyState);
+    const socket = useContext(WebsocketContext);
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     const [Player1] = useState<Paddle>({
@@ -51,6 +58,7 @@ export default function GameInstance()
         color: "#fff",
         speed: 1,
         gravity: 3,
+        ready: false,
     })
 
     const [Player2] = useState<Paddle>({
@@ -60,7 +68,8 @@ export default function GameInstance()
         height: PADDLEHEIGHT,
         color: "#fff",
         speed: 1,
-        gravity: 3
+        gravity: 3,
+        ready: false,
     })
 
     const [Ball] = useState<Ball>({
@@ -71,21 +80,19 @@ export default function GameInstance()
         color: "#fff",
         speed: BALLSPEED,
         gravity: BALLGRAVITY
-    }) 
+    })
 
-    let upArrow = false;
-    let downArrow = false;
+    let gameStart = false;
 
-    let keyW = false;
-    let keyS = false;
+    let Player1UpArrow = false;
+    let Player1DownArrow = false;
 
+    let Player2UpArrow = false;
+    let Player2DownArrow = false;
 
     let scoreOne = 0;
     let scoreTwo = 0;
 
-    
-
-    
     const drawPaddle = ( ( config : Paddle ) => {
 
         if (canvasRef.current)
@@ -116,6 +123,21 @@ export default function GameInstance()
         }   
     });
 
+    const drawLine = ( () => {
+
+        if (canvasRef.current)
+        {
+            const canvas = canvasRef.current;
+            const context = canvas.getContext('2d');
+            if (context) 
+            {
+                context.font = "18px Arial";
+                context.fillStyle = "#fff";
+                context.fillRect(CANVASWIDTH / 2, 0, NETWIDTH, NETHEIGHT);
+            }
+        }
+    })
+
     const drawScore = ( ( ) => {
         if (canvasRef.current)
         {
@@ -123,12 +145,10 @@ export default function GameInstance()
             const context = canvas.getContext('2d');
             if (context) 
             {
-
                 context.font = "18px Arial";
                 context.fillStyle = "#fff";
                 context.fillText(scoreOne.toString(), canvas.width / 2 - 60, 30);
                 context.fillText(scoreTwo.toString(), canvas.width / 2 + 60, 30);
-                context.fillRect(CANVASWIDTH / 2, 0, NETWIDTH, NETHEIGHT);
             }
         }
     });
@@ -192,103 +212,205 @@ export default function GameInstance()
         }
     });
 
+    const waitForOpponent = ( () => {
+
+        if (canvasRef.current)
+        {
+            const canvas = canvasRef.current;
+            const context = canvas.getContext('2d');
+
+            if (context)
+            {
+                context.font = "18px Arial";
+                context.fillStyle = "#fff";
+                if ( Player1.ready == false )
+                    context.fillText("Waiting for player1....", canvas.width / 10, 30);
+                if ( Player2.ready == false )
+                    context.fillText("Waiting for player2....", canvas.width - canvas.width / 3, 30);
+            }
+        }   
+    })
+
+    function Player1keyDownHandler( event : any )
+    {
+        if ( event.defaultPrevented ) 
+            return ;
+
+        if ( event.code === "ArrowUp" ) 
+            socket.emit(ClientEvents.Player1ArrowUpPress);
+
+        else if ( event.code === "ArrowDown"  ) 
+            socket.emit(ClientEvents.Player1ArrowDownPress);
+        
+        event.preventDefault();
+    }
+
+    function Player2keyDownHandler( event : any )
+    {
+        if ( event.defaultPrevented ) 
+            return ;
+
+        if ( event.code === "ArrowUp") 
+            socket.emit(ClientEvents.Player2ArrowUpPress);
+
+        else if ( event.code === "ArrowDown"  ) 
+            socket.emit(ClientEvents.Player2ArrowDownPress);
+        
+        event.preventDefault();
+    }
+
+    function Player1keyUpHandler( event : any )
+    {
+        if ( event.defaultPrevented ) 
+            return ;
+
+        console.log("PLAYER 1");
+        console.log(event.code);
+
+        if ( event.code === "Space" && gameStart == false )
+            socket.emit(ClientEvents.ReadyState);
+
+        if ( event.code === "ArrowUp") 
+            socket.emit(ClientEvents.Player1ArrowUpRelease);
+
+        else if ( event.code === "ArrowDown"  ) 
+            socket.emit(ClientEvents.Player1ArrowDownRelease);
+            
+        event.preventDefault();
+    }
+
+    function Player2keyUpHandler( event : any )
+    {
+        if ( event.defaultPrevented ) 
+            return ;
+
+            console.log("PLAYER 2");
+            console.log(event.code);
+
+        if ( event.code === "Space" && gameStart == false )
+            socket.emit(ClientEvents.ReadyState);
+
+        if ( event.code === "ArrowUp") 
+            socket.emit(ClientEvents.Player2ArrowUpRelease);
+
+        else if ( event.code === "ArrowDown"  ) 
+            socket.emit(ClientEvents.Player2ArrowDownRelease);
+            
+        event.preventDefault();
+    }
+
     const updateVar = ( () =>
     {
         let canvasHeight = 0;
         if (canvasRef.current)
             canvasHeight = canvasRef.current.height;
 
-        if ( keyW && Player2.y - Player2.gravity > 0 ) 
-            Player2.y -= Player2.gravity * 4;
-
-        else if ( keyS && Player2.y + Player2.height + Player2.gravity < canvasHeight ) 
-            Player2.y += Player2.gravity * 4;
-
-        else if ( upArrow && Player1.y - Player1.gravity > 0 ) 
+        if ( Player1UpArrow && Player1.y - Player1.gravity > 0 ) 
             Player1.y -= Player1.gravity * 4;
 
-        else if ( downArrow && Player1.y + Player1.height + Player1.gravity < canvasHeight ) 
+        else if ( Player1DownArrow && Player1.y + Player1.height + Player1.gravity < canvasHeight ) 
             Player1.y += Player1.gravity * 4;
+
+        else if ( Player2UpArrow && Player2.y - Player2.gravity > 0  ) 
+            Player2.y -= Player2.gravity * 4;
+
+        else if ( Player2DownArrow && Player2.y + Player2.height + Player2.gravity < canvasHeight ) 
+            Player2.y += Player2.gravity * 4;
+            
+    });
+
+    const serverloop = ( () => {
+
+        socket.emit(ClientEvents.GameLoop);
+
+        if ( CurrentLobbyState )
+        {
+            gameStart = CurrentLobbyState.gameStart;
+            scoreOne = CurrentLobbyState.scoreOne;
+            scoreTwo = CurrentLobbyState.scoreTwo;
+
+            Player1.x = CurrentLobbyState.Player1x;
+            Player1.y = CurrentLobbyState.Player1y;
+            Player1.width = CurrentLobbyState.Player1width;
+            Player1.height = CurrentLobbyState.Player1height;
+            Player1.color = CurrentLobbyState.Player1color;
+            Player1.speed = CurrentLobbyState.Player1speed;
+            Player1.gravity = CurrentLobbyState.Player1gravity;
+
+            Player2.x = CurrentLobbyState.Player2x;
+            Player2.y = CurrentLobbyState.Player2y;
+            Player2.width = CurrentLobbyState.Player2width;
+            Player2.height = CurrentLobbyState.Player2height;
+            Player2.color = CurrentLobbyState.Player2color;
+            Player2.speed = CurrentLobbyState.Player2speed;
+            Player2.gravity = CurrentLobbyState.Player2gravity;
+
+            Ball.x = CurrentLobbyState.Ballx;
+            Ball.y = CurrentLobbyState.Bally;
+            Ball.width = CurrentLobbyState.Ballwidth;
+            Ball.height = CurrentLobbyState.Ballheight;
+            Ball.color = CurrentLobbyState.Ballcolor;
+            Ball.speed = CurrentLobbyState.Ballspeed;
+            Ball.gravity = CurrentLobbyState.Ballgravity;
+
+            if ( CurrentLobbyState.Player1Ready === true )
+                Player1.ready = true;
+            else
+                Player1.ready = false;
+
+            if ( CurrentLobbyState.Player2Ready === true )
+                Player2.ready = true;
+            else
+                Player2.ready = false;
+        }
+
     });
 
     const gameloop = ( ( ) => {
+        serverloop();
         clear();
+        drawScore();
         drawPaddle(Player1);
         drawPaddle(Player2);
-        BallBounce(Ball);
-        BallCollision(Ball);
-        drawBall(Ball);
-        drawScore();
-        updateVar();
-        requestAnimationFrame(gameloop);
+        if ( gameStart != false )
+        {
+            drawLine();
+            drawBall(Ball);
+            // BallBounce(Ball);
+            // BallCollision(Ball);
+            // updateVar();
+        }
+        else
+        {
+            waitForOpponent();
+        }
     });
 
     useEffect( () => {
 
-        let anim = requestAnimationFrame(gameloop)
+        if ( CurrentLobbyState )
+        {
+            if ( CurrentLobbyState.Player1id == socket.id )
+            {
+                window.addEventListener('keydown', Player1keyDownHandler);
+                window.addEventListener('keyup', Player1keyUpHandler);
+            }
+            else if ( CurrentLobbyState.Player2id == socket.id )
+            {
+                window.addEventListener('keydown', Player2keyDownHandler);
+                window.addEventListener('keyup', Player2keyUpHandler);
+            }
+            else {} //! Else go to spectator mode
+        }
+
+        let anim = requestAnimationFrame(gameloop);
 
         return () =>
         {
-            console.log("Quitted animation frame ?");
             cancelAnimationFrame(anim);
         }
 
-    }, []);
-
-    window.addEventListener('keydown', keyDownHandler);
-    window.addEventListener('keyup', keyUpHandler);
-
-    function keyDownHandler( event : any )
-    {
-        if ( event.defaultPrevented ) 
-            return ;
-
-        if ( event.code === "Escape" )
-        {
-            Ball.speed = 0;
-            Ball.gravity = 0;
-        }
-
-        if ( event.code === "KeyW" ) 
-            keyW = true;
-
-        else if ( event.code === "KeyS" ) 
-            keyS = true;
-
-        else if ( event.code === "ArrowUp") 
-            upArrow = true;
-
-        else if ( event.code === "ArrowDown"  ) 
-            downArrow = true;
-        
-        event.preventDefault();
-    }
-
-    function keyUpHandler( event : any )
-    {
-        if ( event.defaultPrevented ) 
-            return ;
-
-        if ( event.code === "Escape" )
-        {
-            Ball.speed = 0;
-            Ball.gravity = 0;
-        }
-
-        if ( event.code === "KeyW" ) 
-            keyW = false;
-
-        else if ( event.code === "KeyS" ) 
-            keyS = false;
-
-        else if ( event.code === "ArrowUp") 
-            upArrow = false;
-
-        else if ( event.code === "ArrowDown"  ) 
-            downArrow = false;
-            
-        event.preventDefault();
-    }
+    }, [CurrentLobbyState]);
 
     return (
         <div>

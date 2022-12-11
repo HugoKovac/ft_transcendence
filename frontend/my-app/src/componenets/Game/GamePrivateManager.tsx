@@ -20,10 +20,8 @@ export default function GamePrivateManager() {
         });
 
         socket.on(ServerEvents.LobbyState, (data) => {
-    
             setLobby(data);
             setSearchParams({id: data.lobbyid});
-
         });
 
         return () => {
@@ -35,8 +33,6 @@ export default function GamePrivateManager() {
 
     if ( lobby === null )
         return <GameLobby/>
-
-    console.log("GOING TO GAME !");
 
     return <GameInstance/>;
 }

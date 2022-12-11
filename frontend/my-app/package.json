@@ -1,4 +1,5 @@
 {
+  "browser": { "timers": false},
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
@@ -53,5 +54,6 @@
     "@types/recoil": "^0.0.9",
     "css-loader": "^6.7.1",
     "style-loader": "^3.3.1"
+      
   }
 }

@@ -4,7 +4,7 @@ import { ServerEvents } from '../shared/server/Server.Events'
 import { Server, Socket } from 'socket.io'
 import { LobbyCreateDto } from './lobby/LobbyCreateDto';
 import { LobbyFactory } from './lobby/lobby-factory';
-import { Lobby } from './lobby/lobby';
+import { Lobby, ServerPayload } from './lobby/lobby';
 import { LobbyJoinDto } from './lobby/LobbyJoinDto';
 import { json } from 'stream/consumers';
 
@@ -14,18 +14,6 @@ export type AuthenticatedSocket = Socket & {
     lobby: null | Lobby;
   };
 
-};
-
-export type ServerPayload = {
-
-    [ServerEvents.LobbyCall]: {
-      message: 'The lobby say you Hi !';
-    };
-
-    [ServerEvents.LobbyState]: {
-      message: string;
-      lobbyid : string,
-    };
 };
 
 @WebSocketGateway({
@@ -68,16 +56,10 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
 
     //? Blind mode 
     @SubscribeMessage(ClientEvents.CreateLobby)
-    onLobbyCreation( client: AuthenticatedSocket, data: LobbyCreateDto ) : WsResponse<ServerPayload[ServerEvents.LobbyState]> 
+    onLobbyCreation( client: AuthenticatedSocket, data: LobbyCreateDto )
     {
       const lobby = this.lobbyManager.generateLobby(data.skin);
       lobby.addClient(client);
-
-      return (ServerEvents.LobbyState, {
-            event: ServerEvents.LobbyState,
-            data: { message: "server_createlobby", lobbyid: lobby.id }
-          }
-      )
     }
     
 
@@ -92,6 +74,86 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if ( client.data.lobby )
         client.data.lobby.removeClient(client);
+    }
+
+    @SubscribeMessage(ClientEvents.ReadyState)
+    onReadyState( client : AuthenticatedSocket )
+    {
+      if (!client.data.lobby)
+        return ;
+      client.data.lobby.instance.toggleReadyState(client.id);
+    }
+
+    @SubscribeMessage(ClientEvents.GameLoop)
+    onGameLoop( client : AuthenticatedSocket )
+    {
+      if (!client.data.lobby)
+        return ;
+      client.data.lobby.instance.gameLoop();
+    }
+
+    @SubscribeMessage(ClientEvents.Player1ArrowDownRelease)
+    onPlayer1ArrowDownRelease( client : AuthenticatedSocket )
+    {
+      if (!client.data.lobby)
+        return ;
+      client.data.lobby.instance.Player1ArrowDownRelease();
+    }
+
+    @SubscribeMessage(ClientEvents.Player1ArrowDownPress)
+    onPlayer1ArrowDownPress( client : AuthenticatedSocket )
+    {
+      if (!client.data.lobby)
+        return ;
+      client.data.lobby.instance.Player1ArrowDownPress();
+    }
+
+    @SubscribeMessage(ClientEvents.Player1ArrowUpRelease)
+    onPlayer1ArrowUpRelease( client : AuthenticatedSocket )
+    {
+      if (!client.data.lobby)
+        return ;
+      client.data.lobby.instance.Player1ArrowUpRelease();
+    }
+
+    @SubscribeMessage(ClientEvents.Player1ArrowUpPress)
+    onPlayer1ArrowUpPress( client : AuthenticatedSocket )
+    {
+      if (!client.data.lobby)
+        return ;
+      client.data.lobby.instance.Player1ArrowUpPress();
+    }
+
+    @SubscribeMessage(ClientEvents.Player2ArrowDownRelease)
+    onPlayer2ArrowDownRelease( client : AuthenticatedSocket )
+    {
+      if (!client.data.lobby)
+        return ;
+      client.data.lobby.instance.Player2ArrowDownRelease();
+    }
+
+    @SubscribeMessage(ClientEvents.Player2ArrowDownPress)
+    onPlayer2ArrowDownPress( client : AuthenticatedSocket )
+    {
+      if (!client.data.lobby)
+        return ;
+      client.data.lobby.instance.Player2ArrowDownPress();
+    }
+
+    @SubscribeMessage(ClientEvents.Player2ArrowUpRelease)
+    onPlayer2ArrowUpRelease( client : AuthenticatedSocket )
+    {
+      if (!client.data.lobby)
+        return ;
+      client.data.lobby.instance.Player2ArrowUpRelease();
+    }
+
+    @SubscribeMessage(ClientEvents.Player2ArrowUpPress)
+    onPlayer2ArrowUpPress( client : AuthenticatedSocket )
+    {
+      if (!client.data.lobby)
+        return ;
+      client.data.lobby.instance.Player2ArrowUpPress();
     }
 
     //? Blind mode
