@@ -49,7 +49,6 @@ export class GroupConv{
 		user => user.own_group
 	)
 	owner: User
-	/**Un group peut avoir un owner -- ManyToOne*/
 
 	@ManyToMany(
 		() => User,
@@ -59,5 +58,4 @@ export class GroupConv{
 		name: 'admin'
 	})
 	admin: User[]
-	/**Un group peut avoir plusieurs admin -- ManyToMany*/
 }

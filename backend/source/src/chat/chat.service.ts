@@ -166,7 +166,34 @@ export class ChatService{
 		}
 	}
 
-	 async getGroupSecretConvMsg({group_conv_id, password}:DTO.getGroupSecretConvMsgDTO, jwt:string){
+	async getConvUsers({group_conv_id}:DTO.getGroupConvMsgDTO, jwt:string){
+		let tokenUserInfo: any = decode(jwt)
+		try{
+			const conv = await this.groupConvRepo.findOne({where:{group_conv_id: group_conv_id}, relations:['users']})
+
+			if (!conv)
+				return false
+
+			let kick = true
+			let rtn = []
+			for (let i of conv.users){
+				if (i.id === tokenUserInfo.id)
+					kick = false
+				if (i.id !== tokenUserInfo.id)
+					rtn.push(i)
+			}
+
+			if (kick)
+				return false
+
+			return rtn
+		}
+		catch(e){
+			console.error(e)
+		}
+	}
+
+	async getGroupSecretConvMsg({group_conv_id, password}:DTO.getGroupSecretConvMsgDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 
 		try{
@@ -236,10 +263,9 @@ export class ChatService{
 	async newAdmin({group_conv_id, admin_ids}: DTO.newAdminDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		try{
+			console.log(group_conv_id, admin_ids)
 			const conv: GroupConv = await this.groupConvRepo.findOne({where: {group_conv_id}, relations:['owner', 'admin']})
-
-			console.log(conv, conv.owner.id, tokenUserInfo.id)
-
+			
 			if (!conv || conv.owner.id !== tokenUserInfo.id)
 				return false
 
