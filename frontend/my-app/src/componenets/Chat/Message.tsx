@@ -1,5 +1,3 @@
-import console from "console"
-
 const Message = (props : {content:string, own: boolean, username: string, userPP:string, date:string}) => {
 	const date = new Date(props.date).toLocaleString()
 

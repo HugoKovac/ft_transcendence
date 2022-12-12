@@ -7,4 +7,23 @@ export enum ClientEvents
     LeaveLobby = 'client.leavelobby',
 
     JoinMatchmaking = 'client.joinmatchmaking',
+
+    ReadyState = 'client.readystate',
+
+    Player1ArrowUpRelease = 'client.player1arrowuprelease',
+    Player1ArrowUpPress = 'client.player1arrowuppress',
+
+    Player1ArrowDownRelease = 'client.player1arrowdownrelease',
+    Player1ArrowDownPress = 'client.player1arrowdownpress',
+
+    Player2ArrowUpRelease = 'client.player2arrowuprelease',
+    Player2ArrowUpPress = 'client.player2arrowuppress',
+
+    Player2ArrowDownRelease = 'client.player2arrowdownrelease',
+    Player2ArrowDownPress = 'client.player2arrowdownpress',
+
+
+
+
+    GameLoop = 'client.gameloop',
 }

@@ -12,6 +12,7 @@ const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX
 	const request = props.nav === 1 ? 'get_all_conv' : 'get_all_group_conv'
 	const refreshConvListCpy = props.refreshConvList
 	const setRefreshConvListCpy = props.setRefreshConvList
+	const setisConvPrivateCpy = props.setisConvPrivate
 
 	useEffect(() =>{
 		const fetchConvList = async () => {
@@ -28,18 +29,18 @@ const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX
 					if (navCpy === 1)
 						list.push(<Conv
 							key={i.conv_id} name={i.username} img_path={i.pp} conv_id={i.conv_id}
-							setConv={setConvCpy} isPrivate={i.isPrivate} setisConvPrivate={props.setisConvPrivate}
+							setConv={setConvCpy} isPrivate={i.isPrivate} setisConvPrivate={setisConvPrivateCpy}
 						/>)
 					else{
 						if (i.isPrivate)
 							listPrivate.push(<Conv
 								key={i.group_conv_id} name={i.group_name} img_path={''} conv_id={i.group_conv_id}
-								setConv={setConvCpy} isPrivate={i.isPrivate} setisConvPrivate={props.setisConvPrivate}
+								setConv={setConvCpy} isPrivate={i.isPrivate} setisConvPrivate={setisConvPrivateCpy}
 							/>)
 						else
 							list.push(<Conv
 								key={i.group_conv_id} name={i.group_name} img_path={''} conv_id={i.group_conv_id}
-								setConv={setConvCpy} isPrivate={i.isPrivate} setisConvPrivate={props.setisConvPrivate}
+								setConv={setConvCpy} isPrivate={i.isPrivate} setisConvPrivate={setisConvPrivateCpy}
 							/>)
 					}
 				}
@@ -50,7 +51,7 @@ const SideBarChat = (props:{conv:number, setConv: (v:number)=>void, convList:JSX
 		}
 		fetchConvList()
 		setRefreshConvListCpy(false)
-	}, [popupCpy, setConvListCpy, setConvCpy, navCpy, refreshConvListCpy, setRefreshConvListCpy, request])
+	}, [popupCpy, setConvListCpy, setConvCpy, navCpy, refreshConvListCpy, setRefreshConvListCpy, request, setConvListPrivateCpy, setisConvPrivateCpy])
 
 	const body = props.nav === 1 ? <div className='body-nav-bar'>
 		{props.convList}

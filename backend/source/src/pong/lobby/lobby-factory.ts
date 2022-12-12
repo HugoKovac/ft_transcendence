@@ -22,7 +22,7 @@ export class LobbyFactory {
     //? Generate a new lobby and insert the client that created it
     public generateLobby( skin: string ) : Lobby 
     {
-        skin = 'default'; //? Skin is set to default for now
+        skin = "default"; //? Skin is set to default for now
 
         const lobby = new Lobby(this.server, skin);
 
