@@ -28,6 +28,16 @@ export class newGroupConvDTO{
 	group_name:string
 }
 
+export class newAdminDTO{
+	@IsNotEmpty()
+	@IsNumber()
+	group_conv_id:number
+
+	@IsArray()
+	@ArrayMinSize(1)
+	admin_ids:number[]
+}
+
 export class newGroupMsgDTO{
 	@IsNotEmpty()
 	@IsNumber()

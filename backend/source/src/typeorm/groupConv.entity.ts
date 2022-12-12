@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Message } from "./message.entity";
 import { User } from "./user.entity";
 
@@ -40,7 +40,24 @@ export class GroupConv{
 	@Column({
 		nullable: false,
 		type: 'varchar',
-		default: ''
+		default: '',
 	})
 	password: string
+
+	@ManyToOne(
+		() => User,
+		user => user.own_group
+	)
+	owner: User
+	/**Un group peut avoir un owner -- ManyToOne*/
+
+	@ManyToMany(
+		() => User,
+		user => user.admin_group
+	)
+	@JoinTable({
+		name: 'admin'
+	})
+	admin: User[]
+	/**Un group peut avoir plusieurs admin -- ManyToMany*/
 }

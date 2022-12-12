@@ -25,6 +25,12 @@ export class ChatController{
 		return await this.chatService.newGroupConv(bod, req.cookies['jwt'])
 	}
 
+	@Post('new_admin')
+	@UseGuards(AuthGuard('jwt'))
+	async newAdmin(@Body()bod: DTO.newAdminDTO, @Req() req){
+		return await this.chatService.newAdmin(bod, req.cookies['jwt'])
+	}
+
 	@Post('new_group_msg')
 	@UseGuards(AuthGuard('jwt'))
 	async newGroupMsg(@Body()bod: DTO.newGroupMsgDTO, @Req() req){

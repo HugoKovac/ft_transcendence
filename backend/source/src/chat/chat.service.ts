@@ -165,11 +165,6 @@ export class ChatService{
 			return false
 		}
 	}
-	/**
-	 * getGroupConvMsg return conv if not private
-	 * Pour les private convs passer par un autre service qui return la conv si le message passe en payload est le bon
-	 * check le hash du password pour tous les messages envoye
-	 */
 
 	 async getGroupSecretConvMsg({group_conv_id, password}:DTO.getGroupSecretConvMsgDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
@@ -217,13 +212,17 @@ export class ChatService{
 			if (!group_name)
 				return false
 			let users: User[] = []
+			let owner: User
+
 			for (let i of user_ids){
 				const user: User = await this.userRepo.findOne({where: {id: i}})
 				if (user)
 					users.push(user)
+				if (user.id === tokenUserInfo.id)
+					owner = user
 			}
 
-			const newGroup = this.groupConvRepo.create({group_name: group_name, users: users})
+			const newGroup = this.groupConvRepo.create({group_name: group_name, users: users, owner: owner, admin: [owner]})
 			
 			await this.groupConvRepo.save(newGroup)
 
@@ -232,6 +231,35 @@ export class ChatService{
 			console.error(e)
 			return false
 		}
+	}
+
+	async newAdmin({group_conv_id, admin_ids}: DTO.newAdminDTO, jwt:string){
+		let tokenUserInfo: any = decode(jwt)
+		try{
+			const conv: GroupConv = await this.groupConvRepo.findOne({where: {group_conv_id}, relations:['owner', 'admin']})
+
+			console.log(conv, conv.owner.id, tokenUserInfo.id)
+
+			if (!conv || conv.owner.id !== tokenUserInfo.id)
+				return false
+
+			let new_admin = conv.admin
+
+			for (let i of admin_ids){
+				const admin = await this.userRepo.findOne({where: {id: i}})
+				if (admin)
+					new_admin.push(admin)
+			}
+
+			const new_conv = this.groupConvRepo.create({...conv, admin: new_admin})
+			await this.groupConvRepo.save(new_conv)
+
+			return true
+		}catch(e){
+			console.error(e)
+			return false
+		}
+
 	}
 
 	async newGroupMsg({group_conv_id, message}:DTO.newGroupMsgDTO, jwt:string){
