@@ -141,10 +141,11 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 			})
 			try{
 				await axInst.post('get_conv_users', {group_conv_id: convCpy}).then((res)=>{
-
 					let list = []
-					for (let i of res.data)
-						list.push(<label key={i.id}><input value={i.id} type='checkbox' onChange={handleChange}/>{i.username}</label>)
+					for (let i of res.data){
+						console.log(i)
+						list.push(<label key={i.id}><input value={i.id} type='checkbox' checked={i.admin} onChange={handleChange}/>{i.username}</label>)
+					}
 
 					setGroupUserList(list)
 				})

@@ -169,7 +169,7 @@ export class ChatService{
 	async getConvUsers({group_conv_id}:DTO.getGroupConvMsgDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		try{
-			const conv = await this.groupConvRepo.findOne({where:{group_conv_id: group_conv_id}, relations:['users']})
+			const conv = await this.groupConvRepo.findOne({where:{group_conv_id: group_conv_id}, relations:['users', 'admin']})
 
 			if (!conv)
 				return false
@@ -177,10 +177,16 @@ export class ChatService{
 			let kick = true
 			let rtn = []
 			for (let i of conv.users){
+				console.log(i)
 				if (i.id === tokenUserInfo.id)
 					kick = false
-				if (i.id !== tokenUserInfo.id)
-					rtn.push(i)
+				if (i.id !== tokenUserInfo.id){
+					let ad = false
+					for (let j of conv.admin)
+						if (j.id === i.id)
+							ad = true
+					rtn.push({...i, admin:ad})
+				}
 			}
 
 			if (kick)
