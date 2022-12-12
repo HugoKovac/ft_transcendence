@@ -294,6 +294,42 @@ export class ChatService{
 
 	}
 
+	async delAdmin({group_conv_id, admin_ids}: DTO.newAdminDTO, jwt:string){
+		let tokenUserInfo: any = decode(jwt)
+
+		const isInIt = (v:number) =>{
+			for (let i of admin_ids){
+				if (i === parseInt(v.toString()))
+					return false
+			}
+			return true
+		}
+
+		try{
+			const conv = await this.groupConvRepo.findOne({where:{group_conv_id:group_conv_id}, relations:['admin', 'owner']})
+
+			if (!conv || conv.owner.id !== tokenUserInfo.id)
+				return false
+
+			let new_admin = []
+			for (let i of conv.admin)
+				if (isInIt(i.id)){
+					console.log(isInIt(i.id))
+					new_admin.push(i)
+				}
+
+			console.log(conv.admin ,new_admin)
+			const new_conv = this.groupConvRepo.create({...conv, admin: new_admin})
+			await this.groupConvRepo.save(new_conv)
+
+			return true
+			
+		}catch(e){
+			console.error(e)
+			return false
+		}
+	}
+
 	async newGroupMsg({group_conv_id, message}:DTO.newGroupMsgDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		if (!message)

@@ -171,9 +171,19 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 				ids.push(parseInt(i))
 
 		await axInst.post('new_admin', {group_conv_id: props.conv_id, admin_ids: ids}).then((res) => {
-			console.log(res.data)
+			// console.log(res.data)
 			setPopAdmin(false)
 			props.setPanelTrigger(false)
+		}).catch((e) => {
+			console.error(e)
+		})
+
+		let del = []
+		for (let i in adminCheckbox)
+			if (adminCheckbox[i] === false)
+				del.push(parseInt(i))
+		await axInst.post('del_admin', {group_conv_id: props.conv_id, admin_ids: del}).then((res) => {
+			console.log(res.data)
 		}).catch((e) => {
 			console.error(e)
 		})
