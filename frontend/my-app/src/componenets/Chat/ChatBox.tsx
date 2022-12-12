@@ -1,5 +1,5 @@
 import axios from "axios"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import Popup from "../Popup"
 import ChatRight from "./ChatRight"
 import Message from "./Message"
@@ -32,14 +32,14 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 		<button onClick={(e) => {e.preventDefault(); setRequestPrivate(true)}}>Verify</button>
 	</Popup>
 
-	const findGoodPass = (conv_id:number) => {
+	const findGoodPass = useCallback( (conv_id:number) => {
 		for (let i of goodPass)
 			if (i.conv_id === conv_id)
 				return i
 		return undefined
-	}
+	}, [goodPass])
 
-	const ChangeGoodPass = (conv_id:number, val:boolean, pass:string) => {
+	const ChangeGoodPass = useCallback( (conv_id:number, val:boolean, pass:string) => {
 		const cpy = goodPass
 		for (let i of cpy)
 			if (i.conv_id === conv_id){
@@ -48,7 +48,7 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 				return cpy
 			}
 		return cpy
-	}
+	}, [goodPass])
 
 	useEffect(() => {//* DM
 		if (navCpy !== 1 || convCpy === 0)
@@ -87,7 +87,7 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 			console.error(e, "DM CONV")
 		}
 		setRefresh(false)
-	}, [navCpy, refresh, logStateCpy, convCpy, setGoodPass])
+	}, [navCpy, refresh, logStateCpy, convCpy, setGoodPass, findGoodPass, goodPass])
 
 	useEffect(() => {//* PUBLIC GROUP
 		if (navCpy !== 2 || isConvPrivateCpy !== false || convCpy === 0)
@@ -132,7 +132,7 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 			console.error(e, "PUBLIC GROUP CONV")
 		}
 		setRefresh(false)
-	}, [navCpy, refresh, logStateCpy, convCpy, setGoodPass])
+	}, [navCpy, refresh, logStateCpy, convCpy, setGoodPass, findGoodPass, goodPass, isConvPrivateCpy])
 
 	useEffect(() => {//* PRIVATE GROUP
 		if (navCpy !== 2 || isConvPrivateCpy !== true)
@@ -188,7 +188,8 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 		}
 		setPasswordPopupState(false)
 		setRefresh(false)
-	}, [navCpy, refresh, logStateCpy, convCpy, requestPrivate, setPasswordPopupState, setRequestPrivate, setGoodPass])
+	}, [navCpy, refresh, logStateCpy, convCpy, requestPrivate, setPasswordPopupState, setRequestPrivate, setGoodPass,
+	findGoodPass, goodPass, isConvPrivateCpy, ChangeGoodPass, passwordInput])
 
 	let right = <ChatRight conv={props.conv} msgList={msgList}
 		setRefresh={setRefresh} nav={props.nav} setConv={props.setConv}
