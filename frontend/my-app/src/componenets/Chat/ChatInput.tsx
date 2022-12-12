@@ -23,7 +23,6 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 			return goodPass[0]
 		}
 
-		console.log(msg)
 		if (channel){
 			const socket = io("localhost:3000", {
 				auth: (cb) => {
@@ -87,7 +86,6 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	return <form onSubmit={(e) => {
 		e.preventDefault()
 		setMsg(inputMessage)
-		console.log('msg: ',msg)
 		if (nav === 1)
 			setChannel('message')
 		else if (nav === 2 && !isConvPrivate)

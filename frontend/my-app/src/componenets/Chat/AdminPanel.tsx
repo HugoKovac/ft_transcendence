@@ -12,6 +12,7 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 	const [checkboxState, setCheckboxState] = useState([false])
 	const [delCheckboxState, setDelCheckboxState] = useState([false])
 	const [privateState, setPrivateState] = useState(props.isConvPrivate)
+	const [asChange, setAsChange] = useState(false)
 	const userGroupListCpy = props.userGroupList
 	const {logState} = useContext(LoginStateContext)
 	
@@ -98,18 +99,20 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 			await axInst.post('change_group_name', {group_conv_id: props.conv_id, new_name: groupName}).then((res) => {
 				// console.log(res.data)
 			})
-
+			
 			await axInst.post('change_group_visibility', {group_conv_id: props.conv_id, isPrivate: privateState}).then((res) => {
 				// console.log(res.data)
 			})
-
+			
 			if (privateState === true){
 				await axInst.post('set_password', {group_conv_id: props.conv_id, password: props.passwordInput}).then((res) => {
-					console.log(res.data)
+					// console.log(res.data)
 				})
-				props.setConv(0)
 			}
 
+			if (asChange)
+				props.setConv(0)
+			
 			props.setPanelTrigger(false)
 			props.setRefreshConvList(true)
 		}
@@ -131,7 +134,7 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 			</div>
 			<div className='form'>
 				<label htmlFor="isPrivate">Private : </label>
-				<input type="checkbox" id="isPrivate" checked={privateState} onChange={(e) => {setPrivateState(!privateState)}} />
+				<input type="checkbox" id="isPrivate" checked={privateState} onChange={(e) => {setPrivateState(!privateState); setAsChange(true)}} />
 				{groupPass}
 			</div>
 			<div className='add-users'>
