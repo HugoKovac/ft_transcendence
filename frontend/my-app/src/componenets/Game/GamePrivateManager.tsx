@@ -30,7 +30,7 @@ export default function GamePrivateManager() {
             socket.off('connect');
             socket.off(ServerEvents.LobbyState);
         }
-    }, []);
+    }, [searchParams, setLobby, socket, setSearchParams]);
 
     if ( lobby === null )
         return <GameLobby/>

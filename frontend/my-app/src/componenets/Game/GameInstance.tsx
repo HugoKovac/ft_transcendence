@@ -408,7 +408,7 @@ export default function GameInstance()
             cancelAnimationFrame(anim);
         }
 
-    }, [CurrentLobbyState]);
+    }, [CurrentLobbyState, gameloop, socket.id]);
 
     return (
         <div>

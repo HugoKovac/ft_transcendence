@@ -20,7 +20,7 @@ export default function GameLobby() {
           });
         }
         
-    }, [searchParamsString]);
+    }, [searchParamsString, socket]);
 
     const emitLobby = () => {
         socket.emit(ClientEvents.CreateLobby, {
