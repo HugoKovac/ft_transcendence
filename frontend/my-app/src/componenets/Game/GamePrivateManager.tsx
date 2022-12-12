@@ -20,6 +20,7 @@ export default function GamePrivateManager() {
         });
 
         socket.on(ServerEvents.LobbyState, (data) => {
+            console.log(searchParams);
             setLobby(data);
             setSearchParams({id: data.lobbyid});
         });
