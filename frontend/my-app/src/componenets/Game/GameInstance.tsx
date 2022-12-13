@@ -81,15 +81,16 @@ export default function GameInstance()
     })
 
     let gameStart = false;
-
-    // let Player1UpArrow = false;
-    // let Player1DownArrow = false;
-
-    // let Player2UpArrow = false;
-    // let Player2DownArrow = false;
+    let gameEnd = false;
+    let endMessage : string;
+    let PauseGame = false;
+    let gameFinish = false;
 
     let scoreOne = 0;
     let scoreTwo = 0;
+
+    let Player1Win = false;
+    let Player2Win = false;
 
     const drawPaddle = ( ( config : Paddle ) => {
 
@@ -151,53 +152,36 @@ export default function GameInstance()
         }
     });
 
-    // const BallBounce = ( ( Ball : Ball ) => {
+    const drawFinalScore = ( ( ) => {
+        if (canvasRef.current)
+        {
+            const canvas = canvasRef.current;
+            const context = canvas.getContext('2d');
+            if (context) 
+            {
+                context.font = "18px Arial";
+                context.fillStyle = "#fff";
+                if ( Player1Win === true )
+                    context.fillText("Player 1 Won !", canvas.width / 2 - 60, canvas.height / 2);
+                else if ( Player2Win === true )
+                    context.fillText("Player 2 Won !", canvas.width / 2 - 60, canvas.height / 2);
+            }
+        }
+    });
 
-    //     let canvasHeight = 0;
-    //     if (canvasRef.current)
-    //         canvasHeight = canvasRef.current.height;
-
-    //     if ( Ball.y + Ball.gravity <= 0 || Ball.y + Ball.gravity >= canvasHeight )
-    //     {
-    //         Ball.gravity = Ball.gravity * -1;
-    //         Ball.y += Ball.gravity;
-    //         Ball.x += Ball.speed;
-    //     }
-    //     else
-    //     {
-    //         Ball.y += Ball.gravity;
-    //         Ball.x += Ball.speed;
-    //     }
-    // });
-
-    // const BallCollision = ( ( Ball : Ball ) => {
-    //     if ( ( ( Ball.y + Ball.gravity <= Player2.y + Player2.height && Ball.y + Ball.gravity >= Player2.y ) && 
-    //         (Ball.x + Ball.width + Ball.speed >= Player2.x && Ball.x + Ball.width + Ball.speed <= Player2.x + Player2.width ) && 
-    //         Ball.y + Ball.gravity > Player2.y ))
-    //         {
-    //             Ball.speed = Ball.speed * -1;
-    //         }
-    //     else if ( Ball.y + Ball.gravity <= Player1.y + Player1.height && 
-    //         ( Ball.x + Ball.speed <= Player1.x + Player1.width && Ball.x + Ball.speed >= Player1.x ) && 
-    //         Ball.y + Ball.gravity > Player1.y)
-    //         {
-    //             Ball.speed = Ball.speed * -1;
-    //         }
-    //     else if ( Ball.x + Ball.speed < Player1.x - 100 )
-    //     {
-    //         scoreTwo += 1;
-    //         Ball.x = CANVASWIDTH / 2;
-    //         Ball.y = CANVASHEIGHT / 2;
-    //         Ball.speed = BALLSPEED;
-    //     }
-    //     else if ( Ball.x + Ball.speed > Player2.x + Player2.width + 100 )
-    //     {
-    //         scoreOne += 1;
-    //         Ball.x = CANVASWIDTH / 2;
-    //         Ball.y = CANVASHEIGHT / 2;
-    //         Ball.speed = BALLSPEED * -1;
-    //     }
-    // });
+    const drawEndGame = ( ( ) => {
+        if (canvasRef.current)
+        {
+            const canvas = canvasRef.current;
+            const context = canvas.getContext('2d');
+            if (context) 
+            {
+                context.font = "18px Arial";
+                context.fillStyle = "#fff";
+                context.fillText(endMessage, canvas.width / 2 - 60, canvas.height / 2);
+            }
+        }
+    });
     
     const clear = ( ( ) => {
         if (canvasRef.current)
@@ -297,35 +281,23 @@ export default function GameInstance()
         event.preventDefault();
     }
 
-    // const updateVar = ( () =>
-    // {
-    //     let canvasHeight = 0;
-    //     if (canvasRef.current)
-    //         canvasHeight = canvasRef.current.height;
-
-    //     if ( Player1UpArrow && Player1.y - Player1.gravity > 0 ) 
-    //         Player1.y -= Player1.gravity * 4;
-
-    //     else if ( Player1DownArrow && Player1.y + Player1.height + Player1.gravity < canvasHeight ) 
-    //         Player1.y += Player1.gravity * 4;
-
-    //     else if ( Player2UpArrow && Player2.y - Player2.gravity > 0  ) 
-    //         Player2.y -= Player2.gravity * 4;
-
-    //     else if ( Player2DownArrow && Player2.y + Player2.height + Player2.gravity < canvasHeight ) 
-    //         Player2.y += Player2.gravity * 4;
-            
-    // });
-
     const serverloop = ( () => {
 
         socket.emit(ClientEvents.GameLoop);
 
         if ( CurrentLobbyState )
         {
+            endMessage = CurrentLobbyState.endMessage;
+
+            gameEnd = CurrentLobbyState.gameEnd;
             gameStart = CurrentLobbyState.gameStart;
+            PauseGame = CurrentLobbyState.PauseGame;
+
             scoreOne = CurrentLobbyState.scoreOne;
             scoreTwo = CurrentLobbyState.scoreTwo;
+
+            Player1Win = CurrentLobbyState.Player1Win;
+            Player2Win = CurrentLobbyState.Player2Win;
 
             Player1.x = CurrentLobbyState.Player1x;
             Player1.y = CurrentLobbyState.Player1y;
@@ -370,18 +342,17 @@ export default function GameInstance()
         drawScore();
         drawPaddle(Player1);
         drawPaddle(Player2);
-        if ( gameStart !== false )
+        if ( gameStart === true && gameEnd === false )
         {
             drawLine();
             drawBall(Ball);
-            // BallBounce(Ball);
-            // BallCollision(Ball);
-            // updateVar();
         }
+        else if ( Player1Win === true || Player2Win === true )
+            drawFinalScore();
+        else if ( gameEnd === true )
+            drawEndGame();
         else
-        {
             waitForOpponent();
-        }
     });
 
     useEffect( () => {

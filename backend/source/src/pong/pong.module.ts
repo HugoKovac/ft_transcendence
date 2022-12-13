@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { LobbyFactory } from './lobby/lobby-factory';
+import { LobbyFactory } from './lobby/LobbyFactory';
 import { PongGateway } from './pong.gateway';
 
 @Module({

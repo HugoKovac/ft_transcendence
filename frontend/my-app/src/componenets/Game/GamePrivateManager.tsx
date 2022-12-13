@@ -6,6 +6,8 @@ import { WebsocketContext } from "./WebsocketContext";
 import { LobbyState } from "./LobbyState";
 import { useRecoilState } from 'recoil';
 import { useSearchParams } from "react-router-dom";
+import { Socket } from "socket.io-client";
+import { ClientEvents } from "../../shared/client/Client.Events";
     
 export default function GamePrivateManager() {
 
@@ -13,14 +15,29 @@ export default function GamePrivateManager() {
     const [lobby, setLobby] = useRecoilState(LobbyState);
     const [searchParams, setSearchParams] = useSearchParams();
 
+    let connectionLost = false;
+
     useEffect( () => {
 
-        socket.on('connect', () => {    
-            console.log('Connected !'); 
+        socket.on('connect', () => {
+
+            if ( connectionLost === true )
+                socket.emit(ClientEvents.PlayerRetrieveConnection);
+        });
+
+        socket.on('disconnect', (reason : Socket.DisconnectReason) => {
+
+            if ( reason === "ping timeout" || reason === "transport close" || reason === "transport error" )
+            {
+                connectionLost = true;
+                socket.emit(ClientEvents.PlayerLostConnection);
+            }
+            else
+                socket.emit(ClientEvents.LeaveLobby);
+
         });
 
         socket.on(ServerEvents.LobbyState, (data) => {
-            console.log(searchParams);
             setLobby(data);
             setSearchParams({id: data.lobbyid});
         });
@@ -28,6 +45,7 @@ export default function GamePrivateManager() {
         return () => {
             console.log('Disconnected');        
             socket.off('connect');
+            socket.off('disconnect');
             socket.off(ServerEvents.LobbyState);
         }
     }, [searchParams, setLobby, socket, setSearchParams]);

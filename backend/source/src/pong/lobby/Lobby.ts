@@ -2,7 +2,7 @@ import { v4 } from 'uuid';
 import { Server, Socket } from "socket.io";
 import { AuthenticatedSocket } from '../pong.gateway';
 import { ServerEvents } from 'src/shared/server/Server.Events';
-import { Instance } from '../instance/instance';
+import { Instance } from '../instance/Instance';
 
 export type ServerPayload = {
 
@@ -13,11 +13,15 @@ export type ServerPayload = {
     };
 
     [ServerEvents.LobbyState]: {
+
+      endMessage: string,
       message: string;
       skin: string;
       lobbyid : string,
 
+      gameEnd: boolean,
       gameStart: boolean,
+      PauseGame: boolean,
 
       scoreOne: number,
       scoreTwo: number,
@@ -27,6 +31,9 @@ export type ServerPayload = {
 
       Player1Ready: boolean,
       Player2Ready: boolean,
+
+      Player1Win: boolean,
+      Player2Win: boolean,
 
       Player1x: number,
       Player1y: number,
@@ -78,6 +85,9 @@ export class Lobby
     //    if ( this.clients.size >= this.maxClient )
     //         this.instance.triggerStart();
 
+        console.log("ADDING CLIENT NUMBER : ");
+        console.log(client.id);
+
         if ( this.instance.Player1Online == false )
         {
             this.instance.Player1id = client.id;
@@ -105,6 +115,9 @@ export class Lobby
 
         client.leave(this.id);
 
+        if ( client.id == this.instance.Player1id || client.id == this.instance.Player2id )
+            this.instance.finishGame("Your Opponent left the lobby");
+
         client.data.lobby = null;
 
         this.refreshLobby();
@@ -113,11 +126,15 @@ export class Lobby
     public refreshLobby()
     {
         const payload: ServerPayload[ServerEvents.LobbyState] = {
+
+            endMessage: this.instance.endMessage,
             message: "Refreshed lobby",
             skin: "default",
             lobbyid : this.id,
 
+            gameEnd: this.instance.gameEnd,
             gameStart: this.instance.gameStart,
+            PauseGame: this.instance.PauseGame,
 
             scoreOne: this.instance.scoreOne,
             scoreTwo: this.instance.scoreTwo,
@@ -127,6 +144,9 @@ export class Lobby
 
             Player1Ready: this.instance.Player1Ready,
             Player2Ready: this.instance.Player2Ready,
+
+            Player1Win: this.instance.Player1Win,
+            Player2Win: this.instance.Player2Win,
 
             Player1x: this.instance.Player1.x,
             Player1y: this.instance.Player1.y,

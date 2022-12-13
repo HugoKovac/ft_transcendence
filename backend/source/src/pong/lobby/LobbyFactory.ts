@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import { AuthenticatedSocket } from "src/pong/pong.gateway";
-import { Lobby } from "./lobby";
+import { Lobby } from "./Lobby";
 
 export class LobbyFactory {
 
@@ -39,9 +39,6 @@ export class LobbyFactory {
 
         if (!lobby) //! Handle this errors
             console.log("Lobby don't exist abort"); 
-
-        else if ( lobby.clients.size >= 2 ) //! Handle this errors
-            console.log("Lobby is full gtf bro "); 
 
         lobby.addClient(client);
     }

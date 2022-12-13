@@ -3,8 +3,8 @@ import { ClientEvents } from '../shared/client/Client.Events'
 import { ServerEvents } from '../shared/server/Server.Events'
 import { Server, Socket } from 'socket.io'
 import { LobbyCreateDto } from './lobby/LobbyCreateDto';
-import { LobbyFactory } from './lobby/lobby-factory';
-import { Lobby, ServerPayload } from './lobby/lobby';
+import { LobbyFactory } from './lobby/LobbyFactory';
+import { Lobby, ServerPayload } from './lobby/Lobby';
 import { LobbyJoinDto } from './lobby/LobbyJoinDto';
 import { json } from 'stream/consumers';
 
@@ -90,6 +90,22 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
       if (!client.data.lobby)
         return ;
       client.data.lobby.instance.gameLoop();
+    }
+
+    @SubscribeMessage(ClientEvents.PlayerLostConnection)
+    onPlayerLostConnection( client : AuthenticatedSocket )
+    {
+      if (!client.data.lobby)
+        return ;
+      client.data.lobby.instance.PlayerLostConnection();
+    }
+
+    @SubscribeMessage(ClientEvents.PlayerRetrieveConnection)
+    onPlayerRetrieveConnection( client : AuthenticatedSocket )
+    {
+      if (!client.data.lobby)
+        return ;
+      client.data.lobby.instance.PlayerRetrieveConnection();
     }
 
     @SubscribeMessage(ClientEvents.Player1ArrowDownRelease)
