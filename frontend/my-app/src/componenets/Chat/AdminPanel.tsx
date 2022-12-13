@@ -1,9 +1,10 @@
 import axios from 'axios'
-import React, { useState, useContext, useEffect, EventHandler } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import LoginStateContext from '../Login/LoginStateContext'
 import Popup from '../Popup'
 import './AdminPanel.scss'
 import { userType } from './ChatBox'
+import ManageAdmin from './ManageAdmin'
 
 const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: (v:number)=>void, setPanelTrigger: (v:boolean)=>void, setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void}) => {
 
@@ -17,7 +18,6 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 	const [popAdmin, setPopAdmin] = useState(false)
 	const userGroupListCpy = props.userGroupList
 	const {logState} = useContext(LoginStateContext)
-	const convCpy = props.conv_id
 	
 	useEffect(() => {
 		const handleCheckedBox = (e:any) => {
@@ -123,71 +123,6 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 		}
 	}
 
-	const [adminCheckbox, setAdminCheckbox] = useState([false])
-	const [groupUserList, setGroupUserList] = useState<JSX.Element[]>([])
-
-	useEffect(() => {
-		const handleChange = (e:any) =>{
-			setAdminCheckbox((v) => {
-				v[e.target.value] = v[e.target.value] ? !v[e.target.value] : true
-				return v
-			})
-		}
-
-		const get = async () => {
-			const axInst = axios.create({
-				baseURL: 'http://localhost:3000/api/message/',
-				withCredentials: true
-			})
-			try{
-				await axInst.post('get_conv_users', {group_conv_id: convCpy}).then((res)=>{
-					let list = []
-					for (let i of res.data){
-						console.log(i)
-						list.push(<label key={i.id}><input value={i.id} type='checkbox' checked={i.admin} onChange={handleChange}/>{i.username}</label>)
-					}
-
-					setGroupUserList(list)
-				})
-			}catch(e){
-				console.error(e)
-			}
-		}
-		get()
-	}, [convCpy])
-
-	const handleAddAdmin = async () => {
-		setPopAdmin(true)
-	}
-
-	const submitNewAdmin = async() =>{
-		const axInst = axios.create({
-			baseURL: 'http://localhost:3000/api/message/',
-			withCredentials: true
-		})
-		let ids = []
-		for (let i in adminCheckbox)
-			if (adminCheckbox[i] === true)
-				ids.push(parseInt(i))
-
-		await axInst.post('new_admin', {group_conv_id: props.conv_id, admin_ids: ids}).then((res) => {
-			// console.log(res.data)
-			setPopAdmin(false)
-			props.setPanelTrigger(false)
-		}).catch((e) => {
-			console.error(e)
-		})
-
-		let del = []
-		for (let i in adminCheckbox)
-			if (adminCheckbox[i] === false)
-				del.push(parseInt(i))
-		await axInst.post('del_admin', {group_conv_id: props.conv_id, admin_ids: del}).then((res) => {
-			console.log(res.data)
-		}).catch((e) => {
-			console.error(e)
-		})
-	}
 
 	const groupPass = privateState === true
 	? <><label htmlFor="isPrivate">Password : </label>
@@ -215,14 +150,10 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 			</div>
 		</div>
 		<Popup trigger={popAdmin} setPopup={setPopAdmin}>
-			<h1>Add Admin:</h1>
-			<div className='list-group-member'>
-				{groupUserList}
-			</div>
-			<button className='submit-admin' onClick={submitNewAdmin}>submit</button>
+			<ManageAdmin conv_id={props.conv_id} setPanelTrigger={props.setPanelTrigger} setPopAdmin={setPopAdmin}/>
 		</Popup>
 		<div className='bot-wrpper'>
-			<button className='add-min-btn' onClick={handleAddAdmin}>Add Admin</button>
+			<button className='add-min-btn' onClick={() => {setPopAdmin(true)}}>Add Admin</button>
 			<button className='save-btn' onClick={updateSubmit}>Save</button>
 		</div>
 	</div>
