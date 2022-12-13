@@ -107,8 +107,13 @@ export class Lobby
         this.clients.delete(client.id);
         client.leave(this.id);
 
-        if ( this.instance.gameStart == true && (client.id == this.instance.Player1id || client.id == this.instance.Player2id) )
-            this.instance.finishGame("Your Opponent left the lobby");
+        if ( this.instance.gameStart == true )
+        {
+            if ( client.id == this.instance.Player1id )
+                this.instance.finishGame("Player 1 Left Lobby");
+            else if ( client.id == this.instance.Player2id )
+                this.instance.finishGame("Player 2 Left Lobby");
+        }
         
         if ( client.id == this.instance.Player1id )
         {
