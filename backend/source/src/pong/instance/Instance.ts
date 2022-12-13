@@ -1,5 +1,6 @@
 import { throws } from "assert";
 import { Lobby } from "../lobby/Lobby";
+import { BALLGRAVITY, BALLSPEED, CANVASHEIGHT, CANVASWIDTH, PADDLEHEIGHT, PADDLEWIDTH, WINCONDITION } from "./gameConstant";
 
 interface Paddle
 {
@@ -23,20 +24,6 @@ interface Ball
     speed : number;
     gravity : number;
 }
-
-const CANVASHEIGHT = 400;
-const CANVASWIDTH = 700;
-
-const NETWIDTH = 5;
-const NETHEIGHT = CANVASHEIGHT;
-
-const PADDLEHEIGHT = 100;
-const PADDLEWIDTH = 10;
-
-const BALLSPEED = 2;
-const BALLGRAVITY = 2;
-
-const WINCONDITION = 10;
 
 export class Instance 
 {
@@ -68,6 +55,8 @@ export class Instance
 
     public scoreOne = 0;
     public scoreTwo = 0;
+
+    public numberOfSpectator = 0;
 
     public endMessage : string = null;
 

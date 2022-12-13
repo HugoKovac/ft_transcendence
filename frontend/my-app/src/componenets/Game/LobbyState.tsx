@@ -11,10 +11,16 @@ export type ServerPayload = {
 
   [ServerEvents.LobbyState]: {
 
+    canvasWidth: number,
+    canvasHeight: number,
+    netWidth: number,
+    netHeight: number,
+
     endMessage: string,
     message: string;
     skin: string;
     lobbyid : string,
+    numberOfSpectator: number,
 
     gameEnd: boolean,
     gameStart: boolean,
@@ -57,6 +63,7 @@ export type ServerPayload = {
     Ballgravity: number,
   };
 };
+
 
 export const LobbyState = atom<ServerPayload[ServerEvents.LobbyState] | null> ({
     key: 'LobbyState',

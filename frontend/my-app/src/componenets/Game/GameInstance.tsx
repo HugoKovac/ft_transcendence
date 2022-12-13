@@ -30,61 +30,54 @@ interface Ball
 }
 
 
-const CANVASHEIGHT = 400;
-const CANVASWIDTH = 700;
-
-const NETWIDTH = 5;
-const NETHEIGHT = CANVASHEIGHT;
-
-const PADDLEHEIGHT = 100;
-const PADDLEWIDTH = 10;
-
-const BALLSPEED = 8;
-const BALLGRAVITY = 4;
-
 export default function GameInstance()
 {
     const CurrentLobbyState = useRecoilValue(LobbyState);
     const socket = useContext(WebsocketContext);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [SpectatorMode, SetSpectatorMode] = useState(false);
+    const [numberOfSpectator, SetnumberOfSpectator] = useState(0);
 
     const [Player1] = useState<Paddle>({
-        x : 10,
-        y: CANVASHEIGHT / 2 - PADDLEHEIGHT / 2,
-        width: PADDLEWIDTH,
-        height: PADDLEHEIGHT,
+        x : 0,
+        y: 0,
+        width: 0,
+        height: 0,
         color: "#fff",
-        speed: 1,
-        gravity: 3,
+        speed: 0,
+        gravity: 0,
         ready: false,
     })
 
     const [Player2] = useState<Paddle>({
-        x : CANVASWIDTH - (PADDLEWIDTH + 10),
-        y: CANVASHEIGHT / 2 - PADDLEHEIGHT / 2,  
-        width: PADDLEWIDTH,
-        height: PADDLEHEIGHT,
+        x : 0,
+        y: 0,  
+        width: 0,
+        height: 0,
         color: "#fff",
-        speed: 1,
-        gravity: 3,
+        speed: 0,
+        gravity: 0,
         ready: false,
     })
 
     const [Ball] = useState<Ball>({
-        x : CANVASWIDTH / 2,
-        y: CANVASHEIGHT / 2,
-        width: 5,
-        height: 15,
+        x : 0,
+        y: 0,
+        width: 0,
+        height: 0,
         color: "#fff",
-        speed: BALLSPEED,
-        gravity: BALLGRAVITY
+        speed: 0,
+        gravity: 0
     })
+
+    let canvasWidth = 0;
+    let canvasHeight = 0;
+    let netWidth = 0;
+    let netHeight = 0;
 
     let gameStart = false;
     let gameEnd = false;
     let endMessage : string;
-    let PauseGame = false;
-    let gameFinish = false;
 
     let scoreOne = 0;
     let scoreTwo = 0;
@@ -132,7 +125,7 @@ export default function GameInstance()
             {
                 context.font = "18px Arial";
                 context.fillStyle = "#fff";
-                context.fillRect(CANVASWIDTH / 2, 0, NETWIDTH, NETHEIGHT);
+                context.fillRect(canvasWidth / 2, 0, netWidth, netHeight);
             }
         }
     })
@@ -146,8 +139,8 @@ export default function GameInstance()
             {
                 context.font = "18px Arial";
                 context.fillStyle = "#fff";
-                context.fillText(scoreOne.toString(), canvas.width / 2 - 60, 30);
-                context.fillText(scoreTwo.toString(), canvas.width / 2 + 60, 30);
+                context.fillText(scoreOne.toString(), canvasWidth / 2 - 60, 30);
+                context.fillText(scoreTwo.toString(), canvasWidth / 2 + 60, 30);
             }
         }
     });
@@ -162,9 +155,9 @@ export default function GameInstance()
                 context.font = "18px Arial";
                 context.fillStyle = "#fff";
                 if ( Player1Win === true )
-                    context.fillText("Player 1 Won !", canvas.width / 2 - 60, canvas.height / 2);
+                    context.fillText("Player 1 Won !", canvasWidth / 2 - 60, canvasHeight / 2);
                 else if ( Player2Win === true )
-                    context.fillText("Player 2 Won !", canvas.width / 2 - 60, canvas.height / 2);
+                    context.fillText("Player 2 Won !", canvasWidth / 2 - 60, canvasHeight / 2);
             }
         }
     });
@@ -178,7 +171,7 @@ export default function GameInstance()
             {
                 context.font = "18px Arial";
                 context.fillStyle = "#fff";
-                context.fillText(endMessage, canvas.width / 2 - 60, canvas.height / 2);
+                context.fillText(endMessage, canvasWidth / 2 - 60, canvasHeight / 2);
             }
         }
     });
@@ -190,7 +183,7 @@ export default function GameInstance()
             const context = canvas.getContext('2d');
 
             if (context)
-                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.clearRect(0, 0, canvasWidth, canvasHeight);
         }
     });
 
@@ -206,9 +199,12 @@ export default function GameInstance()
                 context.font = "18px Arial";
                 context.fillStyle = "#fff";
                 if ( Player1.ready === false )
-                    context.fillText("Waiting for player1....", canvas.width / 10, 30);
+                    context.fillText("Waiting for player1....", canvasWidth / 10, 30);
                 if ( Player2.ready === false )
-                    context.fillText("Waiting for player2....", canvas.width - canvas.width / 3, 30);
+                    context.fillText("Waiting for player2....", canvasWidth - canvasWidth / 3, 30);
+                if ( CurrentLobbyState )
+                    if ( (CurrentLobbyState.Player1id === socket.id && Player1.ready === false) || (CurrentLobbyState.Player2id === socket.id && Player2.ready === false) )
+                        context.fillText("Press SPACE to play", canvasWidth / 2.5, canvasHeight / 2);
             }
         }   
     })
@@ -287,11 +283,17 @@ export default function GameInstance()
 
         if ( CurrentLobbyState )
         {
+
+            SetnumberOfSpectator(CurrentLobbyState.numberOfSpectator);
             endMessage = CurrentLobbyState.endMessage;
+
+            canvasHeight = CurrentLobbyState.canvasHeight;
+            canvasWidth = CurrentLobbyState.canvasWidth;
+            netHeight = CurrentLobbyState.netHeight;
+            netWidth = CurrentLobbyState.netWidth;
 
             gameEnd = CurrentLobbyState.gameEnd;
             gameStart = CurrentLobbyState.gameStart;
-            PauseGame = CurrentLobbyState.PauseGame;
 
             scoreOne = CurrentLobbyState.scoreOne;
             scoreTwo = CurrentLobbyState.scoreTwo;
@@ -332,6 +334,11 @@ export default function GameInstance()
                 Player2.ready = true;
             else
                 Player2.ready = false;
+
+            if ( CurrentLobbyState.Player1id !== socket.id && CurrentLobbyState.Player2id !== socket.id )
+                SetSpectatorMode(true);
+            else
+                SetSpectatorMode(false);
         }
 
     });
@@ -384,6 +391,9 @@ export default function GameInstance()
     return (
         <div>
                 <NavBar/>
+                <div>
+                    {SpectatorMode ? (<span> You are watching as a Spectator </span>) : (<span> Number of Spectator : {numberOfSpectator} </span>)}
+                </div>
                 <div>
                     <canvas className="Canvas" ref={canvasRef} width={700} height={400}></canvas> 
                 </div>

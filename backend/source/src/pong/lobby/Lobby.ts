@@ -3,6 +3,7 @@ import { Server, Socket } from "socket.io";
 import { AuthenticatedSocket } from '../pong.gateway';
 import { ServerEvents } from 'src/shared/server/Server.Events';
 import { Instance } from '../instance/Instance';
+import { CANVASHEIGHT, CANVASWIDTH, NETHEIGHT, NETWIDTH, } from "../instance/gameConstant";
 
 export type ServerPayload = {
 
@@ -14,10 +15,16 @@ export type ServerPayload = {
 
     [ServerEvents.LobbyState]: {
 
+      canvasWidth: number,
+      canvasHeight: number,
+      netWidth: number,
+      netHeight: number,
+
       endMessage: string,
       message: string;
       skin: string;
       lobbyid : string,
+      numberOfSpectator: number,
 
       gameEnd: boolean,
       gameStart: boolean,
@@ -67,26 +74,18 @@ export class Lobby
 
     public readonly clients: Map<Socket['id'], AuthenticatedSocket> = new Map<Socket['id'], AuthenticatedSocket>(); //? Where client are stored
 
-    public readonly maxClient = 2;
-
     public readonly instance: Instance = new Instance(this); //? The hole game logic is an instance, in a lobby
 
-    constructor( public readonly server: Server, public readonly skin: string ) { console.log(skin)}
+    constructor( public readonly server: Server, public readonly skin: string ) { }
 
     public addClient( client: AuthenticatedSocket )
     {
-       this.clients.set(client.id, client); //? Adding client to the lobby
+        this.clients.set(client.id, client); //? Adding client to the lobby
 
-       client.join(this.id);
+        client.join(this.id);
 
-       client.data.lobby = this; //? Client will store an address of their lobby instance
-       //! By the way this is a real low level practice, suprising for a typescript tutorial...
-
-    //    if ( this.clients.size >= this.maxClient )
-    //         this.instance.triggerStart();
-
-        console.log("ADDING CLIENT NUMBER : ");
-        console.log(client.id);
+        client.data.lobby = this; //? Client will store an address of their lobby instance
+        //! This is a real low level practice, suprising for a typescript tutorial...
 
         if ( this.instance.Player1Online == false )
         {
@@ -98,25 +97,32 @@ export class Lobby
             this.instance.Player2id = client.id;
             this.instance.Player2Online = true;
         }
-        else {} //! Else go to spectator mode
+        else { this.instance.numberOfSpectator += 1; } //! Else go to spectator mode
         
-        //? Prevenir le front que le lobby a ete modifier
-        
-        console.log(this.id);   
-
         this.refreshLobby();
     }
 
     public removeClient( client: AuthenticatedSocket )
     {
-        console.log("REMOVING CLIENT NUMBER : ");
-        console.log(client.id);
         this.clients.delete(client.id);
-
         client.leave(this.id);
 
-        if ( client.id == this.instance.Player1id || client.id == this.instance.Player2id )
+        if ( this.instance.gameStart == true && (client.id == this.instance.Player1id || client.id == this.instance.Player2id) )
             this.instance.finishGame("Your Opponent left the lobby");
+        
+        if ( client.id == this.instance.Player1id )
+        {
+            this.instance.Player1id = null;
+            this.instance.Player1Online = false;
+            this.instance.Player1Ready = false;
+        }
+        else if ( client.id == this.instance.Player2id )
+        {
+            this.instance.Player2id = null;
+            this.instance.Player2Online = false;
+            this.instance.Player2Ready = false;
+        }
+        else { this.instance.numberOfSpectator -= 1; }
 
         client.data.lobby = null;
 
@@ -127,10 +133,16 @@ export class Lobby
     {
         const payload: ServerPayload[ServerEvents.LobbyState] = {
 
+            canvasWidth: CANVASWIDTH, 
+            canvasHeight: CANVASHEIGHT,
+            netWidth: NETWIDTH,
+            netHeight: NETHEIGHT,
+
             endMessage: this.instance.endMessage,
             message: "Refreshed lobby",
             skin: "default",
             lobbyid : this.id,
+            numberOfSpectator: this.instance.numberOfSpectator,
 
             gameEnd: this.instance.gameEnd,
             gameStart: this.instance.gameStart,

@@ -108,6 +108,8 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
       client.data.lobby.instance.PlayerRetrieveConnection();
     }
 
+    //! Annoying key handler
+
     @SubscribeMessage(ClientEvents.Player1ArrowDownRelease)
     onPlayer1ArrowDownRelease( client : AuthenticatedSocket )
     {
@@ -171,20 +173,12 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
         return ;
       client.data.lobby.instance.Player2ArrowUpPress();
     }
+    //! Annoying key handler
 
     //? Blind mode
 
 
     //? Ranked mode 
-    // @SubscribeMessage(ClientEvents.JoinMatchmaking)
-    // onJoinMatchmaking() : 
-    // {
-    //   return (ServerEvents.LobbyState, {
-    //     event: ServerEvents.LobbyState,
-    //     data: { message: "server_createlobby", lobbyid: lobby.id }
-    //   }
-    // )
-    // }
     //? Ranked mode 
 
 }
