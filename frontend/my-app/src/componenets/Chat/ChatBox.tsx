@@ -28,8 +28,8 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 	const [goodPass, setGoodPass] = useState([{conv_id: 0, passState: true, password:''}])//faire de good pass une structure de donné qui associe le conv_id avec le bool good pass et le pass pour le donne en payload
 
 	let passwordPopup = <Popup trigger={passwordPopupState} setPopup={setPasswordPopupState}>
-		<label htmlFor="password" id='password'><h1>Password :</h1></label>
-		<input type="password" className="group-pass" onChange={e => {setPasswordInput(e.target.value)}} />
+		<label htmlFor="password" id='password'><h1>Unlock the group :</h1></label>
+		<input type="password" placeholder="Password..." className="group-pass" onChange={e => {setPasswordInput(e.target.value)}} />
 		<button className="btn-pass" onClick={(e) => {e.preventDefault(); setRequestPrivate(true)}}>Verify</button>
 	</Popup>
 

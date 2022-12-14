@@ -101,4 +101,18 @@
 		height: 44px;
 		width: 100%;
 	}
+
+	.form-to{
+		padding-top: 45px;
+		padding-bottom: 45px;
+		background-color: rgba(0, 0, 0, 0.108);
+		margin: 20px;
+		input{
+			height: 30px;
+		}
+		button{
+			height: 35px;
+			border-radius: 5px;
+		}
+	}
 }

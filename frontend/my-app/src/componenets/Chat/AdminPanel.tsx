@@ -56,10 +56,10 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 	}, [setFriendList, checkboxState, userGroupListCpy])
 
 	const [to, setTo] = useState(false)
-	const handleSetTime = async(id:number, isBan:boolean) => {
-		console.log(id, isBan)
+	const [toInfo, setToInfo] = useState([0, 0])
+	const handleSetTime = async(id:number, isBan:number) => {
 		setTo(true)
-		//submit ban or mute dans takeoff the popup
+		setToInfo([id, isBan])		
 	}
 
 	useEffect(() => {
@@ -75,8 +75,8 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 				if (parseInt(i.id.toString()) !== logState)
 					list.push(<label key={i.id}>
 						<input onChange={handleCheckedBox} value={i.id} type="checkbox" /> {i.username}
-						<button key={-i.id} className='ban' onClick={() => {handleSetTime(i.id, true)}}>Ban</button>{/**Popup to set time of Mute*/}
-						<button key={i.id} className='mute' onClick={() => {handleSetTime(i.id, false)}}>Mute</button>{/**Popup to set time of Mute*/}
+						<button key={-i.id} className='ban' onClick={() => {handleSetTime(i.id, 1)}}>Ban</button>{/**Popup to set time of Mute*/}
+						<button key={i.id} className='mute' onClick={() => {handleSetTime(i.id, 0)}}>Mute</button>{/**Popup to set time of Mute*/}
 					</label>)
 		
 		setDelList(list)
@@ -136,6 +136,24 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 		}
 	}
 
+	const [time, setTime] = useState<string>('')
+
+	const sendTime = async () => {
+		const axInst =  axios.create({
+			baseURL: 'http://localhost:3000/api/message/',
+			withCredentials: true
+		})
+
+		if (toInfo[1]){
+			await axInst.post('ban_user', {group_conv_id: props.conv_id, user_id: parseInt(toInfo[0].toString()), to: parseInt(time)}).then((res) => {
+				console.log(res.data)
+				setTo(false)
+			}).catch((e) => {
+				console.error(e)
+			})
+		}
+	}
+
 
 	const groupPass = privateState === true
 	? <><label htmlFor="isPrivate">Password : </label>
@@ -162,10 +180,17 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 				{friendList}
 			</div>
 		</div>
-		<Popup trigger={popAdmin} setPopup={setPopAdmin}>
+		<Popup key={'general'} trigger={popAdmin} setPopup={setPopAdmin}>
 			<ManageAdmin conv_id={props.conv_id} setPanelTrigger={props.setPanelTrigger} setPopAdmin={setPopAdmin}/>
 		</Popup>
-		<Popup trigger={to} setPopup={setTo}>test ok</Popup>{/*input to set time*/}
+		<Popup key={'admin'} trigger={to} setPopup={setTo}>
+			<h1>Set Time Out</h1>
+			<div className='form-to'>
+				<label htmlFor="time">Time in seconds :</label>
+				<input name='time' type="number" onChange={(e) => {setTime(e.target.value)}} />
+				<button onClick={sendTime}>Submit</button>
+			</div>
+		</Popup>
 		<div className='bot-wrpper'>
 			<button className='add-min-btn' onClick={() => {setPopAdmin(true)}}>Add Admin</button>
 			<button className='save-btn' onClick={updateSubmit}>Save</button>
