@@ -155,10 +155,27 @@ export class ChatService{
 		let tokenUserInfo: any = decode(jwt)
 
 		try{
-			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users'], order:{messages:{msg_id: 'ASC'}}})
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users', 'ban_users'], order:{messages:{msg_id: 'ASC'}}})
 
 			if (!conv || conv.isPrivate === true)
 				return false
+
+			let kick = true
+			for (let i of conv.users)
+				if (i.id === tokenUserInfo.id)
+					kick = false
+
+			const date = new Date()
+			for (let i of conv.ban_users){
+				const banEnt = await this.banRepo.findOne({where: {id: i.id}, relations: ['user_banned']})
+				if ((banEnt.user_banned.id === tokenUserInfo.id) && (banEnt.end > date)){
+					console.log(banEnt.end, date)
+					kick = true
+				}
+			}
+			if (kick){
+				return false
+			}
 
 			return conv
 		}
@@ -179,7 +196,6 @@ export class ChatService{
 			let kick = true
 			let rtn = []
 			for (let i of conv.users){
-				console.log(i)
 				if (i.id === tokenUserInfo.id)
 					kick = false
 				if (i.id !== tokenUserInfo.id){
@@ -226,12 +242,27 @@ export class ChatService{
 	async getAllGroupConv(jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		try{
-			const conv: GroupConv[] = await this.groupConvRepo.find({relations: ['users'], where: {users:{id: tokenUserInfo.id}}})
+			const convs: GroupConv[] = await this.groupConvRepo.find({relations: ['users', 'ban_users'], where: {users:{id: tokenUserInfo.id}}})
 
-			if (!conv)
+			if (!convs)
 				return false
 
-			return conv
+			const rtn: GroupConv[] = []
+
+			const time = new Date()
+
+			for (let i of convs){
+				let push = true
+				for (let j of i.ban_users){
+					const banEnt = await this.banRepo.findOne({where: {id: j.id}, relations: ['user_banned']})
+					if ((banEnt.user_banned.id === tokenUserInfo.id) && banEnt.end > time)
+						push = false
+				}
+				if (push)
+				rtn.push(i)
+			}
+
+			return rtn
 		}
 		catch{
 			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
@@ -274,8 +305,6 @@ export class ChatService{
 			const conv = await this.groupConvRepo.findOne({where:{group_conv_id:group_conv_id}, relations:['owner', 'ban_users']})
 			const user = await this.userRepo.findOne({where:{id:user_id}})
 
-			console.log('before', conv)
-			
 			if (!conv || conv.owner.id !== tokenUserInfo.id || !user || user_id === tokenUserInfo.id)
 				return false
 
@@ -294,7 +323,6 @@ export class ChatService{
 	async newAdmin({group_conv_id, admin_ids}: DTO.newAdminDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		try{
-			console.log(group_conv_id, admin_ids)
 			const conv: GroupConv = await this.groupConvRepo.findOne({where: {group_conv_id}, relations:['owner', 'admin']})
 			
 			if (!conv || conv.owner.id !== tokenUserInfo.id)
@@ -339,11 +367,9 @@ export class ChatService{
 			let new_admin = []
 			for (let i of conv.admin)
 				if (isInIt(i.id)){
-					console.log(isInIt(i.id))
 					new_admin.push(i)
 				}
 
-			console.log(conv.admin ,new_admin)
 			const new_conv = this.groupConvRepo.create({...conv, admin: new_admin})
 			await this.groupConvRepo.save(new_conv)
 
@@ -360,10 +386,30 @@ export class ChatService{
 		if (!message)
 			return false
 		try{
-			const group_conv: GroupConv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}})
+			const group_conv: GroupConv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations: ['ban_users', 'users']})
 
 			if (!group_conv || group_conv.isPrivate)
 				return false
+
+			let kick = true
+			for (let i of group_conv.users)
+				if (i.id === tokenUserInfo.id){
+					console.log(1)
+					kick = false
+				}
+				
+				const date = new Date()
+				for (let i of group_conv.ban_users){
+					const banEnt = await this.banRepo.findOne({where: {id: i.id}, relations: ['user_banned']})
+					if ((banEnt.user_banned.id === tokenUserInfo.id) && (banEnt.end > date)){
+					console.log(2)
+					// console.log(banEnt.end, date)
+					kick = true
+				}
+			}
+			if (kick){
+				return false
+			}
 
 			const newMsg = this.messRepo.create({sender_id: tokenUserInfo.id, message: message, group_conv: group_conv})
 			await this.messRepo.save(newMsg)
