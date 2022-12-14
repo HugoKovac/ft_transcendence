@@ -1,5 +1,5 @@
 import axios from 'axios'
-import React, { useState, useContext, useEffect } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import LoginStateContext from '../Login/LoginStateContext'
 import Popup from '../Popup'
 import './AdminPanel.scss'
@@ -18,7 +18,7 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 	const [popAdmin, setPopAdmin] = useState(false)
 	const userGroupListCpy = props.userGroupList
 	const {logState} = useContext(LoginStateContext)
-	
+
 	useEffect(() => {
 		const handleCheckedBox = (e:any) => {
 			let tmp = checkboxState
@@ -41,7 +41,9 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 								push = false
 						}
 						if (push)
-							list.push(<label key={i.friend_id}><input onChange={handleCheckedBox} value={i.friend_id} type="checkbox" /> {i.friend_username}</label>)
+							list.push(<label key={i.friend_id}>
+								<input onChange={handleCheckedBox} value={i.friend_id} type="checkbox" /> {i.friend_username}
+							</label>)
 					}
 					setFriendList(list)
 				})
@@ -53,18 +55,29 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 		get()
 	}, [setFriendList, checkboxState, userGroupListCpy])
 
+	const [to, setTo] = useState(false)
+	const handleSetTime = async(id:number, isBan:boolean) => {
+		console.log(id, isBan)
+		setTo(true)
+		//submit ban or mute dans takeoff the popup
+	}
+
 	useEffect(() => {
+
 		const handleCheckedBox = (e:any) => {
 			let tmp = delCheckboxState
 			tmp[e.target.value] = tmp[e.target.value] ? !tmp[e.target.value] : true
 			setDelCheckboxState(tmp)
-			// console.log(delCheckboxState)
 		}
 
 		let list = []
 			for (let i of userGroupListCpy)
 				if (parseInt(i.id.toString()) !== logState)
-					list.push(<label key={i.id}><input onChange={handleCheckedBox} value={i.id} type="checkbox" /> {i.username}</label>)
+					list.push(<label key={i.id}>
+						<input onChange={handleCheckedBox} value={i.id} type="checkbox" /> {i.username}
+						<button key={-i.id} className='ban' onClick={() => {handleSetTime(i.id, true)}}>Ban</button>{/**Popup to set time of Mute*/}
+						<button key={i.id} className='mute' onClick={() => {handleSetTime(i.id, false)}}>Mute</button>{/**Popup to set time of Mute*/}
+					</label>)
 		
 		setDelList(list)
 	}, [setDelList, setDelCheckboxState, userGroupListCpy, delCheckboxState, logState])
@@ -140,18 +153,19 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 				<input type="checkbox" id="isPrivate" checked={privateState} onChange={(e) => {setPrivateState(!privateState); setAsChange(true)}} />
 				{groupPass}
 			</div>
-			<div className='add-users'>
-				<h2>Select User(s) to add :</h2>
-				{friendList}
-			</div>
 			<div className='del-users'>
 				<h2>Select User(s) to remove :</h2>
 				{delList}
+			</div>
+			<div className='add-users'>
+				<h2>Select User(s) to add :</h2>
+				{friendList}
 			</div>
 		</div>
 		<Popup trigger={popAdmin} setPopup={setPopAdmin}>
 			<ManageAdmin conv_id={props.conv_id} setPanelTrigger={props.setPanelTrigger} setPopAdmin={setPopAdmin}/>
 		</Popup>
+		<Popup trigger={to} setPopup={setTo}>test ok</Popup>{/*input to set time*/}
 		<div className='bot-wrpper'>
 			<button className='add-min-btn' onClick={() => {setPopAdmin(true)}}>Add Admin</button>
 			<button className='save-btn' onClick={updateSubmit}>Save</button>

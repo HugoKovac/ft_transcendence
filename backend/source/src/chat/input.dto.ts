@@ -38,6 +38,20 @@ export class newAdminDTO{
 	admin_ids:number[]
 }
 
+export class banUserDTO{
+	@IsNotEmpty()
+	@IsNumber()
+	group_conv_id:number
+
+	@IsNotEmpty()
+	@IsNumber()
+	user_id:number
+
+	@IsNotEmpty()
+	@IsNumber()
+	to:number
+}
+
 export class newGroupMsgDTO{
 	@IsNotEmpty()
 	@IsNumber()

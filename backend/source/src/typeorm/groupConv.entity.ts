@@ -1,4 +1,5 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BanEnity } from "./ban.entity";
 import { Message } from "./message.entity";
 import { User } from "./user.entity";
 
@@ -33,7 +34,13 @@ export class GroupConv{
 		user => user.group_conv
 	)
 	@JoinTable({
-		name: 'users_list'
+		name: 'users_list',
+		joinColumn: {
+			name: 'users'
+		},
+		inverseJoinColumn: {
+			name: 'group_conv'
+		}
 	})
 	users: User[]
 
@@ -58,4 +65,10 @@ export class GroupConv{
 		name: 'admin'
 	})
 	admin: User[]
+
+	@OneToMany(
+		() => BanEnity,
+		ban => ban.from_group
+	)
+	ban_users: BanEnity[]
 }

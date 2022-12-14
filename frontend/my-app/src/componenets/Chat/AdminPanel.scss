@@ -47,6 +47,18 @@
 			width: 568px;
 			height: 218.75px;
 			background-color: rgba(0, 0, 0, 0.082);
+			.ban{
+				background-color: rgb(189, 0, 0);
+			}
+			.mute{
+				background-color: rgb(214, 77, 27);
+			}
+			button{
+				float: right;
+				margin-left: 20px;
+				padding: 5px;
+				border-radius: 5px;
+			}
 			label{
 				display: block;
 			}

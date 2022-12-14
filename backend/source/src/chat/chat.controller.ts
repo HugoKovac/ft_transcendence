@@ -31,6 +31,12 @@ export class ChatController{
 		return await this.chatService.newAdmin(bod, req.cookies['jwt'])
 	}
 
+	@Post('ban_user')
+	@UseGuards(AuthGuard('jwt'))
+	async banUser(@Body()bod: DTO.banUserDTO, @Req() req){
+		return await this.chatService.banUser(bod, req.cookies['jwt'])
+	}
+
 	@Post('del_admin')
 	@UseGuards(AuthGuard('jwt'))
 	async delAdmin(@Body()bod: DTO.newAdminDTO, @Req() req){

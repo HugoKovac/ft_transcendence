@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { decode } from "jsonwebtoken";
-import { Message, User } from "src/typeorm";
+import { BanEnity, Message, User } from "src/typeorm";
 import Conv from "src/typeorm/conv.entity";
 import { GroupConv } from "src/typeorm/groupConv.entity";
 import { Repository } from "typeorm";
@@ -17,7 +17,9 @@ export class ChatService{
 	@InjectRepository(GroupConv)
 	private readonly groupConvRepo : Repository<GroupConv>,
 	@InjectRepository(User)
-	private readonly userRepo : Repository<User>){}
+	private readonly userRepo : Repository<User>,
+	@InjectRepository(BanEnity)
+	private readonly banRepo : Repository<BanEnity>){}
 
 	// CONV SETTER
 
@@ -260,6 +262,29 @@ export class ChatService{
 			await this.groupConvRepo.save(newGroup)
 
 			return true
+		}catch(e){
+			console.error(e)
+			return false
+		}
+	}
+
+	async banUser({group_conv_id, user_id, to}: DTO.banUserDTO, jwt:string){
+		let tokenUserInfo: any = decode(jwt)
+		try{
+			const conv = await this.groupConvRepo.findOne({where:{group_conv_id:group_conv_id}, relations:['owner', 'ban_users']})
+			const user = await this.userRepo.findOne({where:{id:user_id}})
+
+			console.log('before', conv)
+			
+			if (!conv || conv.owner.id !== tokenUserInfo.id || !user || user_id === tokenUserInfo.id)
+				return false
+
+				var date = new Date();
+				date.setSeconds(date.getSeconds() + to);
+				const new_ban: BanEnity = this.banRepo.create({from_group:conv, user_banned: user, end: date})
+				await this.banRepo.save(new_ban)
+				return true
+				
 		}catch(e){
 			console.error(e)
 			return false

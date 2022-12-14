@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react"
 import Popup from "../Popup"
 import ChatRight from "./ChatRight"
 import Message from "./Message"
+import './PassPopup.scss'
 
 export type userType = {
 	id:number,
@@ -28,8 +29,8 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 
 	let passwordPopup = <Popup trigger={passwordPopupState} setPopup={setPasswordPopupState}>
 		<label htmlFor="password" id='password'><h1>Password :</h1></label>
-		<input type="password" onChange={e => {setPasswordInput(e.target.value)}} />
-		<button onClick={(e) => {e.preventDefault(); setRequestPrivate(true)}}>Verify</button>
+		<input type="password" className="group-pass" onChange={e => {setPasswordInput(e.target.value)}} />
+		<button className="btn-pass" onClick={(e) => {e.preventDefault(); setRequestPrivate(true)}}>Verify</button>
 	</Popup>
 
 	const findGoodPass = useCallback( (conv_id:number) => {
