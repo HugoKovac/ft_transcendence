@@ -4,6 +4,7 @@ import { AuthenticatedSocket } from '../pong.gateway';
 import { ServerEvents } from 'src/shared/server/Server.Events';
 import { Instance } from '../instance/Instance';
 import { CANVASHEIGHT, CANVASWIDTH, NETHEIGHT, NETWIDTH, } from "../instance/gameConstant";
+import { clearInterval } from 'timers';
 
 export type ServerPayload = {
 
@@ -76,7 +77,11 @@ export class Lobby
 
     public readonly instance: Instance = new Instance(this); //? The hole game logic is an instance, in a lobby
 
-    constructor( public readonly server: Server, public readonly skin: string ) { }
+    constructor( public readonly server: Server, public readonly skin: string )
+    { 
+        setInterval( () => { this.instance.gameLoop(); }, 10);
+        // setImmediate(() => {this.instance.gameLoop()} );
+    }
 
     public addClient( client: AuthenticatedSocket )
     {

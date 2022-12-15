@@ -280,7 +280,7 @@ export default function GameInstance()
 
     const serverloop = ( () => {
 
-        socket.emit(ClientEvents.GameLoop);
+        // socket.emit(ClientEvents.GameLoop);
 
         if ( CurrentLobbyState )
         {
@@ -396,7 +396,7 @@ export default function GameInstance()
                     {SpectatorMode ? (<span> You are watching as a Spectator </span>) : (<span> Number of Spectator : {numberOfSpectator} </span>)}
                 </div>
                 <div>
-                    <canvas className="Canvas" ref={canvasRef} width={700} height={400}></canvas> 
+                    <canvas className="Canvas" ref={canvasRef} width={1000} height={600}></canvas> 
                 </div>
         </div>
     );

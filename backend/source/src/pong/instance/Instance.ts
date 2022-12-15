@@ -284,6 +284,7 @@ export class Instance
             this.checkFinish();
         }
         this.lobby.refreshLobby();
+        // setImmediate(() => {this.gameLoop()} );
     }
 }
 
