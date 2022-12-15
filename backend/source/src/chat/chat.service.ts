@@ -306,18 +306,26 @@ export class ChatService{
 	async banUser({group_conv_id, user_id, to}: DTO.banUserDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		try{
-			const conv = await this.groupConvRepo.findOne({where:{group_conv_id:group_conv_id}, relations:['owner', 'ban_users']})
+			const conv = await this.groupConvRepo.findOne({where:{group_conv_id:group_conv_id}, relations:['owner', 'ban_users', 'messages']})
 			const user = await this.userRepo.findOne({where:{id:user_id}})
 
 			if (!conv || conv.owner.id !== tokenUserInfo.id || !user || user_id === tokenUserInfo.id)
 				return false
+				
+			let new_msgs = []
 
-				var date = new Date();
-				date.setSeconds(date.getSeconds() + to);
-				const new_ban: BanEnity = this.banRepo.create({from_group:conv, user_banned: user, end: date})
-				await this.banRepo.save(new_ban)
+			for (let i of conv.messages)
+				if (i.sender_id !== user_id)
+					new_msgs.push(i)
 
-				return true
+			await this.groupConvRepo.save({...conv, messages: new_msgs})
+			var date = new Date();
+			date.setSeconds(date.getSeconds() + to);
+			const new_ban: BanEnity = this.banRepo.create({from_group:conv, user_banned: user, end: date})
+			await this.banRepo.save(new_ban)
+
+
+			return true
 				
 		}catch(e){
 			console.error(e)
