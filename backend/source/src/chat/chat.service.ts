@@ -174,7 +174,6 @@ export class ChatService{
 			for (let i of conv.ban_users){
 				const banEnt = await this.banRepo.findOne({where: {id: i.id}, relations: ['user_banned']})
 				if ((banEnt.user_banned.id === tokenUserInfo.id) && (banEnt.end > date)){
-					console.log(banEnt.end, date)
 					kick = true
 				}
 			}
@@ -400,7 +399,6 @@ export class ChatService{
 			let kick = true
 			for (let i of group_conv.users)
 				if (i.id === tokenUserInfo.id){
-					console.log(1)
 					kick = false
 				}
 				
@@ -408,7 +406,6 @@ export class ChatService{
 				for (let i of group_conv.ban_users){
 					const banEnt = await this.banRepo.findOne({where: {id: i.id}, relations: ['user_banned']})
 					if ((banEnt.user_banned.id === tokenUserInfo.id) && (banEnt.end > date)){
-					console.log(2)
 					// console.log(banEnt.end, date)
 					kick = true
 				}

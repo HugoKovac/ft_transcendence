@@ -1,5 +1,7 @@
 import axios from 'axios'
+import Cookies from 'js-cookie'
 import { useState, useContext, useEffect } from 'react'
+import { io } from 'socket.io-client'
 import LoginStateContext from '../Login/LoginStateContext'
 import Popup from '../Popup'
 import './AdminPanel.scss'
@@ -148,6 +150,19 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 			await axInst.post('ban_user', {group_conv_id: props.conv_id, user_id: parseInt(toInfo[0].toString()), to: parseInt(time)}).then((res) => {
 				console.log(res.data)
 				setTo(false)
+
+				const socket = io("localhost:3000", {
+					auth: (cb) => {
+						cb({
+							token: Cookies.get('jwt')
+						});
+					}
+				})
+
+				socket.emit('ban', {group_conv_id: props.conv_id, user_id: parseInt(toInfo[0].toString()), to: parseInt(time)})
+
+				return (() => {socket.off('ban')})
+				
 			}).catch((e) => {
 				console.error(e)
 			})

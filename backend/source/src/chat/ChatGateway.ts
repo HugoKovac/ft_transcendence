@@ -38,4 +38,22 @@ export class ChatGateway{
 		await this.chatService.newPrivateGroupMsg(body, client.handshake.auth.token)
 		this.serv.emit((body.group_conv_id * -1).toString())
 	}
+
+	@SubscribeMessage('ban')
+	async ban(@ConnectedSocket() client: Socket, @MessageBody()body: any){//setDTO for body
+		// console.log('ban : ', body)
+		/*
+			listen son user id (logState cote client)
+			emit au user id un ban
+			setTimeout to emit unban
+		*/
+		this.serv.emit(body.user_id)
+
+		console.log(`unban${body.user_id}`)
+
+		setTimeout(() => {
+			// console.log(`unban${body.user_id}`)
+			this.serv.emit(`unban${body.user_id}`)
+		}, body.to * 1000)
+	}
 }

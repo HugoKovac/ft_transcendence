@@ -1,7 +1,8 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client"
+import LoginStateContext from "../Login/LoginStateContext";
 import Popup from "../Popup";
 import AdminPanel from "./AdminPanel";
 import './Chat.scss'
@@ -69,6 +70,8 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 		}).catch((e) => {console.error(e)})
 	}, [perm])
 
+	const {logState} = useContext(LoginStateContext)
+
 	useEffect(()=>{
 		const socket = io("localhost:3000", {
 			auth: (cb) => {
@@ -80,14 +83,26 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 
 		for (let i of ids){
 			socket.on(i.toString(), () => {
-				console.log(i.toString())
+				// console.log(i.toString())
 				setRefresh(true)
 			});
 		}
-			
+
+		socket.on(logState.toString(), () => {
+			// console.log(logState.toString())
+			setRefresh(true)
+		});
+		
+		socket.on(`unban${logState}`, () => {
+			// console.log(`unban${logState}`)
+			setRefresh(true)
+		});
+
 		return () => {
-			for (let i of ids)	
+			for (let i of ids)
 				socket.off(i.toString());
+			socket.off(logState.toString())
+			socket.off(`unban${logState}`)
 		}
 	}, [perm, setRefresh, ids])
 
