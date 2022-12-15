@@ -83,18 +83,18 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 
 		for (let i of ids){
 			socket.on(i.toString(), () => {
-				// console.log(i.toString())
+				console.log(i.toString())
 				setRefresh(true)
 			});
 		}
 
 		socket.on(logState.toString(), () => {
-			// console.log(logState.toString())
+			console.log(logState.toString())
 			setRefresh(true)
 		});
 		
 		socket.on(`unban${logState}`, () => {
-			// console.log(`unban${logState}`)
+			console.log(`unban${logState}`)
 			setRefresh(true)
 		});
 

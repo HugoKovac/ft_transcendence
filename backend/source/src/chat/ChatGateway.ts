@@ -1,7 +1,7 @@
 import { WebSocketGateway, SubscribeMessage, ConnectedSocket, MessageBody, WebSocketServer } from '@nestjs/websockets'
 import {Socket, Server} from 'socket.io'
 import { ChatService } from './chat.service'
-import { newGroupMsgDTO, newMsgDTO, newPrivateGroupMsgDTO } from './input.dto'
+import { banUserDTO, newGroupMsgDTO, newMsgDTO, newPrivateGroupMsgDTO } from './input.dto'
 
 @WebSocketGateway({
 	cors: {
@@ -40,19 +40,12 @@ export class ChatGateway{
 	}
 
 	@SubscribeMessage('ban')
-	async ban(@ConnectedSocket() client: Socket, @MessageBody()body: any){//setDTO for body
-		// console.log('ban : ', body)
-		/*
-			listen son user id (logState cote client)
-			emit au user id un ban
-			setTimeout to emit unban
-		*/
-		this.serv.emit(body.user_id)
+	async ban(@ConnectedSocket() client: Socket, @MessageBody()body: banUserDTO){
+		this.serv.emit(body.user_id.toString())
 
 		console.log(`unban${body.user_id}`)
 
 		setTimeout(() => {
-			// console.log(`unban${body.user_id}`)
 			this.serv.emit(`unban${body.user_id}`)
 		}, body.to * 1000)
 	}
