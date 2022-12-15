@@ -8,13 +8,15 @@ import AdminPanel from "./AdminPanel";
 import './Chat.scss'
 import { userType } from "./ChatBox";
 
-function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefreshConvList, isConvPrivate, passwordInput, setPasswordInput, goodPass}:
-	{conv_id:number, setRefresh:(v:boolean)=>void, nav:number, userGroupList:userType[], setConv: (v:number)=>void, setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void, goodPass: {conv_id:number, passState:boolean, password:string}[]} ){
+function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefreshConvList, isConvPrivate, passwordInput, setPasswordInput, goodPass, setHideRight}:
+	{conv_id:number, setRefresh:(v:boolean)=>void, nav:number, userGroupList:userType[], setConv: (v:number)=>void, setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void, goodPass: {conv_id:number, passState:boolean, password:string}[], setHideRight: (v:boolean)=>void} ){
 	
 	const [inputMessage, setInputMessage] = useState<string>('')
 	const [channel, setChannel] = useState<string | null>(null)
 	const [perm] = useState({})
 	const [msg, setMsg] = useState('')
+	const setHideRightCpy = setHideRight
+	const setRefreshConvListCpy = setRefreshConvList
 	
 	useEffect(()=>{
 		const findGoodPass = (conv_id:number) => {
@@ -88,23 +90,55 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 			});
 		}
 
-		socket.on(logState.toString(), () => {
-			console.log(logState.toString())
-			setRefresh(true)
-		});
-		
-		socket.on(`unban${logState}`, () => {
-			console.log(`unban${logState}`)
-			setRefresh(true)
-		});
-
 		return () => {
 			for (let i of ids)
 				socket.off(i.toString());
-			socket.off(logState.toString())
-			socket.off(`unban${logState}`)
 		}
 	}, [perm, setRefresh, ids])
+
+	useEffect(() => {
+		const socket = io("localhost:3000", {
+			auth: (cb) => {
+				cb({
+					token: Cookies.get('jwt')
+				});
+			}
+		})
+
+		socket.on(logState.toString(), () => {
+			console.log(logState.toString())
+			setHideRightCpy(true)
+			setRefreshConvListCpy(true)
+			setRefresh(true)
+			alert('You have been ban of this group')
+		});
+
+		return (() => {
+			socket.off(logState.toString())
+		})
+
+	}, [perm, logState, setHideRightCpy, setRefreshConvListCpy, setRefresh])
+	
+	useEffect(() => {
+		const socket = io("localhost:3000", {
+			auth: (cb) => {
+					cb({
+					token: Cookies.get('jwt')
+				});
+			}
+		})
+			socket.on(`unban${logState}`, () => {
+				console.log(`unban${logState}`)
+				setRefreshConvListCpy(true)
+				setHideRightCpy(false)
+				setRefresh(true)
+			// alert('You have been unban of this group')
+			});
+		return (() => {
+			// socket.off(`unban${logState}`)
+		})
+
+	}, [perm, logState, setRefreshConvListCpy, setHideRightCpy, setRefresh])
 
 	const [panelTrigger, setPanelTrigger] = useState(false)
 	//! and if admin role and if private check if log

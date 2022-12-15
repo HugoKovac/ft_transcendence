@@ -196,13 +196,15 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 	}, [navCpy, refresh, logStateCpy, convCpy, requestPrivate, setPasswordPopupState, setRequestPrivate, setGoodPass,
 	findGoodPass, goodPass, isConvPrivateCpy, ChangeGoodPass, passwordInput])
 
+	const [hideRight, setHideRight] = useState(false)
+
 	let right = <ChatRight conv={props.conv} msgList={msgList}
 		setRefresh={setRefresh} nav={props.nav} setConv={props.setConv}
 		userGroupList={userGroupList} setRefreshConvList={props.setRefreshConvList}
 		isConvPrivate={props.isConvPrivate} passwordInput={passwordInput}
-		setPasswordInput={setPasswordInput} goodPass={goodPass}
+		setPasswordInput={setPasswordInput} goodPass={goodPass} setHideRight={setHideRight}
 	/>
-	if (props.conv === 0 || !findGoodPass(convCpy)?.passState)
+	if (props.conv === 0 || !findGoodPass(convCpy)?.passState || hideRight)
 		right = <div className='chatBox' />
 
 	return <React.Fragment>
