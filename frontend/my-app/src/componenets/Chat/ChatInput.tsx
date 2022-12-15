@@ -1,3 +1,4 @@
+import axios from "axios";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client"
@@ -13,7 +14,6 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	const [channel, setChannel] = useState<string | null>(null)
 	const [perm] = useState({})
 	const [msg, setMsg] = useState('')
-
 	
 	useEffect(()=>{
 		const findGoodPass = (conv_id:number) => {
@@ -56,20 +56,40 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 		}
 	}, [channel, conv_id, goodPass, msg])
 	
+	const [ids, setIds] = useState<number[]>([])
+
+	useEffect(() => {
+		const axInst = axios.create({
+			baseURL: 'http://localhost:3000/api/message/',
+			withCredentials: true
+		})
+
+		axInst.post('get_conv_id').then((res) => {
+			setIds(res.data)
+		}).catch((e) => {console.error(e)})
+	}, [perm])
+
 	useEffect(()=>{
 		const socket = io("localhost:3000", {
 			auth: (cb) => {
 				cb({
-				  token: Cookies.get('jwt')
+					token: Cookies.get('jwt')
 				});
-			  }
+			}
 		})
-		socket.on("refresh", () => {
-			setRefresh(true)
-		});
 
-		return () => {socket.off('refresh')}
-	}, [perm, setRefresh])
+		for (let i of ids){
+			socket.on(i.toString(), () => {
+				console.log(i.toString())
+				setRefresh(true)
+			});
+		}
+			
+		return () => {
+			for (let i of ids)	
+				socket.off(i.toString());
+		}
+	}, [perm, setRefresh, ids])
 
 	const [panelTrigger, setPanelTrigger] = useState(false)
 	//! and if admin role and if private check if log

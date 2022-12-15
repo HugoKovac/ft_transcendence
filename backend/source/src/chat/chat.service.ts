@@ -7,6 +7,8 @@ import { GroupConv } from "src/typeorm/groupConv.entity";
 import { Repository } from "typeorm";
 import * as DTO from './input.dto'
 import * as bcrypt from 'bcrypt';
+import { WebSocketServer } from "@nestjs/websockets";
+import {Server} from 'socket.io'
 
 @Injectable()
 export class ChatService{
@@ -20,6 +22,9 @@ export class ChatService{
 	private readonly userRepo : Repository<User>,
 	@InjectRepository(BanEnity)
 	private readonly banRepo : Repository<BanEnity>){}
+
+	@WebSocketServer()
+	serv: Server
 
 	// CONV SETTER
 
@@ -312,6 +317,7 @@ export class ChatService{
 				date.setSeconds(date.getSeconds() + to);
 				const new_ban: BanEnity = this.banRepo.create({from_group:conv, user_banned: user, end: date})
 				await this.banRepo.save(new_ban)
+
 				return true
 				
 		}catch(e){
@@ -580,6 +586,33 @@ export class ChatService{
 			await this.groupConvRepo.save(new_conv)
 
 			return true
+		}catch(e){
+			console.error(e)
+			return false
+		}
+	}
+
+	//GETTER FOR ALL
+
+	async getConvId(jwt: string){
+		let tokenUserInfo: any = decode(jwt)
+
+		try{
+			const convs = await this.convRepo.find({where: [{user_id_1: tokenUserInfo.id}, {user_id_2: tokenUserInfo.id}]})
+			const group_convs = await this.groupConvRepo.find({where: {users: {id: tokenUserInfo.id}}})
+
+			// console.log(convs)
+			// console.log(group_convs)
+
+			let ids: number[] = []
+			for (let i of convs)
+				ids.push(i.conv_id)
+			for (let i of group_convs)
+				ids.push(i.group_conv_id * -1)
+
+			// console.log(ids)
+
+			return ids
 		}catch(e){
 			console.error(e)
 			return false

@@ -120,5 +120,11 @@ export class ChatController{
 	async getGroupSecretConvMsg(@Body()bod: DTO.getGroupSecretConvMsgDTO, @Req() req){
 		return await this.chatService.getGroupSecretConvMsg(bod, req.cookies['jwt'])
 	}
+
+	@Post('get_conv_id')
+	@UseGuards(AuthGuard('jwt'))
+	async getConvId(@Req()req){
+		return await this.chatService.getConvId(req.cookies['jwt'])
+	}
 	
 }

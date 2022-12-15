@@ -1,5 +1,7 @@
 import axios from "axios"
+import Cookies from "js-cookie"
 import React, { useCallback, useEffect, useState } from "react"
+import { io } from "socket.io-client"
 import Popup from "../Popup"
 import ChatRight from "./ChatRight"
 import Message from "./Message"
@@ -108,8 +110,9 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 				const list = []
 
 				setUserGroupList(res.data.users)//set la list des users pour savoir ou afficher dans AdminPanel
-				for (let i of res.data.messages){
-					for (let j of res.data.users){
+				if (res.data && res.data.messages){
+					for (let i of res.data.messages){
+						for (let j of res.data.users){
 						if (i.sender_id === parseInt(j.id)){//prendre le bon user
 							user = j
 							break
@@ -118,10 +121,11 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 					
 					list.unshift(
 						<Message
-							key={i.msg_id} own={i.sender_id === logStateCpy ? true : false}
-							content={i.message} username={user.username} userPP={user.pp} date={i.send_at}
+						key={i.msg_id} own={i.sender_id === logStateCpy ? true : false}
+						content={i.message} username={user.username} userPP={user.pp} date={i.send_at}
 						/>//mettre info du message plus bon user dans message
-					)
+						)
+					}
 				}
 
 				setMsgList(list)
