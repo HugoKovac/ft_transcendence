@@ -3,6 +3,7 @@ import { BanEnity } from "./ban.entity";
 import Conv from "./conv.entity";
 import { Friends } from "./friends.entity";
 import { GroupConv } from "./groupConv.entity";
+import { MuteEntity } from "./mute.entity";
 
 @Entity()
 export class User {
@@ -78,4 +79,10 @@ export class User {
 		ban => ban.user_banned
 	)
 	ban_groups: BanEnity[]
+
+	@OneToMany(
+		() => MuteEntity,
+		ban => ban.user_muted
+	)
+	mute_groups: MuteEntity[]
 }

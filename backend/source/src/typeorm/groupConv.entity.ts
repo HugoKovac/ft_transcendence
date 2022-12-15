@@ -71,4 +71,10 @@ export class GroupConv{
 		ban => ban.from_group
 	)
 	ban_users: BanEnity[]
+
+	@OneToMany(
+		() => BanEnity,
+		ban => ban.from_group
+	)
+	mute_users: BanEnity[]
 }

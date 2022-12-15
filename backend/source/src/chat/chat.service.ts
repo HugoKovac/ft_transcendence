@@ -160,7 +160,7 @@ export class ChatService{
 		let tokenUserInfo: any = decode(jwt)
 
 		try{
-			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users', 'ban_users'], order:{messages:{msg_id: 'ASC'}}})
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users', 'ban_users', 'ban_users.user_banned'], order:{messages:{msg_id: 'ASC'}}})
 
 			if (!conv || conv.isPrivate === true)
 				return false
@@ -170,12 +170,16 @@ export class ChatService{
 				if (i.id === tokenUserInfo.id)
 					kick = false
 
+			console.log(conv.ban_users)
+
 			const date = new Date()
 			for (let i of conv.ban_users){
-				const banEnt = await this.banRepo.findOne({where: {id: i.id}, relations: ['user_banned']})
-				if ((banEnt.user_banned.id === tokenUserInfo.id) && (banEnt.end > date)){
+				if ((i.user_banned.id === tokenUserInfo.id) && (i.end > date)){
 					kick = true
 				}
+				if (i.end < date)
+					await this.banRepo.delete(i.id)
+				//si end du ban et > au time delete le banEntity
 			}
 			if (kick){
 				return false
