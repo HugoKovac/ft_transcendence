@@ -5,7 +5,7 @@ import { decode, JwtPayload } from 'jsonwebtoken';
 import { Friends, ReqFriend, User } from 'src/typeorm';
 import { Repository } from 'typeorm';
 import { threadId } from 'worker_threads';
-import { ReqInvitFriend, RequestFriend,ReqFriendService } from './req-friend.service';
+import { ReqInvitFriend,ReqFriendService } from './req-friend.service';
 
 @Controller('req-friend')
 export class ReqFriendController {
@@ -38,13 +38,13 @@ export class ReqFriendController {
         }
     @Post('acceptInvit')
 	@UseGuards(AuthGuard('jwt'))
-	async acceptInvit(@Body()bod: RequestFriend, @Req() req){
+	async acceptInvit(@Body()bod: ReqInvitFriend, @Req() req){
 		let i : string = await this.ReqFriendService.acceptInvit(bod, req.cookies['jwt'])
         return i
 	}
     @Post('denyInvit')
 	@UseGuards(AuthGuard('jwt'))
-	async denyInvit(@Body()bod: RequestFriend, @Req() req){
+	async denyInvit(@Body()bod: ReqInvitFriend, @Req() req){
 		let i : string = await this.ReqFriendService.denyInvit(bod, req.cookies['jwt'])
         return i
 	}
@@ -57,7 +57,13 @@ export class ReqFriendController {
     @Get('list-invit')
 	@UseGuards(AuthGuard('jwt'))
 	async getFriendsListInvit(@Req() req) {
-		let str : ReqFriend[] = await this.ReqFriendService.getReqFriends(req.cookies['jwt'])
+		let str : User[] = await this.ReqFriendService.getReqFriends(req.cookies['jwt'])
+        return str
+	}	
+    @Get('list-blocked')
+	@UseGuards(AuthGuard('jwt'))
+	async getBlocked(@Body() bod : ReqInvitFriend, @Req() req) {
+		let str : User[] = await this.ReqFriendService.getBlockUser(bod, req.cookies['jwt'])
         return str
 	}	
 	@Post('delete')
