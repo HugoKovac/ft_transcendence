@@ -167,6 +167,22 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 				console.error(e)
 			})
 		}
+		else if(!toInfo[1]){
+			await axInst.post('mute_user', {group_conv_id: props.conv_id, user_id: parseInt(toInfo[0].toString()), to: parseInt(time)}).then((res) => {
+				console.log(res.data)
+				setTo(false)
+
+				const socket = io("localhost:3000", {
+					auth: (cb) => {
+						cb({
+							token: Cookies.get('jwt')
+						});
+					}
+				})
+			}).catch((e) => {
+				console.error(e)
+			})
+		}
 	}
 
 
