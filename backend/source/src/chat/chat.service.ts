@@ -111,7 +111,7 @@ export class ChatService{
 			return conv
 		}
 		catch{
-			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
+			console.error('Error: getConvMsg')
 			return false
 		}
 	}
@@ -151,7 +151,7 @@ export class ChatService{
 			return add_username
 		}
 		catch{
-			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
+			console.error('Error: getAllConv')
 			return false
 		}
 	}
@@ -162,7 +162,7 @@ export class ChatService{
 		let tokenUserInfo: any = decode(jwt)
 
 		try{
-			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users', 'ban_users', 'ban_users.user_banned', 'admin', 'owner'], order:{messages:{msg_id: 'ASC'}}})
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users', 'ban_users', 'ban_users.user_banned', 'mute_users', 'mute_users.user_muted', 'admin', 'owner'], order:{messages:{msg_id: 'ASC'}}})
 
 			if (!conv || conv.isPrivate === true)
 				return false
@@ -180,14 +180,19 @@ export class ChatService{
 				if (i.end < date)
 					await this.banRepo.delete(i.id)
 			}
+			
 			if (kick){
 				return false
 			}
 
+			for (let i of conv.mute_users)
+				if ((i.user_muted.id === tokenUserInfo.id) && (i.end > date))
+					await this.muteRepo.delete(i.id)
+
 			return {...conv, password:''}
 		}
 		catch{
-			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
+			console.error('Error: getGroupConvMsg')
 			return false
 		}
 	}
@@ -230,6 +235,9 @@ export class ChatService{
 		try{
 			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users', 'admin', 'owner'], order:{messages:{msg_id: 'ASC'}}})
 
+			if (!conv || conv.isPrivate === false)
+				return
+
 			let kick = true
 			for (let i of conv.users)
 				if (i.id === tokenUserInfo.id)
@@ -241,7 +249,7 @@ export class ChatService{
 			return {...conv, password:''}
 		}
 		catch{
-			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
+			console.error('Error: getGroupSecretConvMsg')
 			return false
 		}
 	}
@@ -271,7 +279,7 @@ export class ChatService{
 			return rtn
 		}
 		catch{
-			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
+			console.error('Error: getAllGroupConv')
 			return false
 		}
 	}
@@ -442,7 +450,6 @@ export class ChatService{
 				}
 			}
 
-			console.log(group_conv.mute_users)
 			for (let i of group_conv.mute_users){
 				if ((i.user_muted.id === tokenUserInfo.id) && (i.end > date)){
 					// console.log(banEnt.end, date)

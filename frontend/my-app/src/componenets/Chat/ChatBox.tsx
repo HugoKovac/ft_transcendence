@@ -104,8 +104,8 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 				withCredentials: true
 			})//axios create
 			
+			
 			await axInst.post('get_group_msg', {group_conv_id: convCpy}).then(res => {
-				// console.log(res.data)
 				setIsAdmin(false)
 				for (let i of res.data.admin){
 					if (parseInt(i.id.toString()) === logStateCpy)
@@ -166,6 +166,7 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 			})//axios create
 			
 			await axInst.post('get_group_secret_conv_msg', {group_conv_id: convCpy, password: passwordInput}).then(res => {
+				
 				setIsAdmin(false)
 				for (let i of res.data.admin){
 					if (parseInt(i.id.toString()) === logStateCpy)

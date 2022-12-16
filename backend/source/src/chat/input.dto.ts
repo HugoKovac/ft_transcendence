@@ -140,6 +140,12 @@ export class changeGroupNameDTO{
 	new_name:string
 }
 
+export class refreshConvDTO{
+	@IsNotEmpty()
+	@IsNumber()
+	group_conv_id:number
+}
+
 export class changeVisibilityDTO{
 	@IsNotEmpty()
 	@IsNumber()

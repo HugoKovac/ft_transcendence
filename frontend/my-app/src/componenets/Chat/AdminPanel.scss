@@ -6,6 +6,8 @@
 
 	label{
 		font-size: 21px;
+		margin: 20px;
+			flex: 0.9
 	}
 	
 	input{
@@ -19,6 +21,17 @@
 
 	input[type=checkbox]{
 		transform: scale(1.5);
+	}
+
+	button{
+		&:hover{
+			color: #00babc;
+			cursor: pointer;
+		}
+		border: 0;
+		border-radius: 0;
+		background-color: #292d39;
+		color: white;
 	}
 
 	.infoWrap{

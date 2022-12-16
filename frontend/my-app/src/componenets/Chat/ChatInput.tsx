@@ -17,6 +17,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	const [msg, setMsg] = useState('')
 	const setHideRightCpy = setHideRight
 	const setRefreshConvListCpy = setRefreshConvList
+	const convCpy = conv_id
 	
 	useEffect(()=>{
 		const findGoodPass = (conv_id:number) => {
@@ -87,6 +88,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 			socket.on(i.toString(), () => {
 				console.log(i.toString())
 				setRefresh(true)
+				setRefreshConvListCpy(true)
 			});
 		}
 
@@ -94,7 +96,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 			for (let i of ids)
 				socket.off(i.toString());
 		}
-	}, [perm, setRefresh, ids])
+	}, [perm, setRefresh, ids, setRefreshConvListCpy])
 
 	useEffect(() => {
 		const socket = io("localhost:3000", {
@@ -106,7 +108,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 		})
 
 		socket.on(logState.toString(), () => {
-			console.log(logState.toString())
+			// console.log(logState.toString())
 			setHideRightCpy(true)
 			setRefreshConvListCpy(true)
 			setRefresh(true)
@@ -128,17 +130,34 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 			}
 		})
 			socket.on(`unban${logState}`, () => {
-				console.log(`unban${logState}`)
+				// console.log(`unban${logState}`)
 				setRefreshConvListCpy(true)
 				setHideRightCpy(false)
 				setRefresh(true)
-			// alert('You have been unban of this group')
 			});
 		return (() => {
-			// socket.off(`unban${logState}`)
 		})
 
 	}, [perm, logState, setRefreshConvListCpy, setHideRightCpy, setRefresh])
+
+	useEffect(() => {
+		const socket = io("localhost:3000", {
+			auth: (cb) => {
+					cb({
+					token: Cookies.get('jwt')
+				});
+			}
+		})
+			socket.on(`resetConv${convCpy}`, () => {
+				setRefreshConvListCpy(true)
+				setHideRightCpy(false)
+				setRefresh(true)
+				setConv(0)
+			});
+		return (() => {
+			socket.off(`resetConv${convCpy}`)
+		})
+	}, [perm, setConv, convCpy])
 
 	const [panelTrigger, setPanelTrigger] = useState(false)
 	const admin_btn_panel =  nav === 2 && isAdmin ? <button className="adminBtnPanel" onClick={() => {setPanelTrigger(true)}}>Manage</button> : <></> 
@@ -150,26 +169,28 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	 </Popup>
 	 : <></>
 
-	return <form onSubmit={(e) => {
-		e.preventDefault()
-		setMsg(inputMessage)
-		if (nav === 1)
+	return <div className='btn-wrapper'>
+		<form onSubmit={(e) => {
+			e.preventDefault()
+			setMsg(inputMessage)
+			if (nav === 1)
 			setChannel('message')
-		else if (nav === 2 && !isConvPrivate)
+			else if (nav === 2 && !isConvPrivate)
 			setChannel('groupMessage')
-		else if (nav === 2 && isConvPrivate)
+			else if (nav === 2 && isConvPrivate)
 			setChannel('privateGroupMessage')
-
-	}} className='chatInput'>
-			<input
-				className="chat-input" placeholder="type your message..." autoFocus maxLength={300}
-				autoComplete="off" onChange={(e) => {setInputMessage(e.target.value)}}
-				value={inputMessage} type="text" name="msg"
-			/>
-			<button>Send</button>
+			
+		}} className='chatInput'>
+				<input
+					className="chat-input" placeholder="type your message..." autoFocus maxLength={300}
+					autoComplete="off" onChange={(e) => {setInputMessage(e.target.value)}}
+					value={inputMessage} type="text" name="msg"
+					/>
+				<button>Send</button>
+			</form>
 			{admin_btn_panel}
 			{panelPopup}
-		</form>
+	</div>
 }
 
 export default ChatInput

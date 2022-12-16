@@ -129,7 +129,17 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 
 			if (asChange)
 				props.setConv(0)
-			
+
+			const socket = io("localhost:3000", {
+				auth: (cb) => {
+					cb({
+						token: Cookies.get('jwt')
+					});
+				}
+			})
+
+			socket.emit('refreshConv', {group_conv_id: props.conv_id})
+
 			props.setPanelTrigger(false)
 			props.setRefreshConvList(true)
 		}
@@ -171,14 +181,6 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 			await axInst.post('mute_user', {group_conv_id: props.conv_id, user_id: parseInt(toInfo[0].toString()), to: parseInt(time)}).then((res) => {
 				console.log(res.data)
 				setTo(false)
-
-				const socket = io("localhost:3000", {
-					auth: (cb) => {
-						cb({
-							token: Cookies.get('jwt')
-						});
-					}
-				})
 			}).catch((e) => {
 				console.error(e)
 			})
