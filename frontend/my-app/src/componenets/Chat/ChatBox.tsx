@@ -1,7 +1,5 @@
 import axios from "axios"
-import Cookies from "js-cookie"
 import React, { useCallback, useEffect, useState } from "react"
-import { io } from "socket.io-client"
 import Popup from "../Popup"
 import ChatRight from "./ChatRight"
 import Message from "./Message"
@@ -27,7 +25,8 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 	const [passwordPopupState, setPasswordPopupState] = useState(false)
 	const [passwordInput, setPasswordInput] = useState('')
 	const [requestPrivate, setRequestPrivate] = useState(false)
-	const [goodPass, setGoodPass] = useState([{conv_id: 0, passState: true, password:''}])//faire de good pass une structure de donné qui associe le conv_id avec le bool good pass et le pass pour le donne en payload
+	const [goodPass, setGoodPass] = useState([{conv_id: 0, passState: true, password:''}])
+	const [isAdmin, setIsAdmin] = useState(false)
 
 	let passwordPopup = <Popup trigger={passwordPopupState} setPopup={setPasswordPopupState}>
 		<label htmlFor="password" id='password'><h1>Unlock the group :</h1></label>
@@ -106,6 +105,16 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 			})//axios create
 			
 			await axInst.post('get_group_msg', {group_conv_id: convCpy}).then(res => {
+				// console.log(res.data)
+				setIsAdmin(false)
+				for (let i of res.data.admin){
+					if (parseInt(i.id.toString()) === logStateCpy)
+						setIsAdmin(true)
+				}
+
+				if (parseInt(res.data.owner.toString()) === logStateCpy)
+					setIsAdmin(true)
+
 				let user
 				const list = []
 
@@ -137,7 +146,7 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 			console.error(e, "PUBLIC GROUP CONV")
 		}
 		setRefresh(false)
-	}, [navCpy, refresh, logStateCpy, convCpy, setGoodPass, findGoodPass, goodPass, isConvPrivateCpy])
+	}, [navCpy, refresh, logStateCpy, convCpy, setGoodPass, findGoodPass, goodPass, isConvPrivateCpy, setIsAdmin])
 
 	useEffect(() => {//* PRIVATE GROUP
 		if (navCpy !== 2 || isConvPrivateCpy !== true)
@@ -157,6 +166,15 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 			})//axios create
 			
 			await axInst.post('get_group_secret_conv_msg', {group_conv_id: convCpy, password: passwordInput}).then(res => {
+				setIsAdmin(false)
+				for (let i of res.data.admin){
+					if (parseInt(i.id.toString()) === logStateCpy)
+						setIsAdmin(true)
+				}
+
+				if (parseInt(res.data.owner.toString()) === logStateCpy)
+					setIsAdmin(true)
+
 				if (!res.data){
 					setGoodPass(ChangeGoodPass(convCpy, false, ''))
 					return //* wrong password
@@ -194,14 +212,14 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 		setPasswordPopupState(false)
 		setRefresh(false)
 	}, [navCpy, refresh, logStateCpy, convCpy, requestPrivate, setPasswordPopupState, setRequestPrivate, setGoodPass,
-	findGoodPass, goodPass, isConvPrivateCpy, ChangeGoodPass, passwordInput])
+	findGoodPass, goodPass, isConvPrivateCpy, ChangeGoodPass, passwordInput, setIsAdmin])
 
 	const [hideRight, setHideRight] = useState(false)
 
 	let right = <ChatRight conv={props.conv} msgList={msgList}
 		setRefresh={setRefresh} nav={props.nav} setConv={props.setConv}
 		userGroupList={userGroupList} setRefreshConvList={props.setRefreshConvList}
-		isConvPrivate={props.isConvPrivate} passwordInput={passwordInput}
+		isConvPrivate={props.isConvPrivate} passwordInput={passwordInput} isAdmin={isAdmin}
 		setPasswordInput={setPasswordInput} goodPass={goodPass} setHideRight={setHideRight}
 	/>
 	if (props.conv === 0 || !findGoodPass(convCpy)?.passState || hideRight)

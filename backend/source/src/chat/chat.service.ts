@@ -162,7 +162,7 @@ export class ChatService{
 		let tokenUserInfo: any = decode(jwt)
 
 		try{
-			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users', 'ban_users', 'ban_users.user_banned'], order:{messages:{msg_id: 'ASC'}}})
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users', 'ban_users', 'ban_users.user_banned', 'admin', 'owner'], order:{messages:{msg_id: 'ASC'}}})
 
 			if (!conv || conv.isPrivate === true)
 				return false
@@ -184,7 +184,7 @@ export class ChatService{
 				return false
 			}
 
-			return conv
+			return {...conv, password:''}
 		}
 		catch{
 			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
@@ -228,7 +228,7 @@ export class ChatService{
 		let tokenUserInfo: any = decode(jwt)
 
 		try{
-			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users'], order:{messages:{msg_id: 'ASC'}}})
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users', 'admin', 'owner'], order:{messages:{msg_id: 'ASC'}}})
 
 			let kick = true
 			for (let i of conv.users)
@@ -238,7 +238,7 @@ export class ChatService{
 			if (!conv || kick || !await bcrypt.compare(password, conv.password))
 				return false
 
-			return conv
+			return {...conv, password:''}
 		}
 		catch{
 			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)

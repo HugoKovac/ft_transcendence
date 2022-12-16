@@ -8,8 +8,8 @@ import AdminPanel from "./AdminPanel";
 import './Chat.scss'
 import { userType } from "./ChatBox";
 
-function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefreshConvList, isConvPrivate, passwordInput, setPasswordInput, goodPass, setHideRight}:
-	{conv_id:number, setRefresh:(v:boolean)=>void, nav:number, userGroupList:userType[], setConv: (v:number)=>void, setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void, goodPass: {conv_id:number, passState:boolean, password:string}[], setHideRight: (v:boolean)=>void} ){
+function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefreshConvList, isConvPrivate, passwordInput, setPasswordInput, goodPass, setHideRight, isAdmin}:
+	{conv_id:number, setRefresh:(v:boolean)=>void, nav:number, userGroupList:userType[], setConv: (v:number)=>void, setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void, goodPass: {conv_id:number, passState:boolean, password:string}[], setHideRight: (v:boolean)=>void, isAdmin:boolean} ){
 	
 	const [inputMessage, setInputMessage] = useState<string>('')
 	const [channel, setChannel] = useState<string | null>(null)
@@ -141,10 +141,8 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	}, [perm, logState, setRefreshConvListCpy, setHideRightCpy, setRefresh])
 
 	const [panelTrigger, setPanelTrigger] = useState(false)
-	//! and if admin role and if private check if log
-	const admin_btn_panel =  nav === 2 ? <button className="adminBtnPanel" onClick={() => {setPanelTrigger(true)}}>Manage</button> : <></> 
-	//! and if admin role and if private check if log
-	const panelPopup = nav === 2 ? <Popup trigger={panelTrigger} setPopup={setPanelTrigger}> 
+	const admin_btn_panel =  nav === 2 && isAdmin ? <button className="adminBtnPanel" onClick={() => {setPanelTrigger(true)}}>Manage</button> : <></> 
+	const panelPopup = nav === 2 && isAdmin ? <Popup trigger={panelTrigger} setPopup={setPanelTrigger}> 
 		<h1>Manage Group</h1>
 		<AdminPanel userGroupList={userGroupList} conv_id={conv_id} setPanelTrigger={setPanelTrigger}
 		setRefreshConvList={setRefreshConvList} isConvPrivate={isConvPrivate} setConv={setConv}
