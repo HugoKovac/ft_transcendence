@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { BanEnity } from "./ban.entity";
 import { Message } from "./message.entity";
+import { MuteEntity } from "./mute.entity";
 import { User } from "./user.entity";
 
 @Entity()
@@ -73,8 +74,8 @@ export class GroupConv{
 	ban_users: BanEnity[]
 
 	@OneToMany(
-		() => BanEnity,
-		ban => ban.from_group
+		() => MuteEntity,
+		mute => mute.from_group
 	)
-	mute_users: BanEnity[]
+	mute_users: MuteEntity[]
 }

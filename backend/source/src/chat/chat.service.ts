@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { decode } from "jsonwebtoken";
-import { BanEnity, Message, User } from "src/typeorm";
+import { BanEnity, Message, MuteEntity, User } from "src/typeorm";
 import Conv from "src/typeorm/conv.entity";
 import { GroupConv } from "src/typeorm/groupConv.entity";
 import { Repository } from "typeorm";
@@ -21,7 +21,9 @@ export class ChatService{
 	@InjectRepository(User)
 	private readonly userRepo : Repository<User>,
 	@InjectRepository(BanEnity)
-	private readonly banRepo : Repository<BanEnity>){}
+	private readonly banRepo : Repository<BanEnity>,
+	@InjectRepository(MuteEntity)
+	private readonly muteRepo : Repository<MuteEntity>){}
 
 	@WebSocketServer()
 	serv: Server
@@ -93,7 +95,7 @@ export class ChatService{
 	// CONV GETTER
 
 	async getConvMsg({conv_id}:DTO.getConvMsgDTO, jwt:string){
-		let tokenUserInfo: any = decode(jwt)//!verifier si la conv est bien au user_id du token
+		let tokenUserInfo: any = decode(jwt)
 
 		try{
 
@@ -170,8 +172,6 @@ export class ChatService{
 				if (i.id === tokenUserInfo.id)
 					kick = false
 
-			console.log(conv.ban_users)
-
 			const date = new Date()
 			for (let i of conv.ban_users){
 				if ((i.user_banned.id === tokenUserInfo.id) && (i.end > date)){
@@ -179,7 +179,6 @@ export class ChatService{
 				}
 				if (i.end < date)
 					await this.banRepo.delete(i.id)
-				//si end du ban et > au time delete le banEntity
 			}
 			if (kick){
 				return false
@@ -250,7 +249,7 @@ export class ChatService{
 	async getAllGroupConv(jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		try{
-			const convs: GroupConv[] = await this.groupConvRepo.find({relations: ['users', 'ban_users'], where: {users:{id: tokenUserInfo.id}}})
+			const convs: GroupConv[] = await this.groupConvRepo.find({relations: ['users', 'ban_users', 'ban_users.user_banned'], where: {users:{id: tokenUserInfo.id}}})
 
 			if (!convs)
 				return false
@@ -262,8 +261,7 @@ export class ChatService{
 			for (let i of convs){
 				let push = true
 				for (let j of i.ban_users){
-					const banEnt = await this.banRepo.findOne({where: {id: j.id}, relations: ['user_banned']})
-					if ((banEnt.user_banned.id === tokenUserInfo.id) && banEnt.end > time)
+					if ((j.user_banned.id === tokenUserInfo.id) && j.end > time)
 						push = false
 				}
 				if (push)
@@ -337,6 +335,27 @@ export class ChatService{
 		}
 	}
 
+	async muteUser({group_conv_id, user_id, to}: DTO.banUserDTO, jwt:string){
+		let tokenUserInfo: any = decode(jwt)
+		try{
+			const conv = await this.groupConvRepo.findOne({where:{group_conv_id:group_conv_id}, relations:['owner', 'mute_users', 'messages']})
+			const user = await this.userRepo.findOne({where:{id:user_id}})
+
+			if (!conv || conv.owner.id !== tokenUserInfo.id || !user || user_id === tokenUserInfo.id)
+				return false
+
+			var date = new Date();
+			date.setSeconds(date.getSeconds() + to);
+			const new_mute: MuteEntity = this.muteRepo.create({from_group:conv, user_muted: user, end: date})
+			await this.muteRepo.save(new_mute)
+
+			return true
+		}catch(e){
+			console.error(e)
+			return false
+		}
+	}
+
 	async newAdmin({group_conv_id, admin_ids}: DTO.newAdminDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		try{
@@ -403,7 +422,7 @@ export class ChatService{
 		if (!message)
 			return false
 		try{
-			const group_conv: GroupConv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations: ['ban_users', 'users']})
+			const group_conv: GroupConv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations: ['ban_users', 'ban_users.user_banned', 'users', 'mute_users', 'mute_users.user_muted']})
 
 			if (!group_conv || group_conv.isPrivate)
 				return false
@@ -414,14 +433,23 @@ export class ChatService{
 					kick = false
 				}
 				
-				const date = new Date()
-				for (let i of group_conv.ban_users){
-					const banEnt = await this.banRepo.findOne({where: {id: i.id}, relations: ['user_banned']})
-					if ((banEnt.user_banned.id === tokenUserInfo.id) && (banEnt.end > date)){
+			const date = new Date()
+
+			for (let i of group_conv.ban_users){
+				if ((i.user_banned.id === tokenUserInfo.id) && (i.end > date)){
 					// console.log(banEnt.end, date)
 					kick = true
 				}
 			}
+
+			console.log(group_conv.mute_users)
+			for (let i of group_conv.mute_users){
+				if ((i.user_muted.id === tokenUserInfo.id) && (i.end > date)){
+					// console.log(banEnt.end, date)
+					kick = true
+				}
+			}
+
 			if (kick){
 				return false
 			}
