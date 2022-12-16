@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react"
 import Popup from "../Popup"
 import ChatRight from "./ChatRight"
 import Message from "./Message"
+import './PassPopup.scss'
 
 export type userType = {
 	id:number,
@@ -24,12 +25,13 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 	const [passwordPopupState, setPasswordPopupState] = useState(false)
 	const [passwordInput, setPasswordInput] = useState('')
 	const [requestPrivate, setRequestPrivate] = useState(false)
-	const [goodPass, setGoodPass] = useState([{conv_id: 0, passState: true, password:''}])//faire de good pass une structure de donné qui associe le conv_id avec le bool good pass et le pass pour le donne en payload
+	const [goodPass, setGoodPass] = useState([{conv_id: 0, passState: true, password:''}])
+	const [isAdmin, setIsAdmin] = useState(false)
 
 	let passwordPopup = <Popup trigger={passwordPopupState} setPopup={setPasswordPopupState}>
-		<label htmlFor="password" id='password'><h1>Password :</h1></label>
-		<input type="password" onChange={e => {setPasswordInput(e.target.value)}} />
-		<button onClick={(e) => {e.preventDefault(); setRequestPrivate(true)}}>Verify</button>
+		<label htmlFor="password" id='password'><h1>Unlock the group :</h1></label>
+		<input type="password" placeholder="Password..." className="group-pass" onChange={e => {setPasswordInput(e.target.value)}} />
+		<button className="btn-pass" onClick={(e) => {e.preventDefault(); setRequestPrivate(true)}}>Verify</button>
 	</Popup>
 
 	const findGoodPass = useCallback( (conv_id:number) => {
@@ -102,13 +104,24 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 				withCredentials: true
 			})//axios create
 			
+			
 			await axInst.post('get_group_msg', {group_conv_id: convCpy}).then(res => {
+				setIsAdmin(false)
+				for (let i of res.data.admin){
+					if (parseInt(i.id.toString()) === logStateCpy)
+						setIsAdmin(true)
+				}
+
+				if (parseInt(res.data.owner.toString()) === logStateCpy)
+					setIsAdmin(true)
+
 				let user
 				const list = []
 
 				setUserGroupList(res.data.users)//set la list des users pour savoir ou afficher dans AdminPanel
-				for (let i of res.data.messages){
-					for (let j of res.data.users){
+				if (res.data && res.data.messages){
+					for (let i of res.data.messages){
+						for (let j of res.data.users){
 						if (i.sender_id === parseInt(j.id)){//prendre le bon user
 							user = j
 							break
@@ -117,10 +130,11 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 					
 					list.unshift(
 						<Message
-							key={i.msg_id} own={i.sender_id === logStateCpy ? true : false}
-							content={i.message} username={user.username} userPP={user.pp} date={i.send_at}
+						key={i.msg_id} own={i.sender_id === logStateCpy ? true : false}
+						content={i.message} username={user.username} userPP={user.pp} date={i.send_at}
 						/>//mettre info du message plus bon user dans message
-					)
+						)
+					}
 				}
 
 				setMsgList(list)
@@ -132,7 +146,7 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 			console.error(e, "PUBLIC GROUP CONV")
 		}
 		setRefresh(false)
-	}, [navCpy, refresh, logStateCpy, convCpy, setGoodPass, findGoodPass, goodPass, isConvPrivateCpy])
+	}, [navCpy, refresh, logStateCpy, convCpy, setGoodPass, findGoodPass, goodPass, isConvPrivateCpy, setIsAdmin])
 
 	useEffect(() => {//* PRIVATE GROUP
 		if (navCpy !== 2 || isConvPrivateCpy !== true)
@@ -152,6 +166,16 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 			})//axios create
 			
 			await axInst.post('get_group_secret_conv_msg', {group_conv_id: convCpy, password: passwordInput}).then(res => {
+				
+				setIsAdmin(false)
+				for (let i of res.data.admin){
+					if (parseInt(i.id.toString()) === logStateCpy)
+						setIsAdmin(true)
+				}
+
+				if (parseInt(res.data.owner.toString()) === logStateCpy)
+					setIsAdmin(true)
+
 				if (!res.data){
 					setGoodPass(ChangeGoodPass(convCpy, false, ''))
 					return //* wrong password
@@ -189,15 +213,17 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 		setPasswordPopupState(false)
 		setRefresh(false)
 	}, [navCpy, refresh, logStateCpy, convCpy, requestPrivate, setPasswordPopupState, setRequestPrivate, setGoodPass,
-	findGoodPass, goodPass, isConvPrivateCpy, ChangeGoodPass, passwordInput])
+	findGoodPass, goodPass, isConvPrivateCpy, ChangeGoodPass, passwordInput, setIsAdmin])
+
+	const [hideRight, setHideRight] = useState(false)
 
 	let right = <ChatRight conv={props.conv} msgList={msgList}
 		setRefresh={setRefresh} nav={props.nav} setConv={props.setConv}
 		userGroupList={userGroupList} setRefreshConvList={props.setRefreshConvList}
-		isConvPrivate={props.isConvPrivate} passwordInput={passwordInput}
-		setPasswordInput={setPasswordInput} goodPass={goodPass}
+		isConvPrivate={props.isConvPrivate} passwordInput={passwordInput} isAdmin={isAdmin}
+		setPasswordInput={setPasswordInput} goodPass={goodPass} setHideRight={setHideRight}
 	/>
-	if (props.conv === 0 || !findGoodPass(convCpy)?.passState)
+	if (props.conv === 0 || !findGoodPass(convCpy)?.passState || hideRight)
 		right = <div className='chatBox' />
 
 	return <React.Fragment>

@@ -25,6 +25,36 @@ export class ChatController{
 		return await this.chatService.newGroupConv(bod, req.cookies['jwt'])
 	}
 
+	@Post('new_admin')
+	@UseGuards(AuthGuard('jwt'))
+	async newAdmin(@Body()bod: DTO.newAdminDTO, @Req() req){
+		return await this.chatService.newAdmin(bod, req.cookies['jwt'])
+	}
+
+	@Post('ban_user')
+	@UseGuards(AuthGuard('jwt'))
+	async banUser(@Body()bod: DTO.banUserDTO, @Req() req){
+		return await this.chatService.banUser(bod, req.cookies['jwt'])
+	}
+
+	@Post('mute_user')
+	@UseGuards(AuthGuard('jwt'))
+	async muteUser(@Body()bod: DTO.banUserDTO, @Req() req){
+		return await this.chatService.muteUser(bod, req.cookies['jwt'])
+	}
+
+	@Post('del_admin')
+	@UseGuards(AuthGuard('jwt'))
+	async delAdmin(@Body()bod: DTO.newAdminDTO, @Req() req){
+		return await this.chatService.delAdmin(bod, req.cookies['jwt'])
+	}
+	
+	@Post('get_conv_users')
+	@UseGuards(AuthGuard('jwt'))
+	async getConvUsers(@Body()bod: DTO.getGroupConvMsgDTO, @Req() req){
+		return await this.chatService.getConvUsers(bod, req.cookies['jwt'])
+	}
+
 	@Post('new_group_msg')
 	@UseGuards(AuthGuard('jwt'))
 	async newGroupMsg(@Body()bod: DTO.newGroupMsgDTO, @Req() req){
@@ -95,6 +125,12 @@ export class ChatController{
 	@UseGuards(AuthGuard('jwt'))
 	async getGroupSecretConvMsg(@Body()bod: DTO.getGroupSecretConvMsgDTO, @Req() req){
 		return await this.chatService.getGroupSecretConvMsg(bod, req.cookies['jwt'])
+	}
+
+	@Post('get_conv_id')
+	@UseGuards(AuthGuard('jwt'))
+	async getConvId(@Req()req){
+		return await this.chatService.getConvId(req.cookies['jwt'])
 	}
 	
 }

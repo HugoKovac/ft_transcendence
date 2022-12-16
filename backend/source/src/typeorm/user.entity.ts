@@ -1,7 +1,9 @@
 import { Column, Entity, JoinColumn, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { BanEnity } from "./ban.entity";
 import Conv from "./conv.entity";
 import { Friends } from "./friends.entity";
 import { GroupConv } from "./groupConv.entity";
+import { MuteEntity } from "./mute.entity";
 
 @Entity()
 export class User {
@@ -59,4 +61,28 @@ export class User {
 		group_conv => group_conv.users
 	)
 	group_conv: GroupConv[]
+
+	@OneToMany(
+		() => GroupConv,
+		group_conv => group_conv.owner
+	)
+	own_group: GroupConv[]
+
+	@ManyToMany(
+		() => GroupConv,
+		group_conv => group_conv.admin
+	)
+	admin_group: GroupConv[]
+
+	@OneToMany(
+		() => BanEnity,
+		ban => ban.user_banned
+	)
+	ban_groups: BanEnity[]
+
+	@OneToMany(
+		() => MuteEntity,
+		ban => ban.user_muted
+	)
+	mute_groups: MuteEntity[]
 }

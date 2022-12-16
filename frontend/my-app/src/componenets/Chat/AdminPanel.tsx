@@ -1,8 +1,12 @@
 import axios from 'axios'
+import Cookies from 'js-cookie'
 import { useState, useContext, useEffect } from 'react'
+import { io } from 'socket.io-client'
 import LoginStateContext from '../Login/LoginStateContext'
+import Popup from '../Popup'
 import './AdminPanel.scss'
 import { userType } from './ChatBox'
+import ManageAdmin from './ManageAdmin'
 
 const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: (v:number)=>void, setPanelTrigger: (v:boolean)=>void, setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void}) => {
 
@@ -13,10 +17,10 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 	const [delCheckboxState, setDelCheckboxState] = useState([false])
 	const [privateState, setPrivateState] = useState(props.isConvPrivate)
 	const [asChange, setAsChange] = useState(false)
+	const [popAdmin, setPopAdmin] = useState(false)
 	const userGroupListCpy = props.userGroupList
 	const {logState} = useContext(LoginStateContext)
-	
-	
+
 	useEffect(() => {
 		const handleCheckedBox = (e:any) => {
 			let tmp = checkboxState
@@ -39,7 +43,9 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 								push = false
 						}
 						if (push)
-							list.push(<label key={i.friend_id}><input onChange={handleCheckedBox} value={i.friend_id} type="checkbox" /> {i.friend_username}</label>)
+							list.push(<label key={i.friend_id}>
+								<input onChange={handleCheckedBox} value={i.friend_id} type="checkbox" /> {i.friend_username}
+							</label>)
 					}
 					setFriendList(list)
 				})
@@ -51,18 +57,29 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 		get()
 	}, [setFriendList, checkboxState, userGroupListCpy])
 
+	const [to, setTo] = useState(false)
+	const [toInfo, setToInfo] = useState([0, 0])
+	const handleSetTime = async(id:number, isBan:number) => {
+		setTo(true)
+		setToInfo([id, isBan])		
+	}
+
 	useEffect(() => {
+
 		const handleCheckedBox = (e:any) => {
 			let tmp = delCheckboxState
 			tmp[e.target.value] = tmp[e.target.value] ? !tmp[e.target.value] : true
 			setDelCheckboxState(tmp)
-			// console.log(delCheckboxState)
 		}
 
 		let list = []
 			for (let i of userGroupListCpy)
 				if (parseInt(i.id.toString()) !== logState)
-					list.push(<label key={i.id}><input onChange={handleCheckedBox} value={i.id} type="checkbox" /> {i.username}</label>)
+					list.push(<label key={i.id}>
+						<input onChange={handleCheckedBox} value={i.id} type="checkbox" /> {i.username}
+						<button key={-i.id} className='ban' onClick={() => {handleSetTime(i.id, 1)}}>Ban</button>{/**Popup to set time of Mute*/}
+						<button key={i.id} className='mute' onClick={() => {handleSetTime(i.id, 0)}}>Mute</button>{/**Popup to set time of Mute*/}
+					</label>)
 		
 		setDelList(list)
 	}, [setDelList, setDelCheckboxState, userGroupListCpy, delCheckboxState, logState])
@@ -112,7 +129,17 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 
 			if (asChange)
 				props.setConv(0)
-			
+
+			const socket = io("localhost:3000", {
+				auth: (cb) => {
+					cb({
+						token: Cookies.get('jwt')
+					});
+				}
+			})
+
+			socket.emit('refreshConv', {group_conv_id: props.conv_id})
+
 			props.setPanelTrigger(false)
 			props.setRefreshConvList(true)
 		}
@@ -120,6 +147,46 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 			console.error('Error with fetch of http://localhost:3000/api/message/ addList || delList || change_group_name')
 		}
 	}
+
+	const [time, setTime] = useState<string>('')
+
+	const sendTime = async () => {
+		const axInst =  axios.create({
+			baseURL: 'http://localhost:3000/api/message/',
+			withCredentials: true
+		})
+
+		if (toInfo[1]){
+			await axInst.post('ban_user', {group_conv_id: props.conv_id, user_id: parseInt(toInfo[0].toString()), to: parseInt(time)}).then((res) => {
+				console.log(res.data)
+				setTo(false)
+
+				const socket = io("localhost:3000", {
+					auth: (cb) => {
+						cb({
+							token: Cookies.get('jwt')
+						});
+					}
+				})
+
+				socket.emit('ban', {group_conv_id: props.conv_id, user_id: parseInt(toInfo[0].toString()), to: parseInt(time)})
+
+				return (() => {socket.off('ban')})
+				
+			}).catch((e) => {
+				console.error(e)
+			})
+		}
+		else if(!toInfo[1]){
+			await axInst.post('mute_user', {group_conv_id: props.conv_id, user_id: parseInt(toInfo[0].toString()), to: parseInt(time)}).then((res) => {
+				console.log(res.data)
+				setTo(false)
+			}).catch((e) => {
+				console.error(e)
+			})
+		}
+	}
+
 
 	const groupPass = privateState === true
 	? <><label htmlFor="isPrivate">Password : </label>
@@ -137,16 +204,30 @@ const AdminPanel = (props: {userGroupList:userType[], conv_id: number, setConv: 
 				<input type="checkbox" id="isPrivate" checked={privateState} onChange={(e) => {setPrivateState(!privateState); setAsChange(true)}} />
 				{groupPass}
 			</div>
-			<div className='add-users'>
-				<h2>Select User(s) to add :</h2>
-				{friendList}
-			</div>
 			<div className='del-users'>
 				<h2>Select User(s) to remove :</h2>
 				{delList}
 			</div>
+			<div className='add-users'>
+				<h2>Select User(s) to add :</h2>
+				{friendList}
+			</div>
 		</div>
-		<button className='save-btn' onClick={updateSubmit}>Save</button>
+		<Popup key={'general'} trigger={popAdmin} setPopup={setPopAdmin}>
+			<ManageAdmin conv_id={props.conv_id} setPanelTrigger={props.setPanelTrigger} setPopAdmin={setPopAdmin}/>
+		</Popup>
+		<Popup key={'admin'} trigger={to} setPopup={setTo}>
+			<h1>Set Time Out</h1>
+			<div className='form-to'>
+				<label htmlFor="time">Time in seconds :</label>
+				<input name='time' type="number" onChange={(e) => {setTime(e.target.value)}} />
+				<button onClick={sendTime}>Submit</button>
+			</div>
+		</Popup>
+		<div className='bot-wrpper'>
+			<button className='add-min-btn' onClick={() => {setPopAdmin(true)}}>Add Admin</button>
+			<button className='save-btn' onClick={updateSubmit}>Save</button>
+		</div>
 	</div>
 }
 
