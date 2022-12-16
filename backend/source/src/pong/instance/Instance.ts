@@ -284,10 +284,5 @@ export class Instance
             this.checkFinish();
         }
         this.lobby.refreshLobby();
-        // setImmediate(() => {this.gameLoop()} );
     }
 }
-
-
-//*! Tout les calculs de distance, hit, doit se faire cote serveur
-//*! Le client doit simplement pouvoir envoyer les requete, et ne doit faire aucun calcul de son cote

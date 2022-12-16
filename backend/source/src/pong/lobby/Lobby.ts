@@ -79,8 +79,7 @@ export class Lobby
 
     constructor( public readonly server: Server, public readonly skin: string )
     { 
-        setInterval( () => { this.instance.gameLoop(); }, 10);
-        // setImmediate(() => {this.instance.gameLoop()} );
+        setInterval( () => { this.instance.gameLoop(); }, 1000 / 60);
     }
 
     public addClient( client: AuthenticatedSocket )
@@ -127,7 +126,7 @@ export class Lobby
             this.instance.Player1Ready = false;
         }
         else if ( client.id == this.instance.Player2id )
-        {
+        {  
             this.instance.Player2id = null;
             this.instance.Player2Online = false;
             this.instance.Player2Ready = false;

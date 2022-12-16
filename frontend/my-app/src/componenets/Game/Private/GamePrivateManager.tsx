@@ -1,13 +1,13 @@
 import GameInstance from "./GameInstance";
 import GameLobby from "./GameLobby";
 import { useContext, useEffect, useState } from 'react';
-import { ServerEvents } from '../../shared/server/Server.Events'
-import { WebsocketContext } from "./WebsocketContext";
-import { LobbyState } from "./LobbyState";
+import { ServerEvents } from '../../../shared/server/Server.Events'
+import { WebsocketContext } from "../WebsocketContext";
+import { LobbyState } from "../LobbyState";
 import { useRecoilState } from 'recoil';
 import { useSearchParams } from "react-router-dom";
 import { Socket } from "socket.io-client";
-import { ClientEvents } from "../../shared/client/Client.Events";
+import { ClientEvents } from "../../../shared/client/Client.Events";
     
 export default function GamePrivateManager() 
 {

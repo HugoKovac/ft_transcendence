@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { io } from 'socket.io-client';
-import { ServerEvents } from '../..//shared/server/Server.Events'
-import { ClientEvents } from '../../shared/client/Client.Events'
-import NavBar from '../NavBar';
+import { ServerEvents } from '../../../shared/server/Server.Events'
+import { ClientEvents } from '../../../shared/client/Client.Events'
+import NavBar from '../../NavBar';
 
 
 export default function GameMatchmaking() {

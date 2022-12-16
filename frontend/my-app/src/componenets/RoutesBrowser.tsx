@@ -9,8 +9,8 @@ import Profile from "../pages/Profile"
 import Unauthorized from "../pages/Unauthorized"
 import CheckTokenAfterLogin, { CheckTokenFirstMount } from "./Login/CheckToken"
 import LoginStateContext from "./Login/LoginStateContext"
-import GameMatchmaking from "./Game/GameMatchmaking"
-import GamePrivateManager from "./Game/GamePrivateManager"
+import GameMatchmaking from "./Game/Matchmaking/GameMatchmaking"
+import GamePrivateManager from "./Game/Private/GamePrivateManager"
 
 
 

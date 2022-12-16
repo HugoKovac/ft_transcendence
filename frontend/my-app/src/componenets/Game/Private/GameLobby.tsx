@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react';
-import { ClientEvents } from '../../shared/client/Client.Events'
-import NavBar from '../NavBar';
-import { WebsocketContext } from './WebsocketContext';
+import { ClientEvents } from '../../../shared/client/Client.Events'
+import NavBar from '../../NavBar';
+import { WebsocketContext } from './../WebsocketContext';
 import { useSearchParams } from 'react-router-dom';
 
 export default function GameLobby() {

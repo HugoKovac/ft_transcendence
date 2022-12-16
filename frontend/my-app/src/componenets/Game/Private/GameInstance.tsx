@@ -1,44 +1,25 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { WebsocketContext } from "./WebsocketContext";
-import '../../styles/GameInstance.css';
-import NavBar from '../../componenets/NavBar';
-import { LobbyState } from "./LobbyState";
+import { WebsocketContext } from "../WebsocketContext";
+import '../../../styles/GameInstance.css';
+import NavBar from '../../NavBar';
+import { LobbyState } from "../LobbyState";
 import { useRecoilValue } from "recoil";
-import { ClientEvents } from "../../shared/client/Client.Events";
-
-interface Paddle
-{
-    x : number;
-    y : number;
-    width : number;
-    height : number;
-    color : string;
-    speed : number;
-    gravity : number;
-    ready : boolean;
-}
-
-interface Ball
-{
-    x : number;
-    y : number;
-    width : number;
-    height : number;
-    color : string;
-    speed : number;
-    gravity : number;
-}
-
+import { ClientEvents } from "../../../shared/client/Client.Events";
+import { Paddle, Ball } from "../GameConstant"
+import { CANVASHEIGHT, CANVASWIDTH, BALLSPEED } from "../GameConstant"
 
 export default function GameInstance()
 {
-    const CurrentLobbyState = useRecoilValue(LobbyState);
+    //? Variable declaration
+
     const socket = useContext(WebsocketContext);
+    
+    const CurrentLobbyState = useRecoilValue(LobbyState);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [SpectatorMode, SetSpectatorMode] = useState(false);
     const [numberOfSpectator, SetnumberOfSpectator] = useState(0);
 
-    const [Player1] = useState<Paddle>({
+    const Player1 : Paddle = {
         x : 0,
         y: 0,
         width: 0,
@@ -47,9 +28,9 @@ export default function GameInstance()
         speed: 0,
         gravity: 0,
         ready: false,
-    })
+    }
 
-    const [Player2] = useState<Paddle>({
+    const Player2 : Paddle = ({
         x : 0,
         y: 0,  
         width: 0,
@@ -60,7 +41,7 @@ export default function GameInstance()
         ready: false,
     })
 
-    const [Ball] = useState<Ball>({
+    const Ball : Ball = ({
         x : 0,
         y: 0,
         width: 0,
@@ -85,11 +66,34 @@ export default function GameInstance()
     let Player1Win = false;
     let Player2Win = false;
 
+    let Player1UpArrow = false;
+    let Player1DownArrow = false;
+    let Player2UpArrow = false;
+    let Player2DownArrow = false;
+
+
+
+
+
+
+
+    //? Variable declaration
+
+
+    //? Canvas Drawer
+
+
+
+
+
+
+
+
+
     const drawPaddle = ( ( config : Paddle ) => {
 
         if (canvasRef.current)
         {
-            let heightRatio = 1.5;
             const canvas = canvasRef.current;
             const context = canvas.getContext('2d');
             if (context) 
@@ -188,6 +192,258 @@ export default function GameInstance()
         }
     });
 
+
+
+
+
+
+
+
+
+
+
+
+    //? Canvas Drawer
+
+
+    //? Key Handler
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function Player1keyDownHandler( event : any )
+    {
+        if ( event.defaultPrevented ) 
+            return ;
+
+        if ( event.code === "ArrowUp" ) 
+        {
+            socket.emit(ClientEvents.Player1ArrowUpPress);
+            Player1UpArrow = true;
+        }
+
+        else if ( event.code === "ArrowDown"  ) 
+        {
+            socket.emit(ClientEvents.Player1ArrowDownPress);
+            Player1DownArrow = true;
+        }
+        
+        event.preventDefault();
+    }
+
+    function Player2keyDownHandler( event : any )
+    {
+        if ( event.defaultPrevented ) 
+            return ;
+
+        if ( event.code === "ArrowUp")
+        {
+            socket.emit(ClientEvents.Player2ArrowUpPress);
+            Player2UpArrow = true;
+        }
+
+        else if ( event.code === "ArrowDown"  )
+        {
+            socket.emit(ClientEvents.Player2ArrowDownPress);
+            Player2DownArrow = true;
+        }
+        
+        event.preventDefault();
+    }
+
+    function Player1keyUpHandler( event : any )
+    {
+        if ( event.defaultPrevented ) 
+            return ;
+
+        if ( event.code === "Space" && gameStart === false )
+            socket.emit(ClientEvents.ReadyState);
+
+        if ( event.code === "ArrowUp")
+        {
+            socket.emit(ClientEvents.Player1ArrowUpRelease);
+            Player1UpArrow = false;
+        }
+
+        else if ( event.code === "ArrowDown"  )
+        {
+            socket.emit(ClientEvents.Player1ArrowDownRelease);
+            Player1DownArrow = false;
+        }
+        
+        event.preventDefault();
+    }
+
+    function Player2keyUpHandler( event : any )
+    {
+        if ( event.defaultPrevented ) 
+            return ;
+
+        if ( event.code === "Space" && gameStart === false )
+            socket.emit(ClientEvents.ReadyState);
+
+        if ( event.code === "ArrowUp" )
+        {
+            socket.emit(ClientEvents.Player2ArrowUpRelease);
+            Player2UpArrow = false;
+        }
+
+        else if ( event.code === "ArrowDown" )
+        {
+            socket.emit(ClientEvents.Player2ArrowDownRelease);
+            Player2DownArrow = false;
+        }
+        
+        event.preventDefault();
+    }
+
+
+
+
+
+
+
+
+
+
+    //? Key Handler
+
+
+
+
+
+
+
+    //? CLIENT PREDICTION 
+
+
+
+
+
+
+
+
+
+    const BallBounce = ( ) =>
+    {
+
+        if ( Ball.y + Ball.gravity <= 0 ||  Ball.y +  Ball.gravity >= canvasHeight )
+        {
+            Ball.gravity = Ball.gravity * -1;
+            Ball.y +=  Ball.gravity;
+            Ball.x +=  Ball.speed;
+            if ( Ball.speed < 0 )
+                Ball.speed -= 0.2;
+            else
+                Ball.speed += 0.2;
+        }
+        else //! Doesn't bounce just move
+        {
+            Ball.y +=  Ball.gravity;
+            Ball.x +=  Ball.speed;
+        }
+    }
+
+
+    const BallCollision = ( ) =>
+    {
+        if ( ( ( Ball.y +  Ball.gravity <= Player2.y +  Player2.height &&  Ball.y +  Ball.gravity >=  Player2.y ) && 
+            ( Ball.x +  Ball.width +  Ball.speed >=  Player2.x &&  Ball.x +  Ball.width +  Ball.speed <=  Player2.x +  Player2.width ) && 
+            Ball.y +  Ball.gravity >  Player2.y ))
+            {
+                Ball.speed = Ball.speed * -1;
+                if ( Ball.speed < 0 )
+                    Ball.speed -= 0.4;
+                else
+                    Ball.speed += 0.4;
+            }
+        else if (  Ball.y +  Ball.gravity <=  Player1.y +  Player1.height && 
+            (  Ball.x +  Ball.speed <=  Player1.x +  Player1.width &&  Ball.x +  Ball.speed >=  Player1.x ) && 
+            Ball.y +  Ball.gravity >  Player1.y)
+            {
+                Ball.speed =  Ball.speed * -1;
+                if ( Ball.speed < 0 )
+                    Ball.speed -= 0.4;
+                else
+                    Ball.speed += 0.4;
+            }
+        else if (  Ball.x +  Ball.speed <  Player1.x - 100 )
+        {
+            Ball.x = CANVASWIDTH / 2;
+            Ball.y = CANVASHEIGHT / 2;
+            Ball.speed = BALLSPEED;
+        }
+        else if (  Ball.x +  Ball.speed >  Player2.x +  Player2.width + 100 )
+        {
+            Ball.x = CANVASWIDTH / 2;
+            Ball.y = CANVASHEIGHT / 2;
+            Ball.speed = BALLSPEED * -1;
+        }
+    }
+
+    const updateVar = () =>
+    {
+        if ( Player1UpArrow && Player1.y - Player1.gravity > 0 ) 
+            Player1.y -= Player1.gravity * 4;
+
+        else if ( Player1DownArrow && Player1.y + Player1.height + Player1.gravity < CANVASHEIGHT ) 
+            Player1.y += Player1.gravity * 4;
+
+        else if ( Player2UpArrow && Player2.y - Player2.gravity > 0  ) 
+            Player2.y -= Player2.gravity * 4;
+
+        else if ( Player2DownArrow && Player2.y + Player2.height + Player2.gravity < CANVASHEIGHT ) 
+            Player2.y += Player2.gravity * 4;
+            
+    }
+
+    const clientPrediction = ( () => {
+
+        if ( gameStart === true && gameEnd === false )
+        {
+            updateVar();
+            BallBounce();
+            BallCollision();
+        }
+    });
+
+
+
+
+
+
+
+
+
+    //? CLIENT PREDICTION
+
+
+
+
+
+
+
+
+
+
+    //? Client game loop
+
+
+
+
+
+
+
     const waitForOpponent = ( () => {
 
         if (canvasRef.current)
@@ -199,92 +455,24 @@ export default function GameInstance()
             {
                 context.font = "18px Arial";
                 context.fillStyle = "#fff";
-                if ( Player1.ready === false )
-                    context.fillText("Waiting for player1....", canvasWidth / 10, 30);
-                if ( Player2.ready === false )
-                    context.fillText("Waiting for player2....", canvasWidth - canvasWidth / 3, 30);
                 if ( CurrentLobbyState )
-                    if ( (CurrentLobbyState.Player1id === socket.id && Player1.ready === false) || (CurrentLobbyState.Player2id === socket.id && Player2.ready === false) )
-                        context.fillText("Press SPACE to play", canvasWidth / 2.5, canvasHeight / 2);
+                {
+                    if ( CurrentLobbyState.Player1Ready === false  )
+                        context.fillText("Waiting for player1....", canvasWidth / 10, 30);
+                    if ( CurrentLobbyState.Player2Ready === false )
+                        context.fillText("Waiting for player2....", canvasWidth - canvasWidth / 3, 30);
+                    if ( ( CurrentLobbyState.Player1id === socket.id && CurrentLobbyState.Player1Ready === false ) || ( CurrentLobbyState.Player2id === socket.id && CurrentLobbyState.Player2Ready === false ) )
+                            context.fillText("Press SPACE to play", canvasWidth / 2.5, canvasHeight / 2);
+                }
             }
         }   
     })
 
-    function Player1keyDownHandler( event : any )
-    {
-        if ( event.defaultPrevented ) 
-            return ;
-
-        if ( event.code === "ArrowUp" ) 
-            socket.emit(ClientEvents.Player1ArrowUpPress);
-
-        else if ( event.code === "ArrowDown"  ) 
-            socket.emit(ClientEvents.Player1ArrowDownPress);
-        
-        event.preventDefault();
-    }
-
-    function Player2keyDownHandler( event : any )
-    {
-        if ( event.defaultPrevented ) 
-            return ;
-
-        if ( event.code === "ArrowUp") 
-            socket.emit(ClientEvents.Player2ArrowUpPress);
-
-        else if ( event.code === "ArrowDown"  ) 
-            socket.emit(ClientEvents.Player2ArrowDownPress);
-        
-        event.preventDefault();
-    }
-
-    function Player1keyUpHandler( event : any )
-    {
-        if ( event.defaultPrevented ) 
-            return ;
-
-        console.log("PLAYER 1");
-        console.log(event.code);
-
-        if ( event.code === "Space" && gameStart === false )
-            socket.emit(ClientEvents.ReadyState);
-
-        if ( event.code === "ArrowUp") 
-            socket.emit(ClientEvents.Player1ArrowUpRelease);
-
-        else if ( event.code === "ArrowDown"  ) 
-            socket.emit(ClientEvents.Player1ArrowDownRelease);
-            
-        event.preventDefault();
-    }
-
-    function Player2keyUpHandler( event : any )
-    {
-        if ( event.defaultPrevented ) 
-            return ;
-
-            console.log("PLAYER 2");
-            console.log(event.code);
-
-        if ( event.code === "Space" && gameStart === false )
-            socket.emit(ClientEvents.ReadyState);
-
-        if ( event.code === "ArrowUp") 
-            socket.emit(ClientEvents.Player2ArrowUpRelease);
-
-        else if ( event.code === "ArrowDown"  ) 
-            socket.emit(ClientEvents.Player2ArrowDownRelease);
-            
-        event.preventDefault();
-    }
 
     const serverloop = ( () => {
 
-        // socket.emit(ClientEvents.GameLoop);
-
         if ( CurrentLobbyState )
         {
-
             SetnumberOfSpectator(CurrentLobbyState.numberOfSpectator);
             endMessage = CurrentLobbyState.endMessage;
 
@@ -325,26 +513,13 @@ export default function GameInstance()
             Ball.color = CurrentLobbyState.Ballcolor;
             Ball.speed = CurrentLobbyState.Ballspeed;
             Ball.gravity = CurrentLobbyState.Ballgravity;
-
-            if ( CurrentLobbyState.Player1Ready === true )
-                Player1.ready = true;
-            else
-                Player1.ready = false;
-
-            if ( CurrentLobbyState.Player2Ready === true )
-                Player2.ready = true;
-            else
-                Player2.ready = false;
-
-            if ( CurrentLobbyState.Player1id !== socket.id && CurrentLobbyState.Player2id !== socket.id )
-                SetSpectatorMode(true);
-            else
-                SetSpectatorMode(false);
         }
 
     });
 
-    const gameloop = ( ( ) => {
+    const gameloop = ( () => 
+    {
+        clientPrediction();
         serverloop();
         clear();
         drawScore();
@@ -363,8 +538,8 @@ export default function GameInstance()
             waitForOpponent();
     });
 
-    useEffect( () => {
-
+    useEffect( () => 
+    {
         if ( CurrentLobbyState )
         {
             if ( CurrentLobbyState.Player1id === socket.id )
@@ -377,7 +552,7 @@ export default function GameInstance()
                 window.addEventListener('keydown', Player2keyDownHandler);
                 window.addEventListener('keyup', Player2keyUpHandler);
             }
-            else {} //! Else go to spectator mode
+            else { SetSpectatorMode(true); } //! Else go to spectator mode
         }
 
         let anim = requestAnimationFrame(gameloop);
@@ -388,6 +563,17 @@ export default function GameInstance()
         }
 
     }, [CurrentLobbyState, gameloop, socket.id]);
+
+
+    //? Client game loop
+
+
+
+
+
+
+
+
 
     return (
         <div>
