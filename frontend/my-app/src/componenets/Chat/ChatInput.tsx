@@ -157,7 +157,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 		return (() => {
 			socket.off(`resetConv${convCpy}`)
 		})
-	}, [perm, setConv, convCpy])
+	}, [perm, setConv, convCpy, setRefreshConvListCpy, setRefresh, setHideRightCpy])
 
 	const [panelTrigger, setPanelTrigger] = useState(false)
 	const admin_btn_panel =  nav === 2 && isAdmin ? <button className="adminBtnPanel" onClick={() => {setPanelTrigger(true)}}>Manage</button> : <></> 
