@@ -76,6 +76,9 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	const {logState} = useContext(LoginStateContext)
 
 	useEffect(()=>{
+		// if (nav !== 2)
+		// 	return
+	
 		const socket = io("localhost:3000", {
 			auth: (cb) => {
 				cb({
@@ -99,6 +102,8 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	}, [perm, setRefresh, ids, setRefreshConvListCpy])
 
 	useEffect(() => {
+		if (nav !== 2)
+			return
 		const socket = io("localhost:3000", {
 			auth: (cb) => {
 				cb({
@@ -122,6 +127,8 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	}, [perm, logState, setHideRightCpy, setRefreshConvListCpy, setRefresh])
 	
 	useEffect(() => {
+		if (nav !== 2)
+			return
 		const socket = io("localhost:3000", {
 			auth: (cb) => {
 					cb({
@@ -141,6 +148,8 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	}, [perm, logState, setRefreshConvListCpy, setHideRightCpy, setRefresh])
 
 	useEffect(() => {
+		if (nav !== 2)
+			return
 		const socket = io("localhost:3000", {
 			auth: (cb) => {
 					cb({
