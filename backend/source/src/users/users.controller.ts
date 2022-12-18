@@ -7,7 +7,6 @@ import { CreateUserDto } from './users.dto';
 import {User} from '../typeorm/user.entity'
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from 'src/auth/auth.service';
-import { decode, JwtPayload } from 'jsonwebtoken';
 
 
 @Controller('users')
@@ -45,16 +44,12 @@ export class UsersController {
 	}
 
 	@Post('create')//!remove if web site don't take password
-	//@UseGuards(AuthGuard('jwt'))
-	//@UsePipes(new ValidationPipe({whitelist: true}))
+	@UseGuards(AuthGuard('jwt'))
+	@UsePipes(new ValidationPipe({whitelist: true}))
 		async createUser(@Body() createUserDto: CreateUserDto, @Req() req, @Res() res) {
 		const newUser : User = await this.usersService.create(createUserDto);
 		const token = await this.authService.signIn(newUser)
-		console.log("new user = ", JSON.stringify(newUser))
 		await res.cookie('jwt', token)
-		// console.log("jwt = ", token)
-        // let {id} = decode(token) as JwtPayload
-        // console.log("id = ", id)
 		res.redirect(301, 'http://localhost:3002/redirect/check_token')
 	}
 
