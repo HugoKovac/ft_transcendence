@@ -10,10 +10,7 @@ export type ReqInvitFriend = {
 	user_id: number,
 	send_id: number
 }
-export type RequestFriend = {
-	user_id: number,
-	req_id: number
-}
+
 @Injectable()
 export class ReqFriendService {
     constructor
@@ -55,12 +52,12 @@ export class ReqFriendService {
 		}
 	}
 
-    async denyInvit ({user_id, req_id} : {user_id:number, req_id: number}, jwt : string) : Promise<string>
+    async denyInvit ({user_id, send_id} : {user_id:number, send_id: number}, jwt : string) : Promise<string>
     {
         let {id} = decode(jwt) as JwtPayload
         if ( id != user_id)
            return "sender id dont match your cookie"
-           const req : ReqFriend = await this.reqfriendRepo.findOne({where : {id : req_id}})
+           const req : ReqFriend = await this.reqfriendRepo.findOne({where : {from_id : send_id}})
             const oneUser : User = await this.userRepo.findOne({where : {id : user_id}, relations : ['recvReqFriend']})
         	if ( req == undefined || oneUser.recvReqFriend.filter(e => e.id == req.id).length <= 0)
                 return `request doesn't exist`
@@ -68,14 +65,14 @@ export class ReqFriendService {
             return `request ${req.id} has been deny successfully`
     }
 
-    async acceptInvit ({user_id, req_id} : {user_id:number, req_id: number}, jwt : string) : Promise<string>
+    async acceptInvit ({user_id, send_id} : {user_id:number, send_id: number}, jwt : string) : Promise<string>
     {
         let {id} = decode(jwt) as JwtPayload
         if ( id != user_id)
            return "sender id dont match your cookie"
        try 
        {
-        const req : ReqFriend = await this.reqfriendRepo.findOne({where : {id : req_id}})
+        const req : ReqFriend = await this.reqfriendRepo.findOne({where : {id : send_id}})
         const oneUser : User = await this.userRepo.findOne({where : {id : user_id}, relations : ['recvReqFriend']})
         if ( req == undefined || oneUser.recvReqFriend.filter(e => e.id == req.id).length <= 0)
             return `request doesn't exist`
@@ -117,7 +114,7 @@ export class ReqFriendService {
             //userEntity.sendReqFriend = []
 			for (let req_id of userEntity.recvReqFriend){
 				if (req_id.from_id == send_id)
-					return await this.acceptInvit({user_id : user_id, req_id : req_id.id}, jwt)
+					return await this.acceptInvit({user_id : user_id, send_id : send_id}, jwt)
 			}
             const new_req: ReqFriend = this.reqfriendRepo.create({from_id : user_id, to_id : send_id, owner : userEntity, dest : dest_user})
 			await this.reqfriendRepo.save(new_req)
@@ -128,15 +125,15 @@ export class ReqFriendService {
         }
     }
 
-    async getReqFriends(jwt : string) : Promise<ReqFriend[]>
+    async getReqFriends(jwt : string) : Promise<User[]>
     {
         const {id} = decode(jwt) as JwtPayload
 		try{
-			const {recvReqFriend} = await this.userRepo.findOne({where: {id: id}, relations: ['recvReqFriend']})
+			const {recvReqFriend} = await this.userRepo.findOne({where: {id: id}, relations: ['recvReqFriend', 'recvReqFriend.dest']})
 			if (!recvReqFriend)
 				return undefined
 			console.log(JSON.stringify(recvReqFriend, null, 2))
-			return recvReqFriend
+			return recvReqFriend.map(x => x.dest)
 		}catch{
 			return undefined
 		}
@@ -218,4 +215,43 @@ export class ReqFriendService {
             return `error while blocking user ${send_id}`
         }
     }
+	async getBlockUser({user_id} :  {user_id:number}, jwt : string) : Promise<User[]>
+	{
+        let {id} = decode(jwt) as JwtPayload
+        if ( id != user_id)
+		{
+           return null
+		}
+		const user_one : User = await this.userRepo.findOne({where : {id: user_id}, relations : ["blocked", "blocked.dest"]})
+		if (user_one == undefined)
+		{
+			return null
+		}
+		return user_one.blocked.map(x => x.dest)
+	}
+	//a revoir si je veux manage les erreurs
+	async getUserRelativeState({user_id, send_id} :  {user_id:number, send_id : number}, jwt : string) : Promise<string>
+	{
+        let {id} = decode(jwt) as JwtPayload
+        if ( id != user_id)
+		{
+           return undefined
+		}
+		let user_one : User = await this.userRepo.findOne({where : {id: user_id}, relations : ["blocked", "friends", "sendReqFriend", "recvReqFriend", "block_me"] })
+		if (user_one == undefined)
+		{
+			return undefined
+		}
+		if (user_one.recvReqFriend.filter(e => e.from_id == send_id).length > 0)
+			return "recv"
+		if (user_one.sendReqFriend.filter(e => e.to_id == send_id).length > 0)
+			return "send"
+		if (user_one.blocked.filter(e => e.to_id == send_id).length > 0)
+			return "blocked"
+		if (user_one.block_me.filter(e => e.from_id == send_id).length > 0)
+			return "blocked_me"
+		if (user_one.friends.filter(e => e.friend_id == send_id).length > 0)
+			return "friend"
+		return "nothing"
+	}
 }
