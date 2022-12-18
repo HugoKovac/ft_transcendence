@@ -157,4 +157,14 @@ export class AuthService{
 
 		return user.qrCode
 	}
+
+	async isActive(jwt:string){
+		const token: any = decode(jwt)
+
+		const user: User = await this.userRepo.findOne({where: {id: token.id}})
+		if (!user)
+			return undefined
+
+		return user.TwoAuthActive
+	}
 }

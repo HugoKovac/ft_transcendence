@@ -47,4 +47,9 @@ export class AuthController {
 	async qrcode(@Req() req){
 		return await this.authService.qrcode(req.cookies['jwt'])
 	}
+
+	@Get('is_active')
+	async isActive(@Req() req){
+		return await this.authService.isActive(req.cookies['jwt'])
+	}
 }
