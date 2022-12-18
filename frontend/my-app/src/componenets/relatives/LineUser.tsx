@@ -1,5 +1,5 @@
 import '../styles/Chat.scss'
-import {ButtonRelativeState} from "./ButtonRelativeState"
+import ButtonRelativeState from "./ButtonRelativeState"
 
 const LineUser = (props : {name : string, img_path: string, relative_state : string, setRelativeState : (rs : string) => void}) => {
 	const renderImg = props.img_path ? <img src={props.img_path} alt="pp" /> : <></>
