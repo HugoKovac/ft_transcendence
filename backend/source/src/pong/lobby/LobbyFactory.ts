@@ -1,6 +1,8 @@
 import { Server } from "socket.io";
 import { AuthenticatedSocket } from "src/pong/pong.gateway";
 import { Lobby } from "./Lobby";
+import { Cron } from '@nestjs/schedule';
+import { LOBBYLIFETIME } from "../instance/gameConstant";
 
 export class LobbyFactory {
 
@@ -43,9 +45,22 @@ export class LobbyFactory {
         lobby.addClient(client);
     }
 
-    // @Cron('*/5 * * * *') //? Execute this method every 5 minutes (pretty cool)
-    // private memclean(): void {
-        
-    // }
+    @Cron('*/1 * * * *') //? Execute this method every 5 minutes (pretty cool)
+    private LobbyClearer()
+    {
+        console.log("CHECKING")
+        for ( const [lobbyId, lobby] of this.lobbies )
+        {
+            const startClock = (new Date()).getTime();
+            const lobbyLifeTimer = startClock - lobby.createdAT.getTime();
+
+            if ( lobbyLifeTimer > LOBBYLIFETIME )
+            {
+                lobby.instance.finishGame("Lobby Timed Out.");
+                lobby.refreshLobby();
+                this.lobbies.delete(lobby.id);
+            }
+        }    
+    }
 
 }

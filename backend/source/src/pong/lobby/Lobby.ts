@@ -73,6 +73,8 @@ export class Lobby
 {
     public readonly id: string = v4(); //? Unique lobby ID, that will be used by clients
 
+    public readonly createdAT = new Date();
+
     public readonly clients: Map<Socket['id'], AuthenticatedSocket> = new Map<Socket['id'], AuthenticatedSocket>(); //? Where client are stored
 
     public readonly instance: Instance = new Instance(this); //? The hole game logic is an instance, in a lobby
