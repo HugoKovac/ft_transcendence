@@ -22,7 +22,10 @@ export enum ClientEvents
     Player2ArrowDownRelease = 'client.player2arrowdownrelease',
     Player2ArrowDownPress = 'client.player2arrowdownpress',
 
+    PlayerLeft = 'client.playerleft',
 
+    PlayerLostConnection = 'client.playerlostconnection',
+    PlayerRetrieveConnection = 'client.playerretrieveconnection',
 
 
     GameLoop = 'client.gameloop',

@@ -1,5 +1,4 @@
 import { NavLink } from 'react-router-dom';
-import GameLobby from '../Game/GameLobby';
 
 export default function GameMenu() {
     

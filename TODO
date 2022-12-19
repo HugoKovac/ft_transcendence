@@ -1,0 +1,7 @@
+
+Objectif : Permettre une connexion stable et fluide
+
+    Faire le client prediction (front)
+    Faire le client interpolation, en gros predir le mouvement ennemi (front)
+    Faire le calcul DELTA pour gerer les differentes config (back)
+    Faire tourner le projet en live

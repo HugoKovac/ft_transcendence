@@ -3,8 +3,8 @@ import { ClientEvents } from '../shared/client/Client.Events'
 import { ServerEvents } from '../shared/server/Server.Events'
 import { Server, Socket } from 'socket.io'
 import { LobbyCreateDto } from './lobby/LobbyCreateDto';
-import { LobbyFactory } from './lobby/lobby-factory';
-import { Lobby, ServerPayload } from './lobby/lobby';
+import { LobbyFactory } from './lobby/LobbyFactory';
+import { Lobby, ServerPayload } from './lobby/Lobby';
 import { LobbyJoinDto } from './lobby/LobbyJoinDto';
 import { json } from 'stream/consumers';
 
@@ -92,6 +92,24 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
       client.data.lobby.instance.gameLoop();
     }
 
+    @SubscribeMessage(ClientEvents.PlayerLostConnection)
+    onPlayerLostConnection( client : AuthenticatedSocket )
+    {
+      if (!client.data.lobby)
+        return ;
+      client.data.lobby.instance.PlayerLostConnection();
+    }
+
+    @SubscribeMessage(ClientEvents.PlayerRetrieveConnection)
+    onPlayerRetrieveConnection( client : AuthenticatedSocket )
+    {
+      if (!client.data.lobby)
+        return ;
+      client.data.lobby.instance.PlayerRetrieveConnection();
+    }
+
+    //! Annoying key handler
+
     @SubscribeMessage(ClientEvents.Player1ArrowDownRelease)
     onPlayer1ArrowDownRelease( client : AuthenticatedSocket )
     {
@@ -155,20 +173,12 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
         return ;
       client.data.lobby.instance.Player2ArrowUpPress();
     }
+    //! Annoying key handler
 
     //? Blind mode
 
 
     //? Ranked mode 
-    // @SubscribeMessage(ClientEvents.JoinMatchmaking)
-    // onJoinMatchmaking() : 
-    // {
-    //   return (ServerEvents.LobbyState, {
-    //     event: ServerEvents.LobbyState,
-    //     data: { message: "server_createlobby", lobbyid: lobby.id }
-    //   }
-    // )
-    // }
     //? Ranked mode 
 
 }

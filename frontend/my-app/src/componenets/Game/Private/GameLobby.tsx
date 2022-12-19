@@ -1,10 +1,7 @@
 import { useContext, useEffect } from 'react';
-import { io } from 'socket.io-client';
-import { ServerEvents } from '../../shared/server/Server.Events'
-import { ClientEvents } from '../../shared/client/Client.Events'
-import NavBar from '../NavBar';
-import GameInstance from './GameInstance';
-import { WebsocketContext } from './WebsocketContext';
+import { ClientEvents } from '../../../shared/client/Client.Events'
+import NavBar from '../../NavBar';
+import { WebsocketContext } from './../WebsocketContext';
 import { useSearchParams } from 'react-router-dom';
 
 export default function GameLobby() {
@@ -23,7 +20,7 @@ export default function GameLobby() {
           });
         }
         
-    }, [searchParamsString]);
+    }, [searchParamsString, socket]);
 
     const emitLobby = () => {
         socket.emit(ClientEvents.CreateLobby, {
