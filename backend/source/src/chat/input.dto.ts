@@ -34,7 +34,6 @@ export class newAdminDTO{
 	group_conv_id:number
 
 	@IsArray()
-	@ArrayMinSize(1)
 	admin_ids:number[]
 }
 

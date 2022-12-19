@@ -76,9 +76,6 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	const {logState} = useContext(LoginStateContext)
 
 	useEffect(()=>{
-		// if (nav !== 2)
-		// 	return
-	
 		const socket = io("localhost:3000", {
 			auth: (cb) => {
 				cb({
@@ -113,7 +110,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 		})
 
 		socket.on(logState.toString(), () => {
-			// console.log(logState.toString())
+			console.log(logState.toString())
 			setHideRightCpy(true)
 			setRefreshConvListCpy(true)
 			setRefresh(true)
@@ -125,6 +122,28 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 		})
 
 	}, [perm, logState, setHideRightCpy, setRefreshConvListCpy, setRefresh])
+
+	// useEffect(() => {
+	// 	if (nav !== 2)
+	// 		return
+	// 	const socket = io("localhost:3000", {
+	// 		auth: (cb) => {
+	// 			cb({
+	// 				token: Cookies.get('jwt')
+	// 			});
+	// 		}
+	// 	})
+
+	// 	socket.on(logState.toString(), () => {
+	// 		console.log(`ref${logState}`)
+	// 		setRefresh(true)
+	// 	});
+
+	// 	return (() => {
+	// 		socket.off(`ref${logState}`)
+	// 	})
+
+	// }, [perm, logState, setRefresh])
 	
 	useEffect(() => {
 		if (nav !== 2)
