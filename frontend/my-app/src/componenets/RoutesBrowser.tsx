@@ -13,6 +13,7 @@ import GameMatchmaking from "./Game/Matchmaking/GameMatchmaking"
 import GamePrivateManager from "./Game/Private/GamePrivateManager"
 import Verify2fa from "./Login/VerifyTwoFA"
 import Active2FA from "../pages/ActiveTwoFA"
+import ListRelative from "./relatives/ListRelative"
 
 
 
@@ -53,6 +54,7 @@ const RoutesBrowser = () : React.ReactElement => {
 				<Route path='/game/lobby' element={<ProtectedRoute />}>
 					<Route path='/game/lobby' element={<GamePrivateManager />}/>
 				</Route>
+				<Route path='listFriends' element={<ListRelative />}/>
 				<Route path='/redirect/check_token' element={<CheckTokenAfterLogin />} />
 				<Route path='/redirect/verify_2fa' element={<Verify2fa />} />
 				<Route path='/active2FA' element={<Active2FA />} />

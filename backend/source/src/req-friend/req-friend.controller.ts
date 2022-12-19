@@ -48,19 +48,25 @@ export class ReqFriendController {
 		let i : string = await this.ReqFriendService.denyInvit(bod, req.cookies['jwt'])
         return i
 	}
-	@Get('list')
+	@Post('list-friends-as-users')
+	@UseGuards(AuthGuard('jwt'))
+	async getFriendsAsUsers(@Req() req) {
+		let str : User[] = await this.ReqFriendService.getFriendsAsUsers(req.cookies['jwt'])
+        return str
+	}
+	@Post('list')
 	@UseGuards(AuthGuard('jwt'))
 	async getFriendsList(@Req() req) {
 		let str : Friends[] = await this.ReqFriendService.getFriends(req.cookies['jwt'])
         return str
 	}
-    @Get('list-invit')
+    @Post('list-invit')
 	@UseGuards(AuthGuard('jwt'))
 	async getFriendsListInvit(@Req() req) {
 		let str : User[] = await this.ReqFriendService.getReqFriends(req.cookies['jwt'])
         return str
 	}	
-    @Get('list-blocked')
+    @Post('list-blocked')
 	@UseGuards(AuthGuard('jwt'))
 	async getBlocked(@Body() bod : ReqInvitFriend, @Req() req) {
 		let str : User[] = await this.ReqFriendService.getBlockUser(bod, req.cookies['jwt'])
@@ -72,7 +78,7 @@ export class ReqFriendController {
 		let str : string = await this.ReqFriendService.removeFriend(bod, req.cookies['jwt'])
         return str
     }
-	@Get('relative-state')
+	@Post('relative-state')
 	@UseGuards(AuthGuard('jwt'))
 	async relativeState(@Body()bod : ReqInvitFriend, @Req() req){
 		let str : string = await this.ReqFriendService.getUserRelativeState(bod, req.cookies['jwt'])
