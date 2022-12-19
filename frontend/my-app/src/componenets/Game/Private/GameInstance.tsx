@@ -7,6 +7,7 @@ import { useRecoilValue } from "recoil";
 import { ClientEvents } from "../../../shared/client/Client.Events";
 import { Paddle, Ball } from "../GameConstant"
 import { CANVASHEIGHT, CANVASWIDTH, BALLSPEED } from "../GameConstant"
+import React from "react";
 
 export default function GameInstance()
 {
@@ -19,7 +20,7 @@ export default function GameInstance()
     const [SpectatorMode, SetSpectatorMode] = useState(false);
     const [numberOfSpectator, SetnumberOfSpectator] = useState(0);
 
-    const Player1 : Paddle = {
+    const Player1 = useRef<Paddle> ({
         x : 0,
         y: 0,
         width: 0,
@@ -28,9 +29,9 @@ export default function GameInstance()
         speed: 0,
         gravity: 0,
         ready: false,
-    }
+    })
 
-    const Player2 : Paddle = ({
+    const Player2 = useRef<Paddle> ({
         x : 0,
         y: 0,  
         width: 0,
@@ -41,7 +42,7 @@ export default function GameInstance()
         ready: false,
     })
 
-    const Ball : Ball = ({
+    const Ball = useRef<Ball> ({
         x : 0,
         y: 0,
         width: 0,
@@ -51,25 +52,33 @@ export default function GameInstance()
         gravity: 0
     })
 
-    let canvasWidth = 0;
-    let canvasHeight = 0;
-    let netWidth = 0;
-    let netHeight = 0;
+    const canvasWidth = React.useRef(0);
+    const canvasHeight = React.useRef(0);
+    const netWidth = React.useRef(0);
+    const netHeight = React.useRef(0);
 
-    let gameStart = false;
-    let gameEnd = false;
+    
     let endMessage : string;
 
-    let scoreOne = 0;
-    let scoreTwo = 0;
+    const scoreOne = React.useRef(0);
+    const scoreTwo = React.useRef(0);
 
-    let Player1Win = false;
-    let Player2Win = false;
+    const Player1Win = React.useRef(false);
+    const Player2Win = React.useRef(false);
 
-    let Player1UpArrow = false;
-    let Player1DownArrow = false;
-    let Player2UpArrow = false;
-    let Player2DownArrow = false;
+    const Player1UpArrow = React.useRef(false);
+    const Player1DownArrow = React.useRef(false);
+    const Player2UpArrow = React.useRef(false);
+    const Player2DownArrow = React.useRef(false);
+
+    const gameStart = React.useRef(false);
+    const gameEnd = React.useRef(false);
+
+    const requestRef = React.useRef(0);
+
+    const startClock = React.useRef(0);
+    const deltatime = React.useRef(0);
+
 
 
 
@@ -116,7 +125,7 @@ export default function GameInstance()
                 context.arc(config.x, config.y, config.width, 0, Math.PI * 2, true);
                 context.closePath();
                 context.fill();
-            }
+            }   
         }   
     });
 
@@ -130,7 +139,7 @@ export default function GameInstance()
             {
                 context.font = "18px Arial";
                 context.fillStyle = "#fff";
-                context.fillRect(canvasWidth / 2, 0, netWidth, netHeight);
+                context.fillRect(canvasWidth.current / 2, 0, netWidth.current, netHeight.current);
             }
         }
     })
@@ -144,8 +153,8 @@ export default function GameInstance()
             {
                 context.font = "18px Arial";
                 context.fillStyle = "#fff";
-                context.fillText(scoreOne.toString(), canvasWidth / 2 - 60, 30);
-                context.fillText(scoreTwo.toString(), canvasWidth / 2 + 60, 30);
+                context.fillText(scoreOne.current.toString(), canvasWidth.current / 2 - 60, 30);
+                context.fillText(scoreTwo.current.toString(), canvasWidth.current / 2 + 60, 30);
             }
         }
     });
@@ -159,10 +168,10 @@ export default function GameInstance()
             {
                 context.font = "18px Arial";
                 context.fillStyle = "#fff";
-                if ( Player1Win === true )
-                    context.fillText("Player 1 Won !", canvasWidth / 2 - 60, canvasHeight / 2);
-                else if ( Player2Win === true )
-                    context.fillText("Player 2 Won !", canvasWidth / 2 - 60, canvasHeight / 2);
+                if ( Player1Win.current === true )
+                    context.fillText("Player 1 Won !", canvasWidth.current / 2 - 60, canvasHeight.current / 2);
+                else if ( Player2Win.current === true )
+                    context.fillText("Player 2 Won !", canvasWidth.current / 2 - 60, canvasHeight.current / 2);
             }
         }
     });
@@ -176,7 +185,7 @@ export default function GameInstance()
             {
                 context.font = "18px Arial";
                 context.fillStyle = "#fff";
-                context.fillText(endMessage, canvasWidth / 2 - 60, canvasHeight / 2);
+                context.fillText(endMessage, canvasWidth.current / 2 - 60, canvasHeight.current / 2);
             }
         }
     });
@@ -188,7 +197,7 @@ export default function GameInstance()
             const context = canvas.getContext('2d');
 
             if (context)
-                context.clearRect(0, 0, canvasWidth, canvasHeight);
+                context.clearRect(0, 0, canvasWidth.current, canvasHeight.current);
         }
     });
 
@@ -229,13 +238,13 @@ export default function GameInstance()
         if ( event.code === "ArrowUp" ) 
         {
             socket.emit(ClientEvents.Player1ArrowUpPress);
-            Player1UpArrow = true;
+            Player1UpArrow.current = true;
         }
 
         else if ( event.code === "ArrowDown"  ) 
         {
             socket.emit(ClientEvents.Player1ArrowDownPress);
-            Player1DownArrow = true;
+            Player1DownArrow.current = true;
         }
         
         event.preventDefault();
@@ -249,13 +258,13 @@ export default function GameInstance()
         if ( event.code === "ArrowUp")
         {
             socket.emit(ClientEvents.Player2ArrowUpPress);
-            Player2UpArrow = true;
+            Player2UpArrow.current = true;
         }
 
         else if ( event.code === "ArrowDown"  )
         {
             socket.emit(ClientEvents.Player2ArrowDownPress);
-            Player2DownArrow = true;
+            Player2DownArrow.current = true;
         }
         
         event.preventDefault();
@@ -266,19 +275,19 @@ export default function GameInstance()
         if ( event.defaultPrevented ) 
             return ;
 
-        if ( event.code === "Space" && gameStart === false )
+        if ( event.code === "Space" && gameStart.current === false )
             socket.emit(ClientEvents.ReadyState);
 
         if ( event.code === "ArrowUp")
         {
             socket.emit(ClientEvents.Player1ArrowUpRelease);
-            Player1UpArrow = false;
+            Player1UpArrow.current = false;
         }
 
         else if ( event.code === "ArrowDown"  )
         {
             socket.emit(ClientEvents.Player1ArrowDownRelease);
-            Player1DownArrow = false;
+            Player1DownArrow.current = false;
         }
         
         event.preventDefault();
@@ -289,19 +298,19 @@ export default function GameInstance()
         if ( event.defaultPrevented ) 
             return ;
 
-        if ( event.code === "Space" && gameStart === false )
+        if ( event.code === "Space" && gameStart.current === false )
             socket.emit(ClientEvents.ReadyState);
 
         if ( event.code === "ArrowUp" )
         {
             socket.emit(ClientEvents.Player2ArrowUpRelease);
-            Player2UpArrow = false;
+            Player2UpArrow.current = false;
         }
 
         else if ( event.code === "ArrowDown" )
         {
             socket.emit(ClientEvents.Player2ArrowDownRelease);
-            Player2DownArrow = false;
+            Player2DownArrow.current = false;
         }
         
         event.preventDefault();
@@ -337,79 +346,79 @@ export default function GameInstance()
     const BallBounce = ( ) =>
     {
 
-        if ( Ball.y + Ball.gravity <= 0 ||  Ball.y +  Ball.gravity >= canvasHeight )
+        if ( Ball.current.y + Ball.current.gravity <= 0 ||  Ball.current.y +  Ball.current.gravity >= canvasHeight.current )
         {
-            Ball.gravity = Ball.gravity * -1;
-            Ball.y +=  Ball.gravity;
-            Ball.x +=  Ball.speed;
-            if ( Ball.speed < 0 )
-                Ball.speed -= 0.2;
+            Ball.current.gravity = Ball.current.gravity * -1;
+            Ball.current.y +=  Ball.current.gravity * deltatime.current;
+            Ball.current.x +=  Ball.current.speed * deltatime.current;
+            if ( Ball.current.speed < 0 )
+                Ball.current.speed -= 0.2 * deltatime.current;
             else
-                Ball.speed += 0.2;
+                Ball.current.speed += 0.2 * deltatime.current;
         }
         else //! Doesn't bounce just move
         {
-            Ball.y +=  Ball.gravity;
-            Ball.x +=  Ball.speed;
+            Ball.current.y +=  Ball.current.gravity * deltatime.current;
+            Ball.current.x +=  Ball.current.speed * deltatime.current;
         }
     }
 
 
     const BallCollision = ( ) =>
     {
-        if ( ( ( Ball.y +  Ball.gravity <= Player2.y +  Player2.height &&  Ball.y +  Ball.gravity >=  Player2.y ) && 
-            ( Ball.x +  Ball.width +  Ball.speed >=  Player2.x &&  Ball.x +  Ball.width +  Ball.speed <=  Player2.x +  Player2.width ) && 
-            Ball.y +  Ball.gravity >  Player2.y ))
+        if ( ( ( Ball.current.y +  Ball.current.gravity <= Player2.current.y +  Player2.current.height &&  Ball.current.y +  Ball.current.gravity >=  Player2.current.y ) && 
+            ( Ball.current.x +  Ball.current.width +  Ball.current.speed >=  Player2.current.x &&  Ball.current.x +  Ball.current.width +  Ball.current.speed <=  Player2.current.x +  Player2.current.width ) && 
+            Ball.current.y +  Ball.current.gravity >  Player2.current.y ))
             {
-                Ball.speed = Ball.speed * -1;
-                if ( Ball.speed < 0 )
-                    Ball.speed -= 0.4;
+                Ball.current.speed = Ball.current.speed * -1;
+                if ( Ball.current.speed < 0 )
+                    Ball.current.speed -= 0.4 * deltatime.current;
                 else
-                    Ball.speed += 0.4;
+                    Ball.current.speed += 0.4 * deltatime.current;
             }
-        else if (  Ball.y +  Ball.gravity <=  Player1.y +  Player1.height && 
-            (  Ball.x +  Ball.speed <=  Player1.x +  Player1.width &&  Ball.x +  Ball.speed >=  Player1.x ) && 
-            Ball.y +  Ball.gravity >  Player1.y)
+        else if (  Ball.current.y +  Ball.current.gravity <=  Player1.current.y +  Player1.current.height && 
+            (  Ball.current.x +  Ball.current.speed <=  Player1.current.x +  Player1.current.width &&  Ball.current.x +  Ball.current.speed >=  Player1.current.x ) && 
+            Ball.current.y +  Ball.current.gravity >  Player1.current.y)
             {
-                Ball.speed =  Ball.speed * -1;
-                if ( Ball.speed < 0 )
-                    Ball.speed -= 0.4;
+                Ball.current.speed =  Ball.current.speed * -1;
+                if ( Ball.current.speed < 0 )
+                    Ball.current.speed -= 0.4 * deltatime.current;
                 else
-                    Ball.speed += 0.4;
+                    Ball.current.speed += 0.4 * deltatime.current;
             }
-        else if (  Ball.x +  Ball.speed <  Player1.x - 100 )
+        else if (  Ball.current.x +  Ball.current.speed <  Player1.current.x - 100 )
         {
-            Ball.x = CANVASWIDTH / 2;
-            Ball.y = CANVASHEIGHT / 2;
-            Ball.speed = BALLSPEED;
+            Ball.current.x = CANVASWIDTH / 2;
+            Ball.current.y = CANVASHEIGHT / 2;
+            Ball.current.speed = BALLSPEED;
         }
-        else if (  Ball.x +  Ball.speed >  Player2.x +  Player2.width + 100 )
+      else if (  Ball.current.x +  Ball.current.speed >  Player2.current.x +  Player2.current.width + 100 )
         {
-            Ball.x = CANVASWIDTH / 2;
-            Ball.y = CANVASHEIGHT / 2;
-            Ball.speed = BALLSPEED * -1;
+            Ball.current.x = CANVASWIDTH / 2;
+            Ball.current.y = CANVASHEIGHT / 2;
+            Ball.current.speed = BALLSPEED * -1;
         }
     }
 
     const updateVar = () =>
     {
-        if ( Player1UpArrow && Player1.y - Player1.gravity > 0 ) 
-            Player1.y -= Player1.gravity * 4;
+        if ( Player1UpArrow && Player1.current.y - Player1.current.gravity > 0 ) 
+            Player1.current.y -= Player1.current.gravity * 4 * deltatime.current;
 
-        else if ( Player1DownArrow && Player1.y + Player1.height + Player1.gravity < CANVASHEIGHT ) 
-            Player1.y += Player1.gravity * 4;
+        else if ( Player1DownArrow && Player1.current.y + Player1.current.height + Player1.current.gravity < CANVASHEIGHT ) 
+            Player1.current.y += Player1.current.gravity * 4 * deltatime.current;
 
-        else if ( Player2UpArrow && Player2.y - Player2.gravity > 0  ) 
-            Player2.y -= Player2.gravity * 4;
+        else if ( Player2UpArrow && Player2.current.y - Player2.current.gravity > 0  ) 
+            Player2.current.y -= Player2.current.gravity * 4 * deltatime.current;
 
-        else if ( Player2DownArrow && Player2.y + Player2.height + Player2.gravity < CANVASHEIGHT ) 
-            Player2.y += Player2.gravity * 4;
+        else if ( Player2DownArrow && Player2.current.y + Player2.current.height + Player2.current.gravity < CANVASHEIGHT ) 
+            Player2.current.y += Player2.current.gravity * 4 * deltatime.current;
             
     }
 
     const clientPrediction = ( () => {
 
-        if ( gameStart === true && gameEnd === false )
+        if ( gameStart.current === true && gameEnd.current === false )
         {
             updateVar();
             BallBounce();
@@ -458,11 +467,11 @@ export default function GameInstance()
                 if ( CurrentLobbyState )
                 {
                     if ( CurrentLobbyState.Player1Ready === false  )
-                        context.fillText("Waiting for player1....", canvasWidth / 10, 30);
+                        context.fillText("Waiting for player1....", canvasWidth.current / 10, 30);
                     if ( CurrentLobbyState.Player2Ready === false )
-                        context.fillText("Waiting for player2....", canvasWidth - canvasWidth / 3, 30);
+                        context.fillText("Waiting for player2....", canvasWidth.current - canvasWidth.current / 3, 30);
                     if ( ( CurrentLobbyState.Player1id === socket.id && CurrentLobbyState.Player1Ready === false ) || ( CurrentLobbyState.Player2id === socket.id && CurrentLobbyState.Player2Ready === false ) )
-                            context.fillText("Press SPACE to play", canvasWidth / 2.5, canvasHeight / 2);
+                            context.fillText("Press SPACE to play", canvasWidth.current / 2.5, canvasHeight.current / 2);
                 }
             }
         }   
@@ -476,70 +485,50 @@ export default function GameInstance()
             SetnumberOfSpectator(CurrentLobbyState.numberOfSpectator);
             endMessage = CurrentLobbyState.endMessage;
 
-            canvasHeight = CurrentLobbyState.canvasHeight;
-            canvasWidth = CurrentLobbyState.canvasWidth;
-            netHeight = CurrentLobbyState.netHeight;
-            netWidth = CurrentLobbyState.netWidth;
+            canvasHeight.current = CurrentLobbyState.canvasHeight;
+            canvasWidth.current = CurrentLobbyState.canvasWidth;
+            netHeight.current = CurrentLobbyState.netHeight;
+            netWidth.current = CurrentLobbyState.netWidth;
 
-            gameEnd = CurrentLobbyState.gameEnd;
-            gameStart = CurrentLobbyState.gameStart;
+            gameEnd.current = CurrentLobbyState.gameEnd;
+            gameStart.current = CurrentLobbyState.gameStart;
 
-            scoreOne = CurrentLobbyState.scoreOne;
-            scoreTwo = CurrentLobbyState.scoreTwo;
+            scoreOne.current = CurrentLobbyState.scoreOne;
+            scoreTwo.current = CurrentLobbyState.scoreTwo;
 
-            Player1Win = CurrentLobbyState.Player1Win;
-            Player2Win = CurrentLobbyState.Player2Win;
+            Player1Win.current = CurrentLobbyState.Player1Win;
+            Player2Win.current = CurrentLobbyState.Player2Win;
 
-            Player1.x = CurrentLobbyState.Player1x;
-            Player1.y = CurrentLobbyState.Player1y;
-            Player1.width = CurrentLobbyState.Player1width;
-            Player1.height = CurrentLobbyState.Player1height;
-            Player1.color = CurrentLobbyState.Player1color;
-            Player1.speed = CurrentLobbyState.Player1speed;
-            Player1.gravity = CurrentLobbyState.Player1gravity;
+            Player1.current.x = CurrentLobbyState.Player1x;
+            Player1.current.y = CurrentLobbyState.Player1y;
+            Player1.current.width = CurrentLobbyState.Player1width;
+            Player1.current.height = CurrentLobbyState.Player1height;
+            Player1.current.color = CurrentLobbyState.Player1color;
+            Player1.current.speed = CurrentLobbyState.Player1speed;
+            Player1.current.gravity = CurrentLobbyState.Player1gravity;
 
-            Player2.x = CurrentLobbyState.Player2x;
-            Player2.y = CurrentLobbyState.Player2y;
-            Player2.width = CurrentLobbyState.Player2width;
-            Player2.height = CurrentLobbyState.Player2height;
-            Player2.color = CurrentLobbyState.Player2color;
-            Player2.speed = CurrentLobbyState.Player2speed;
-            Player2.gravity = CurrentLobbyState.Player2gravity;
+            Player2.current.x = CurrentLobbyState.Player2x;
+            Player2.current.y = CurrentLobbyState.Player2y;
+            Player2.current.width = CurrentLobbyState.Player2width;
+            Player2.current.height = CurrentLobbyState.Player2height;
+            Player2.current.color = CurrentLobbyState.Player2color;
+            Player2.current.speed = CurrentLobbyState.Player2speed;
+            Player2.current.gravity = CurrentLobbyState.Player2gravity;
 
-            Ball.x = CurrentLobbyState.Ballx;
-            Ball.y = CurrentLobbyState.Bally;
-            Ball.width = CurrentLobbyState.Ballwidth;
-            Ball.height = CurrentLobbyState.Ballheight;
-            Ball.color = CurrentLobbyState.Ballcolor;
-            Ball.speed = CurrentLobbyState.Ballspeed;
-            Ball.gravity = CurrentLobbyState.Ballgravity;
+            Ball.current.x = CurrentLobbyState.Ballx;
+            Ball.current.y = CurrentLobbyState.Bally;
+            Ball.current.width = CurrentLobbyState.Ballwidth;
+            Ball.current.height = CurrentLobbyState.Ballheight;
+            Ball.current.color = CurrentLobbyState.Ballcolor;
+            Ball.current.speed = CurrentLobbyState.Ballspeed;
+            Ball.current.gravity = CurrentLobbyState.Ballgravity;
         }
 
     });
 
     const gameloop = ( () => 
     {
-        clientPrediction();
-        serverloop();
-        clear();
-        drawScore();
-        drawPaddle(Player1);
-        drawPaddle(Player2);
-        if ( gameStart === true && gameEnd === false )
-        {
-            drawLine();
-            drawBall(Ball);
-        }
-        else if ( Player1Win === true || Player2Win === true )
-            drawFinalScore();
-        else if ( gameEnd === true )
-            drawEndGame();
-        else
-            waitForOpponent();
-    });
-
-    useEffect( () => 
-    {
+        startClock.current = Date.now();
         if ( CurrentLobbyState )
         {
             if ( CurrentLobbyState.Player1id === socket.id )
@@ -555,14 +544,35 @@ export default function GameInstance()
             else { SetSpectatorMode(true); } //! Else go to spectator mode
         }
 
-        let anim = requestAnimationFrame(gameloop);
-
-        return () =>
+        clientPrediction();
+        serverloop();
+        clear();
+        drawScore();
+        drawPaddle(Player1.current);
+        drawPaddle(Player2.current);
+        if ( gameStart.current === true && gameEnd.current === false )
         {
-            cancelAnimationFrame(anim);
+            drawLine();
+            drawBall(Ball.current);
         }
+        else if ( Player1Win.current === true || Player2Win.current === true )
+            drawFinalScore();
+        else if ( gameEnd.current === true )
+            drawEndGame();
+        else
+            waitForOpponent();
 
-    }, [CurrentLobbyState, gameloop, socket.id]);
+        deltatime.current = Date.now() - startClock.current;
+        requestRef.current = requestAnimationFrame(gameloop);
+    });
+
+
+    useEffect( () => 
+    {
+        requestRef.current = requestAnimationFrame(gameloop);
+        return () =>
+            cancelAnimationFrame(requestRef.current);
+    }, [CurrentLobbyState]);
 
 
     //? Client game loop
@@ -582,7 +592,7 @@ export default function GameInstance()
                     {SpectatorMode ? (<span> You are watching as a Spectator </span>) : (<span> Number of Spectator : {numberOfSpectator} </span>)}
                 </div>
                 <div>
-                    <canvas className="Canvas" ref={canvasRef} width={1000} height={600}></canvas> 
+                    <canvas className="Canvas" ref={canvasRef} width={800} height={500}></canvas> 
                 </div>
         </div>
     );
