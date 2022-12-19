@@ -9,11 +9,10 @@ import Profile from "../pages/Profile"
 import Unauthorized from "../pages/Unauthorized"
 import CheckTokenAfterLogin, { CheckTokenFirstMount } from "./Login/CheckToken"
 import LoginStateContext from "./Login/LoginStateContext"
-import GameLobby from "./Game/GameLobby"
-import GameMatchmaking from "./Game/GameMatchmaking"
-import GamePrivateManager from "./Game/GamePrivateManager"
-import Verify_2fa from "./Login/Verify2FA"
-import Active2FA from "../pages/Active2FA"
+import GameMatchmaking from "./Game/Matchmaking/GameMatchmaking"
+import GamePrivateManager from "./Game/Private/GamePrivateManager"
+import Verify2fa from "./Login/VerifyTwoFA"
+import Active2FA from "../pages/ActiveTwoFA"
 
 
 
@@ -55,7 +54,7 @@ const RoutesBrowser = () : React.ReactElement => {
 					<Route path='/game/lobby' element={<GamePrivateManager />}/>
 				</Route>
 				<Route path='/redirect/check_token' element={<CheckTokenAfterLogin />} />
-				<Route path='/redirect/verify_2fa' element={<Verify_2fa />} />
+				<Route path='/redirect/verify_2fa' element={<Verify2fa />} />
 				<Route path='/active2FA' element={<Active2FA />} />
 			</Routes>
 		</BrowserRouter>

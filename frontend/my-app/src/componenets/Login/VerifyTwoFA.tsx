@@ -2,7 +2,7 @@ import axios from "axios"
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-const Verify_2fa = () => {//if return of verify navigate to check_token
+const Verify2fa = () => {//if return of verify navigate to check_token
 	const nav = useNavigate()
 	const [code, setCode] = useState('')
 	
@@ -37,4 +37,4 @@ const Verify_2fa = () => {//if return of verify navigate to check_token
 	</React.Fragment>
 }
 
-export default Verify_2fa
+export default Verify2fa
