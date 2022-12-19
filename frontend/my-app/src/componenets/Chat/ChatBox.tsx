@@ -217,13 +217,18 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 
 	const [hideRight, setHideRight] = useState(false)
 
+	useEffect(() => {
+		if (hideRight)
+			props.setConv(0)
+	}, [hideRight])
+
 	let right = <ChatRight conv={props.conv} msgList={msgList}
 		setRefresh={setRefresh} nav={props.nav} setConv={props.setConv}
 		userGroupList={userGroupList} setRefreshConvList={props.setRefreshConvList}
 		isConvPrivate={props.isConvPrivate} passwordInput={passwordInput} isAdmin={isAdmin}
 		setPasswordInput={setPasswordInput} goodPass={goodPass} setHideRight={setHideRight}
 	/>
-	if (props.conv === 0 || !findGoodPass(convCpy)?.passState || hideRight)
+	if (props.conv === 0 || !findGoodPass(convCpy)?.passState)
 		right = <div className='chatBox' />
 
 	return <React.Fragment>

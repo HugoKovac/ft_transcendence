@@ -99,6 +99,8 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	}, [perm, setRefresh, ids, setRefreshConvListCpy])
 
 	useEffect(() => {
+		if (nav !== 2)
+			return
 		const socket = io("localhost:3000", {
 			auth: (cb) => {
 				cb({
@@ -108,7 +110,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 		})
 
 		socket.on(logState.toString(), () => {
-			// console.log(logState.toString())
+			console.log(logState.toString())
 			setHideRightCpy(true)
 			setRefreshConvListCpy(true)
 			setRefresh(true)
@@ -120,8 +122,32 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 		})
 
 	}, [perm, logState, setHideRightCpy, setRefreshConvListCpy, setRefresh])
+
+	// useEffect(() => {
+	// 	if (nav !== 2)
+	// 		return
+	// 	const socket = io("localhost:3000", {
+	// 		auth: (cb) => {
+	// 			cb({
+	// 				token: Cookies.get('jwt')
+	// 			});
+	// 		}
+	// 	})
+
+	// 	socket.on(logState.toString(), () => {
+	// 		console.log(`ref${logState}`)
+	// 		setRefresh(true)
+	// 	});
+
+	// 	return (() => {
+	// 		socket.off(`ref${logState}`)
+	// 	})
+
+	// }, [perm, logState, setRefresh])
 	
 	useEffect(() => {
+		if (nav !== 2)
+			return
 		const socket = io("localhost:3000", {
 			auth: (cb) => {
 					cb({
@@ -141,6 +167,8 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	}, [perm, logState, setRefreshConvListCpy, setHideRightCpy, setRefresh])
 
 	useEffect(() => {
+		if (nav !== 2)
+			return
 		const socket = io("localhost:3000", {
 			auth: (cb) => {
 					cb({
@@ -157,7 +185,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 		return (() => {
 			socket.off(`resetConv${convCpy}`)
 		})
-	}, [perm, setConv, convCpy])
+	}, [perm, setConv, convCpy, setRefreshConvListCpy, setRefresh, setHideRightCpy])
 
 	const [panelTrigger, setPanelTrigger] = useState(false)
 	const admin_btn_panel =  nav === 2 && isAdmin ? <button className="adminBtnPanel" onClick={() => {setPanelTrigger(true)}}>Manage</button> : <></> 

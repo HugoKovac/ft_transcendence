@@ -313,7 +313,7 @@ export class ChatService{
 		}
 	}
 
-	async banUser({group_conv_id, user_id, to}: DTO.banUserDTO, jwt:string){
+	async banUser({group_conv_id, user_id, to}: DTO.banUserDTO, jwt:string){//! if admin or owner
 		let tokenUserInfo: any = decode(jwt)
 		try{
 			const conv = await this.groupConvRepo.findOne({where:{group_conv_id:group_conv_id}, relations:['owner', 'ban_users', 'messages']})
@@ -343,7 +343,7 @@ export class ChatService{
 		}
 	}
 
-	async muteUser({group_conv_id, user_id, to}: DTO.banUserDTO, jwt:string){
+	async muteUser({group_conv_id, user_id, to}: DTO.banUserDTO, jwt:string){//! if admin or owner
 		let tokenUserInfo: any = decode(jwt)
 		try{
 			const conv = await this.groupConvRepo.findOne({where:{group_conv_id:group_conv_id}, relations:['owner', 'mute_users', 'messages']})
@@ -496,7 +496,7 @@ export class ChatService{
 		}
 	}
 
-	async addUserToGroup({group_conv_id, new_user_ids}:DTO.addUserToGroupDTO){
+	async addUserToGroup({group_conv_id, new_user_ids}:DTO.addUserToGroupDTO){//! if admin or owner
 		if (!new_user_ids || !new_user_ids.length)
 			return true
 		try{
@@ -526,7 +526,7 @@ export class ChatService{
 		}
 	}
 
-	async delUserToGroup({group_conv_id, del_user_ids}:DTO.delUserToGroupDTO){
+	async delUserToGroup({group_conv_id, del_user_ids}:DTO.delUserToGroupDTO){//! if admin or owner
 		if (!del_user_ids || !del_user_ids.length)
 			return true
 		try{
@@ -556,7 +556,7 @@ export class ChatService{
 		}
 	}
 
-	async changeGroupName({group_conv_id, new_name}:DTO.changeGroupNameDTO){
+	async changeGroupName({group_conv_id, new_name}:DTO.changeGroupNameDTO){//! if admin or owner
 		if (!new_name)
 			return true
 		try{
@@ -572,7 +572,7 @@ export class ChatService{
 		}
 	}
 
-	async changeVisibility({group_conv_id, isPrivate}:DTO.changeVisibilityDTO, jwt:string){
+	async changeVisibility({group_conv_id, isPrivate}:DTO.changeVisibilityDTO, jwt:string){//! if admin or owner
 		const tokenUserInfo:any = decode(jwt)
 		if (isPrivate === undefined)
 			return true

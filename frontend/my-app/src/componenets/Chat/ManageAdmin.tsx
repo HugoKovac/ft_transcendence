@@ -1,5 +1,7 @@
 import axios from "axios"
+import Cookies from "js-cookie"
 import React, { useEffect, useState } from "react"
+import { io } from "socket.io-client"
 
 const ManageAdmin = (props:{conv_id:number, setPanelTrigger: (v:boolean)=>void, setPopAdmin: (v:boolean)=>void}) =>{
 	const [adminCheckbox, setAdminCheckbox] = useState([false])
@@ -46,16 +48,21 @@ const ManageAdmin = (props:{conv_id:number, setPanelTrigger: (v:boolean)=>void, 
 		}
 		get()
 	}, [convCpy, adminCheckbox])
+
+	const [ids_list, set_ids_list] = useState<number[]>([])
+	const [del_list, set_del_list] = useState<number[]>([])
 	
 	const submitNewAdmin = async() =>{
 		const axInst = axios.create({
 			baseURL: 'http://localhost:3000/api/message/',
 			withCredentials: true
 		})
-		let ids = []
+		let ids: number[] = []
 		for (let i in adminCheckbox)
 			if (adminCheckbox[i] === true)
 				ids.push(parseInt(i))
+
+		set_ids_list(ids)
 
 		await axInst.post('new_admin', {group_conv_id: props.conv_id, admin_ids: ids}).then((res) => {
 			// console.log(res.data)
@@ -65,16 +72,46 @@ const ManageAdmin = (props:{conv_id:number, setPanelTrigger: (v:boolean)=>void, 
 			console.error(e)
 		})
 
-		let del = []
+		let del: number[] = []
 		for (let i in adminCheckbox)
 			if (adminCheckbox[i] === false)
 				del.push(parseInt(i))
+
+		set_del_list(del)
+		
 		await axInst.post('del_admin', {group_conv_id: props.conv_id, admin_ids: del}).then((res) => {
 			console.log(res.data)
 		}).catch((e) => {
 			console.error(e)
 		})
 	}
+
+	// useEffect(()=>{
+	// 	const socket = io("localhost:3000", {
+	// 		auth: (cb) => {
+	// 			cb({
+	// 				token: Cookies.get('jwt')
+	// 			});
+	// 		}
+	// 	})
+
+	// 	for (let i of ids_list){
+	// 		// console.log(`ref${i.toString()}`)
+	// 		socket.emit(`ref${i.toString()}`);
+	// 	}
+		
+	// 	for (let i of del_list){
+	// 		// console.log(i)
+	// 		socket.emit(`ref${i.toString()}`);
+	// 	}
+
+	// 	return () => {
+	// 		for (let i of ids_list)
+	// 			socket.off(i.toString());
+	// 		for (let i of del_list)
+	// 			socket.off(i.toString());
+	// 	}
+	// }, [ids_list, del_list])
 
 
 	return <React.Fragment>

@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, Unauthor
 import {JwtService} from '@nestjs/jwt'
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/typeorm";
-import { CreateUserDto } from "src/users/users.dto";
+import { CreateUserDto, TwoAuthDto } from "src/users/users.dto";
 import { Repository } from "typeorm";
 import { decode } from "jsonwebtoken";
 
@@ -88,5 +88,83 @@ export class AuthService{
 		catch{
 			return 0
 		}
+	}
+
+	async generate2FA(jwt:string){
+		const token: any = decode(jwt)
+		let qrcodeImg:string
+		const speakeasy = require('speakeasy')
+		const qrcode = require('qrcode')
+
+		const user: User = await this.userRepo.findOne({where: {id: token.id}})
+		if (!user)
+			return undefined
+
+		const secret = speakeasy.generateSecret({
+			name: "Transcendence"
+		})
+		qrcode.toDataURL(secret.otpauth_url, async(err, data) => {
+			qrcodeImg = data
+			const new_user: User = this.userRepo.create({...user, qrCode: qrcodeImg, secret_ascii: secret.ascii})
+			await this.userRepo.save(new_user)
+		})
+	}
+
+	async is2FAactive(jwt:string){
+		const token: any = decode(jwt)
+
+		const {TwoAuthActive} = await this.userRepo.findOne({where: {id: token.id}})
+		if (!TwoAuthActive)
+			return undefined
+
+		return TwoAuthActive
+	}
+
+	async active2FA(jwt:string){
+		const token: any = decode(jwt)
+
+		const user: User = await this.userRepo.findOne({where: {id: token.id}})
+		if (!user)
+			return undefined
+
+		const new_user: User = this.userRepo.create({...user, TwoAuthActive: true})
+		await this.userRepo.save(new_user)
+
+		return true
+	}
+
+	async verify2FA({code}: TwoAuthDto, jwt:string){
+		/**validate A2F. Take code in paylaod and check with user.secreta2f.verify()*/
+		const token: any = decode(jwt)
+
+		const user: User = await this.userRepo.findOne({where: {id: token.id}})
+		if (!user)
+			return undefined
+
+		return require('speakeasy').totp.verify({
+			secret: user.secret_ascii,
+			encoding: 'ascii',
+			token: code
+		})
+	}
+
+	async qrcode(jwt:string){
+		const token: any = decode(jwt)
+
+		const user: User = await this.userRepo.findOne({where: {id: token.id}})
+		if (!user)
+			return undefined
+
+		return user.qrCode
+	}
+
+	async isActive(jwt:string){
+		const token: any = decode(jwt)
+
+		const user: User = await this.userRepo.findOne({where: {id: token.id}})
+		if (!user)
+			return undefined
+
+		return user.TwoAuthActive
 	}
 }

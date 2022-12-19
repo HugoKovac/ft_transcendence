@@ -85,4 +85,20 @@ export class User {
 		ban => ban.user_muted
 	)
 	mute_groups: MuteEntity[]
+
+	@Column({
+		default: false
+	})
+	TwoAuthActive: boolean
+
+	@Column({
+		default: ''
+	})
+	qrCode: string
+
+	@Column({
+		default: ''
+	})
+	secret_ascii: string
+
 }
