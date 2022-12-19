@@ -1,16 +1,19 @@
 import GameMenu from '../componenets/Game/GameMenu';
 import { socket, WebsocketProvider } from '../componenets/Game/WebsocketContext';
 import NavBar from '../componenets/NavBar';
+import '../styles/Game.css'
 
 const Game = () => {
 
     return (
-        <div>
-            <NavBar />
-                <WebsocketProvider value={socket}>
-                    <GameMenu/>
-                </WebsocketProvider>
-        </div>
+        <body>
+            <div className="GameMenu">
+                <NavBar />
+                    <WebsocketProvider value={socket}>
+                        <GameMenu/>
+                    </WebsocketProvider>
+            </div>
+        </body>
     );
 }
 

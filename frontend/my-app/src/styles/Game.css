@@ -1,0 +1,38 @@
+.Canvas
+{
+    justify-content: center;
+    align-items: center;
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    background: rgb(0, 0, 0);
+    opacity: 50%;
+}
+
+.GameMenu
+{
+    background-image: url("../../public/goodsize.gif") ;
+    background-repeat:no-repeat;
+    background-size: cover;
+    width: auto;
+    height: 100vh;
+}
+
+.default
+{
+    background-image: url("../../public/goodsize.gif") ;
+    background-repeat:no-repeat;
+    background-size: cover;
+    width: auto;
+    height: 100vh;
+}
+
+.neonsunsetoverdrive
+{
+    background-image: url("../../public/Big\ GIF.gif") ;
+    background-repeat:no-repeat;
+    background-size: cover;
+    width: auto;
+    height: 100vh;
+}

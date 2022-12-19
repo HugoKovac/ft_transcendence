@@ -1,20 +1,9 @@
 import { OnGatewayConnection, OnGatewayInit, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
 import { ClientEvents } from '../shared/client/Client.Events'
-import { ServerEvents } from '../shared/server/Server.Events'
 import { Server, Socket } from 'socket.io'
-import { LobbyCreateDto } from './lobby/LobbyCreateDto';
-import { LobbyFactory } from './lobby/LobbyFactory';
-import { Lobby, ServerPayload } from './lobby/Lobby';
-import { LobbyJoinDto } from './lobby/LobbyJoinDto';
-import { json } from 'stream/consumers';
-
-export type AuthenticatedSocket = Socket & {
-
-  data: {
-    lobby: null | Lobby;
-  };
-
-};
+import { LobbyFactory } from './lobby/lobbyfactory';
+import { LobbyJoinDto, LobbyCreateDto } from './lobby/lobbydtos';
+import { AuthenticatedSocket } from './types'
 
 @WebSocketGateway({
     cors:{
@@ -24,9 +13,7 @@ export type AuthenticatedSocket = Socket & {
 )
 export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGatewayDisconnect {
 
-    constructor( private readonly lobbyManager: LobbyFactory )
-    {
-    }
+    constructor( private readonly lobbyManager: LobbyFactory ) {}
 
     afterInit(server: Server) {
       
@@ -45,7 +32,6 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
 
       //? Si tout c'est bien passer nous pourrons passer au restes des methodes ci-dessous
 
-      
       this.lobbyManager.initializeClient(client as AuthenticatedSocket);
     }
 
@@ -54,7 +40,13 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
       this.lobbyManager.terminateClient(client);
     }
 
-    //? Blind mode 
+    //? Blind mode
+
+
+
+
+
+    
     @SubscribeMessage(ClientEvents.CreateLobby)
     onLobbyCreation( client: AuthenticatedSocket, data: LobbyCreateDto )
     {
@@ -107,6 +99,13 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
         return ;
       client.data.lobby.instance.PlayerRetrieveConnection();
     }
+
+
+
+
+
+
+
 
     //! Annoying key handler
 
@@ -173,8 +172,22 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
         return ;
       client.data.lobby.instance.Player2ArrowUpPress();
     }
+
     //! Annoying key handler
 
+
+
+
+
+
+
+
+
+
+
+
+
+    
     //? Blind mode
 
 

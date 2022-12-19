@@ -32,7 +32,7 @@ export default function GameMatchmaking() {
     
     return (
 
-        <div>
+        <div className="GameMenu">
             <NavBar />
             <h4>Join Matchmaking !</h4>
             <button onClick={emitMatchmaking}> Join Matchmaking </button>

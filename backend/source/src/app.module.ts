@@ -10,10 +10,12 @@ import { ChatModule } from './chat/chat.module';
 import { config } from './auth/strategy/marvin.startegy';
 import { FriendsModule } from './friends/friends.module';
 import { PongModule } from './pong/pong.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
 	ConfigModule.forRoot({isGlobal: true, load: [config]}),
+	ScheduleModule.forRoot(),
 	TypeOrmModule.forRootAsync({
 		imports: [ConfigModule],
 		useFactory: (configService: ConfigService) => {

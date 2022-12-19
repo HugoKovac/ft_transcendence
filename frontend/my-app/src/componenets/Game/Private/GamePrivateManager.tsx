@@ -8,6 +8,8 @@ import { useRecoilState } from 'recoil';
 import { useSearchParams } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import { ClientEvents } from "../../../shared/client/Client.Events";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
     
 export default function GamePrivateManager() 
 {
@@ -36,6 +38,12 @@ export default function GamePrivateManager()
             }
             else
                 socket.emit(ClientEvents.LeaveLobby);
+        });
+        
+        socket.on('exception', (data) => 
+        {
+            console.log(data.message);
+            toast(data.message);
         });
 
         socket.on(ServerEvents.LobbyState, (data) => 

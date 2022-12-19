@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { WebsocketContext } from "../WebsocketContext";
-import '../../../styles/GameInstance.css';
+import '../../../styles/Game.css';
 import NavBar from '../../NavBar';
 import { LobbyState } from "../LobbyState";
 import { useRecoilValue } from "recoil";
@@ -18,6 +18,7 @@ export default function GameInstance()
     const CurrentLobbyState = useRecoilValue(LobbyState);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [SpectatorMode, SetSpectatorMode] = useState(false);
+    // const [Skin, SetSkin] = useState("default");
     const [numberOfSpectator, SetnumberOfSpectator] = useState(0);
 
     const Player1 = useRef<Paddle> ({
@@ -52,6 +53,7 @@ export default function GameInstance()
         gravity: 0
     })
 
+    const skin = React.useRef("default");
     const canvasWidth = React.useRef(0);
     const canvasHeight = React.useRef(0);
     const netWidth = React.useRef(0);
@@ -78,9 +80,6 @@ export default function GameInstance()
 
     const startClock = React.useRef(0);
     const deltatime = React.useRef(0);
-
-
-
 
 
 
@@ -485,6 +484,7 @@ export default function GameInstance()
             SetnumberOfSpectator(CurrentLobbyState.numberOfSpectator);
             endMessage = CurrentLobbyState.endMessage;
 
+            skin.current = CurrentLobbyState.skin;
             canvasHeight.current = CurrentLobbyState.canvasHeight;
             canvasWidth.current = CurrentLobbyState.canvasWidth;
             netHeight.current = CurrentLobbyState.netHeight;
@@ -562,8 +562,10 @@ export default function GameInstance()
         else
             waitForOpponent();
 
+
         deltatime.current = Date.now() - startClock.current;
         requestRef.current = requestAnimationFrame(gameloop);
+
     });
 
 
@@ -586,7 +588,7 @@ export default function GameInstance()
 
 
     return (
-        <div>
+        <div className="neonsunsetoverdrive">
                 <NavBar/>
                 <div>
                     {SpectatorMode ? (<span> You are watching as a Spectator </span>) : (<span> Number of Spectator : {numberOfSpectator} </span>)}
