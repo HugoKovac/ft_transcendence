@@ -105,7 +105,7 @@ export default function GameInstance()
             const canvas = canvasRef.current;
             const context = canvas.getContext('2d');
             if (context) 
-            {   
+            {  
                 context.fillStyle = config.color;
                 context.fillRect(config.x, config.y, config.width, config.height);
             }
@@ -587,6 +587,7 @@ export default function GameInstance()
 
 
 
+
     return (
         <div className="neonsunsetoverdrive">
                 <NavBar/>
@@ -598,4 +599,8 @@ export default function GameInstance()
                 </div>
         </div>
     );
+}
+
+function rgba(arg0: number, arg1: number, arg2: number, arg3: number): string | CanvasGradient | CanvasPattern {
+    throw new Error("Function not implemented.");
 }
