@@ -34,3 +34,8 @@ export const BALLSPEED = 3;
 export const BALLGRAVITY = 3;
 
 export const WINCONDITION = 10;
+
+
+
+
+
