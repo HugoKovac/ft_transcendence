@@ -28,6 +28,7 @@ export type ServerPayload = {
     endMessage: string,
     message: string;
     skin: string;
+    NetColor: string,
     lobbyid : string,
     numberOfSpectator: number,
 

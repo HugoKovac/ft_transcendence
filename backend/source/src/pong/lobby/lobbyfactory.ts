@@ -23,12 +23,30 @@ export class LobbyFactory {
     }
 
     //? Generate a new lobby and insert the client that created it
-    public generateLobby( skin: string ) : Lobby 
+    public generateLobby( skin: string, player1Color: string, player2Color: string, ballColor: string, netColor: string ) : Lobby 
     {
         let defaultskin = "default";
 
+        switch ( skin )
+        {
+            case "default":
+                defaultskin = "default";
+                break ;
+            case "SpaceGIF":
+                defaultskin = "SpaceGIF";
+                break ;
+            case "BananaGIF":
+                defaultskin = "BananaGIF";
+                break ;
+            case "neonsunsetoverdrive":
+                defaultskin = "neonsunsetoverdrive";
+                break ;
+            case "gotham":
+                defaultskin = "gotham";
+                break ;
+        }
 
-        const lobby = new Lobby(this.server, skin);
+        const lobby = new Lobby(this.server, defaultskin, player1Color, player2Color, ballColor, netColor);
 
         this.lobbies.set(lobby.id, lobby);
 

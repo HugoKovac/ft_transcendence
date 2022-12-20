@@ -21,6 +21,8 @@ export default function GameInstance()
     // const [Skin, SetSkin] = useState("default");
     const [numberOfSpectator, SetnumberOfSpectator] = useState(0);
 
+    const netcolor = React.useRef<string>("#fff");
+
     const Player1 = useRef<Paddle> ({
         x : 0,
         y: 0,
@@ -137,7 +139,7 @@ export default function GameInstance()
             if (context) 
             {
                 context.font = "18px Arial";
-                context.fillStyle = "#fff";
+                context.fillStyle = netcolor.current;
                 context.fillRect(canvasWidth.current / 2, 0, netWidth.current, netHeight.current);
             }
         }
@@ -485,6 +487,7 @@ export default function GameInstance()
             endMessage = CurrentLobbyState.endMessage;
 
             skin.current = CurrentLobbyState.skin;
+            netcolor.current = CurrentLobbyState.NetColor;
             canvasHeight.current = CurrentLobbyState.canvasHeight;
             canvasWidth.current = CurrentLobbyState.canvasWidth;
             netHeight.current = CurrentLobbyState.netHeight;
@@ -589,7 +592,7 @@ export default function GameInstance()
 
 
     return (
-        <div className="neonsunsetoverdrive">
+        <div className={skin.current}>
                 <NavBar/>
                 <div>
                     {SpectatorMode ? (<span> You are watching as a Spectator </span>) : (<span> Number of Spectator : {numberOfSpectator} </span>)}
@@ -599,8 +602,4 @@ export default function GameInstance()
                 </div>
         </div>
     );
-}
-
-function rgba(arg0: number, arg1: number, arg2: number, arg3: number): string | CanvasGradient | CanvasPattern {
-    throw new Error("Function not implemented.");
 }

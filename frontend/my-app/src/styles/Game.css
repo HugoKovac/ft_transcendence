@@ -13,11 +13,20 @@
 
 
 
+
+
+
+
+
+
+
+
+
 .CanvasPreview
 {
     justify-content: center;
     align-items: center;
-    margin-top: 100px;
+    margin-top: 50px;
     margin-left: auto;
     margin-right: auto;
     display: block;
@@ -25,9 +34,9 @@
     border: 10px inset brown;
 }
 
-.SkinSelector
+.SkinLabel
 {
-    margin-top: 100px;
+    margin-top: 25px;
     margin-left: auto;
     margin-right: auto;
     justify-content: center;
@@ -38,9 +47,35 @@
     font-weight: 100;
 }
 
+.SkinSelector
+{
+    margin-top: 25px;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-family: cursive;
+    font-size: x-large;
+    font-weight: 100;
+}
+
+.SkinList
+{
+    background-color:black;
+    border: 4px inset brown;
+}
+
+.CreateLobbyBtn
+{
+    background-color: black;
+    width: 200px;
+    border: 4px inset brown;
+}
+
 .CreateLobby
 {
-    margin-top: 100px;
+    margin-top: 50px;
     margin-left: auto;
     margin-right: auto;
     justify-content: center;
@@ -48,10 +83,9 @@
     display: flex;
 }
 
-
 .ColorPicker
 {
-    margin-top: 150px;
+    margin-top: 15px;
     display: flex;
     justify-content: center;
     font-family: cursive;
@@ -68,6 +102,7 @@
 .Paddle2ColorPicker
 {
     background-color: black;
+
 }
 
 .NetColorPicker
@@ -93,22 +128,34 @@
 
 
 
-.GameMenu
-{
-    background-image: url("../../public/goodsize.gif") ;
-    background-repeat:no-repeat;
-    background-size: cover;
-    width: auto;
-    height: 100vh;
-}
-
 .default
 {
+    background-color: black;
+    background-repeat:no-repeat;
+    background-size: cover;
+    width: auto;
+    min-width: 100vh;
+    min-height: 100vh;  
+}
+
+.BananaGIF
+{
+    background-image: url("../../public/BananaGIF.gif") ;
+    background-repeat:no-repeat;
+    background-size: cover;
+    width: auto;
+    min-width: 100vh;
+    min-height: 100vh;
+}
+
+.SpaceGIF
+{
     background-image: url("../../public/goodsize.gif") ;
     background-repeat:no-repeat;
     background-size: cover;
     width: auto;
-    height: 100vh;
+    min-width: 100vh;
+    min-height: 100vh;
 }
 
 .neonsunsetoverdrive
@@ -117,5 +164,16 @@
     background-repeat:no-repeat;
     background-size: cover;
     width: auto;
-    height: 100vh;
+    min-width: 100vh;
+    min-height: 100vh;
+}
+
+.gotham
+{
+    background-image: url("../../public/GothamCity.jpg") ;
+    background-repeat:no-repeat;
+    background-size: cover;
+    width: auto;
+    min-width: 100vh;
+    min-height: 100vh;
 }

@@ -16,8 +16,11 @@ export class Lobby
 
     public readonly instance: Instance = new Instance(this); //? The hole game logic is an instance, in a lobby
 
-    constructor( public readonly server: Server, public readonly skin: string )
-    { 
+    constructor( public readonly server: Server, public readonly skin: string, public readonly player1Color: string, public readonly player2Color: string, public readonly ballColor: string, public readonly netColor: string )
+    {
+        this.instance.Player1.color = player1Color;
+        this.instance.Player2.color = player2Color;
+        this.instance.Ball.color = ballColor;
         setInterval( () => { this.instance.gameLoop(); }, 1000 / 60); //? Game Loop is executed in 60FPS
     }
 
@@ -89,6 +92,7 @@ export class Lobby
             endMessage: this.instance.endMessage,
             message: "Refreshed lobby",
             skin: this.skin,
+            NetColor: this.netColor,
             lobbyid : this.id,
             numberOfSpectator: this.instance.numberOfSpectator,
 

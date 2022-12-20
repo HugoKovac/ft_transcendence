@@ -10,4 +10,16 @@ export class LobbyCreateDto
 {
     @IsString()
     skin: string;
+
+    @IsString()
+    Paddle1color: string;
+
+    @IsString()
+    Paddle2color: string;
+
+    @IsString()
+    Ballcolor: string;
+
+    @IsString()
+    Netcolor: string;
 }

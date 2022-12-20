@@ -49,11 +49,13 @@ export default function GameLobby() {
     const [Paddle2Color, SetPaddle2Color] = useState("#fff"); 
     const [BallColor, SetBallColor] = useState("#fff");
     const [NetColor, SetNetColor] = useState("#fff");
+    const [Skin, SetSkin] = useState("default");
 
     const Paddle1CPRef = useRef<any>();
     const Paddle2CPRef = useRef<any>();
     const BallCPRef = useRef<any>();
     const NetCPRef = useRef<any>();
+    const SkinListRef = useRef<any>();
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const canvasWidth = 800;
@@ -64,6 +66,20 @@ export default function GameLobby() {
 
     useEffect( () => {
 
+        SkinListRef.current = document.getElementById('skin');
+        SkinListRef.current.addEventListener('change', RetrieveSkin);
+
+        Paddle1CPRef.current = document.querySelector("#Paddle1CP");
+        Paddle1CPRef.current.addEventListener("input", Paddle1ColorPicker, false);
+
+        Paddle2CPRef.current = document.querySelector("#Paddle2CP");
+        Paddle2CPRef.current.addEventListener("input", Paddle2ColorPicker, false);
+
+        BallCPRef.current = document.querySelector("#BallCP");
+        BallCPRef.current.addEventListener("input", BallColorPicker, false);
+
+        NetCPRef.current = document.querySelector("#NetCP");
+        NetCPRef.current.addEventListener("input", NetColorPicker, false);
 
         if ( searchParamsString )
         {
@@ -75,26 +91,14 @@ export default function GameLobby() {
         requestRef.current = requestAnimationFrame(previewloop);
         return () =>
             cancelAnimationFrame(requestRef.current);
-    }, [searchParamsString, socket, Paddle1Color, Paddle2Color, BallColor, NetColor]);
+    }, [searchParamsString, socket, Paddle1Color, Paddle2Color, BallColor, NetColor, Skin]);
 
 
     const previewloop = () =>
     {
-        Paddle1CPRef.current = document.querySelector("#Paddle1CP");
-        if (Paddle1CPRef.current)
-            Paddle1CPRef.current.addEventListener("input", Paddle1ColorPicker, false);
-
-        Paddle2CPRef.current = document.querySelector("#Paddle2CP");
-        if (Paddle2CPRef.current)
-            Paddle2CPRef.current.addEventListener("input", Paddle2ColorPicker, false);
-
-        BallCPRef.current = document.querySelector("#BallCP");
-        if (BallCPRef.current)
-            BallCPRef.current.addEventListener("input", BallColorPicker, false);
-
-        NetCPRef.current = document.querySelector("#NetCP");
-        if (NetCPRef.current)
-            NetCPRef.current.addEventListener("input", NetColorPicker, false);
+        Paddle1.current.color = Paddle1Color;
+        Paddle2.current.color = Paddle2Color;
+        Ball.current.color = BallColor;
 
         clear();
         BallBounce();
@@ -103,10 +107,6 @@ export default function GameLobby() {
         drawPaddle(Paddle1.current);
         drawPaddle(Paddle2.current);
         drawBall(Ball.current);
-
-        Paddle1.current.color = Paddle1Color;
-        Paddle2.current.color = Paddle2Color;
-        Ball.current.color = BallColor;
         requestRef.current = requestAnimationFrame(previewloop);
     }
 
@@ -115,14 +115,22 @@ export default function GameLobby() {
     {
         socket.emit(ClientEvents.CreateLobby, 
         {
-            skin: "default",
+            skin: Skin,
+            Paddle1color: Paddle1Color,
+            Paddle2color: Paddle2Color,
+            Ballcolor: BallColor,
+            Netcolor: NetColor
         });
     }
 
 
 
 
-
+    function RetrieveSkin( event : any )
+    {
+        if ( event.target.value )
+            SetSkin(event.target.value);
+    }
 
     function Paddle1ColorPicker(event : any) 
     {
@@ -265,7 +273,7 @@ export default function GameLobby() {
     }
 
     return (
-        <div className='GameMenu'>
+        <div className={Skin}>
             <NavBar />
             <div className="ColorPicker">
                 <label> Player 1 <input type="color" id="Paddle1CP" className="Paddle1ColorPicker"/></label>
@@ -273,20 +281,22 @@ export default function GameLobby() {
                 <label> Net <input type="color" id="NetCP" className="NetColorPicker"/></label>
                 <label> Player 2 <input type="color" id="Paddle2CP" className="Paddle2ColorPicker"/></label>
             </div>
+            <label className='SkinLabel'>Skin</label>
+            <div className="SkinSelector">
+                    <select id="skin" className="SkinList">
+                            <option value="default">Default</option>
+                            <option value="SpaceGIF">SpaceGIF</option>
+                            <option value="BananaGIF">BananaGIF</option>
+                            <option value="neonsunsetoverdrive">Neon Sunset Overdrive</option>
+                            <option value="gotham">Gotham City</option>
+                    </select>
+            </div>
             <div>
                 <canvas className="CanvasPreview" ref={canvasRef} width={800} height={500}></canvas> 
             </div>
-            <div className="SkinSelector">
-                <label> Skins
-                <select name="skin"> 
-                        <option value="default">Default</option>
-                        <option value="neonsunsetoverdrive">Neon Sunset Overdrive</option>
-                        <option value="gotham">Gotham City</option>
-                </select>
-                </label>
-            </div>
+            
             <div className="CreateLobby">
-                <button className="btn" onClick={() => emitLobby()}>Create Lobby</button>
+                <button className="CreateLobbyBtn" onClick={() => emitLobby()}>Create Lobby</button>
             </div>
             <ToastContainer />
         </div>

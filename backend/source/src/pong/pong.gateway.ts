@@ -41,16 +41,11 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     }
 
     //? Blind mode
-
-
-
-
-
     
     @SubscribeMessage(ClientEvents.CreateLobby)
     onLobbyCreation( client: AuthenticatedSocket, data: LobbyCreateDto )
     {
-      const lobby = this.lobbyManager.generateLobby(data.skin);
+      const lobby = this.lobbyManager.generateLobby(data.skin, data.Paddle1color, data.Paddle2color, data.Ballcolor, data.Netcolor);
       lobby.addClient(client);
     }
     
