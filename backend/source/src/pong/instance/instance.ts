@@ -282,6 +282,11 @@ export class Instance
             this.updateVar();
             this.checkFinish();
         }
+        if (this.gameEnd  === true)
+        {
+            this.lobby.refreshLobby();
+            clearInterval(this.lobby.gameloop);
+        }
         this.lobby.refreshLobby();
     }
 }

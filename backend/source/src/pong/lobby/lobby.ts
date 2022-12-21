@@ -5,6 +5,7 @@ import { ServerEvents } from 'src/shared/server/Server.Events';
 import { Instance } from '../instance/instance';
 import { CANVASHEIGHT, CANVASWIDTH, NETHEIGHT, NETWIDTH, } from "../instance/gameConstant";
 import { ServerPayload } from '../types';
+import { clear } from 'console';
 
 export class Lobby 
 {
@@ -16,12 +17,14 @@ export class Lobby
 
     public readonly instance: Instance = new Instance(this); //? The hole game logic is an instance, in a lobby
 
+    public readonly gameloop: any;
+
     constructor( public readonly server: Server, public readonly skin: string, public readonly player1Color: string, public readonly player2Color: string, public readonly ballColor: string, public readonly netColor: string )
     {
         this.instance.Player1.color = player1Color;
         this.instance.Player2.color = player2Color;
         this.instance.Ball.color = ballColor;
-        setInterval( () => { this.instance.gameLoop(); }, 1000 / 60); //? Game Loop is executed in 60FPS
+        this.gameloop = setInterval( () => { this.instance.gameLoop(); }, 1000 / 60); //? Game Loop is executed in 60FPS
     }
 
     public addClient( client: AuthenticatedSocket )
@@ -31,7 +34,6 @@ export class Lobby
         client.join(this.id);
 
         client.data.lobby = this; //? Client will store an address of their lobby instance
-        //! This is a real low level practice, suprising for a typescript tutorial...
 
         if ( this.instance.Player1Online == false )
         {
@@ -45,6 +47,7 @@ export class Lobby
         }
         else { this.instance.numberOfSpectator += 1; } //! Else go to spectator mode
         
+        // this.server.to(this.id).emit(ServerEvents.LobbyID, {lobbyid: this.id});
         this.refreshLobby();
     }
 

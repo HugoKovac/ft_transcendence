@@ -597,7 +597,6 @@ export default function GameInstance()
     const BackToLobby = () =>
     {
         navigate('/game/');
-        window.location.reload();
     }
 
     return (
@@ -610,7 +609,7 @@ export default function GameInstance()
                     <canvas className="Canvas" ref={canvasRef} width={800} height={500}></canvas> 
                 </div>
                 <div className="InstanceButton">
-                    {!gameStart.current && (<button className="CopyLink" onClick={() => {CopyInvitationLink()}}> Copy Invitation Link </button>)}
+                    {!gameStart.current && !gameEnd.current && (<button className="CopyLink" onClick={() => {CopyInvitationLink()}}> Copy Invitation Link </button>)}
                     {gameEnd.current && <button className="BackToLobby" onClick={() => {BackToLobby()}}>{'Back To Lobby'}</button>}
                 </div>
                 <ToastContainer />

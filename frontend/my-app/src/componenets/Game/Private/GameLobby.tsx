@@ -2,9 +2,10 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { ClientEvents } from '../../../shared/client/Client.Events'
 import NavBar from '../../NavBar';
 import { WebsocketContext } from './../WebsocketContext';
-import { useSearchParams } from 'react-router-dom';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { Ball, CANVASHEIGHT, CANVASWIDTH, Paddle, PADDLEHEIGHT, PADDLEWIDTH } from '../GameConstant';
+
 
 export default function GameLobby() {
 
@@ -39,7 +40,6 @@ export default function GameLobby() {
         speed: 6,
         gravity: 6
     })
-
 
     const socket = useContext(WebsocketContext);
     const requestRef = useRef(0);
@@ -231,7 +231,7 @@ export default function GameLobby() {
 
 
 
-    const BallBounce = ( ) =>
+    const BallBounce = () =>
     {
 
         if ( Ball.current.y + Ball.current.gravity <= 0 ||  Ball.current.y +  Ball.current.gravity >= canvasHeight )

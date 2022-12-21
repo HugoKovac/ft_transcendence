@@ -19,25 +19,15 @@ export default function GamePrivateManager()
 
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const [connectionLost, setConnectionLost] = useState(false); //! Lag handler
-
     useEffect( () => {
 
         socket.on('connect', () => 
         {
-            if ( connectionLost === true )
-                socket.emit(ClientEvents.PlayerRetrieveConnection);
         });
 
         socket.on('disconnect', (reason : Socket.DisconnectReason) => 
         {
-            if ( reason === "ping timeout" || reason === "transport close" || reason === "transport error" )
-            {
-                setConnectionLost(true);
-                socket.emit(ClientEvents.PlayerLostConnection);
-            }
-            else
-                socket.emit(ClientEvents.LeaveLobby);
+            socket.emit(ClientEvents.LeaveLobby);
         });
         
         socket.on('exception', (data) => 
@@ -46,10 +36,15 @@ export default function GamePrivateManager()
             toast(data.message);
         });
 
+        socket.on(ServerEvents.LobbyID, (data) =>
+        {
+            setSearchParams({id: data.lobbyid});
+            console.log(data.lobbyid);
+        });
+
         socket.on(ServerEvents.LobbyState, (data) => 
         {
             setLobby(data);
-            setSearchParams({id: data.lobbyid});
         });
 
         return () => 
@@ -57,6 +52,7 @@ export default function GamePrivateManager()
             socket.off('connect');
             socket.off('disconnect');
             socket.off(ServerEvents.LobbyState);
+            socket.off(ServerEvents.LobbyID);
         }
 
     }, [searchParams, setLobby, socket, setSearchParams]);

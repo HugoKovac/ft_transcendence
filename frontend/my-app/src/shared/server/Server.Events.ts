@@ -6,4 +6,5 @@ export enum ServerEvents
     LobbyCall = 'server.lobby.call',
     LobbyCreation = 'server.lobby.creation',
     LobbyTimedOut = 'LobbyTimedOut',
+    LobbyID = 'LobbyClear',
 }
