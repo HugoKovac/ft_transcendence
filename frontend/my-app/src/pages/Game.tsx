@@ -7,7 +7,7 @@ const Game = () => {
 
     return (
         <body>
-            <div className="GameMenu">
+            <div className="SpaceGIF">
                 <NavBar />
                     <WebsocketProvider value={socket}>
                         <GameMenu/>

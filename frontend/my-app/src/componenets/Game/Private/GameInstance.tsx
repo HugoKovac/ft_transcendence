@@ -8,13 +8,16 @@ import { ClientEvents } from "../../../shared/client/Client.Events";
 import { Paddle, Ball } from "../GameConstant"
 import { CANVASHEIGHT, CANVASWIDTH, BALLSPEED } from "../GameConstant"
 import React from "react";
+import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { Navigate, NavLink } from "react-router-dom";
 
 export default function GameInstance()
 {
     //? Variable declaration
 
     const socket = useContext(WebsocketContext);
-    
+    const navigate = useNavigate();
     const CurrentLobbyState = useRecoilValue(LobbyState);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [SpectatorMode, SetSpectatorMode] = useState(false);
@@ -138,7 +141,7 @@ export default function GameInstance()
             const context = canvas.getContext('2d');
             if (context) 
             {
-                context.font = "18px Arial";
+                context.font = "18px cursive";
                 context.fillStyle = netcolor.current;
                 context.fillRect(canvasWidth.current / 2, 0, netWidth.current, netHeight.current);
             }
@@ -152,7 +155,7 @@ export default function GameInstance()
             const context = canvas.getContext('2d');
             if (context) 
             {
-                context.font = "18px Arial";
+                context.font = "18px cursive";
                 context.fillStyle = "#fff";
                 context.fillText(scoreOne.current.toString(), canvasWidth.current / 2 - 60, 30);
                 context.fillText(scoreTwo.current.toString(), canvasWidth.current / 2 + 60, 30);
@@ -167,7 +170,7 @@ export default function GameInstance()
             const context = canvas.getContext('2d');
             if (context) 
             {
-                context.font = "18px Arial";
+                context.font = "18px cursive";
                 context.fillStyle = "#fff";
                 if ( Player1Win.current === true )
                     context.fillText("Player 1 Won !", canvasWidth.current / 2 - 60, canvasHeight.current / 2);
@@ -184,7 +187,7 @@ export default function GameInstance()
             const context = canvas.getContext('2d');
             if (context) 
             {
-                context.font = "18px Arial";
+                context.font = "18px cursive";
                 context.fillStyle = "#fff";
                 context.fillText(endMessage, canvasWidth.current / 2 - 60, canvasHeight.current / 2);
             }
@@ -463,7 +466,7 @@ export default function GameInstance()
 
             if (context)
             {
-                context.font = "18px Arial";
+                context.font = "18px cursive";
                 context.fillStyle = "#fff";
                 if ( CurrentLobbyState )
                 {
@@ -585,21 +588,33 @@ export default function GameInstance()
 
 
 
+    const CopyInvitationLink = () =>
+    {
+        navigator.clipboard.writeText(window.location.href);
+        toast("Link coppied to clipboard !");
+    }
 
-
-
-
-
+    const BackToLobby = () =>
+    {
+        navigate('/game/');
+        window.location.reload();
+    }
 
     return (
         <div className={skin.current}>
                 <NavBar/>
                 <div>
-                    {SpectatorMode ? (<span> You are watching as a Spectator </span>) : (<span> Number of Spectator : {numberOfSpectator} </span>)}
+                    {SpectatorMode ? (<span className="Spectator"> You are watching as a Spectator </span>) : (<span className="Spectator"> Number of Spectator : {numberOfSpectator} </span>)}
                 </div>
                 <div>
                     <canvas className="Canvas" ref={canvasRef} width={800} height={500}></canvas> 
                 </div>
+                <div className="InstanceButton">
+                    {!gameStart.current && (<button className="CopyLink" onClick={() => {CopyInvitationLink()}}> Copy Invitation Link </button>)}
+                    {gameEnd.current && <button className="BackToLobby" onClick={() => {BackToLobby()}}>{'Back To Lobby'}</button>}
+                </div>
+                <ToastContainer />
         </div>
+        
     );
 }

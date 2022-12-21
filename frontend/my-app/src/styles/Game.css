@@ -121,16 +121,92 @@
 
 
 
+.Spectator
+{
+    font-family: cursive;
+    font-size: large;
+    background-color:transparent; 
+}
+
+.InstanceButton
+{
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.BackToLobby
+{
+    font-family: cursive;
+    font-size: large;
+    background-color:transparent;
+    border: 4px inset brown;
+}
+
+.CopyLink
+{
+    font-family: cursive;
+    font-size: large;
+    background-color: transparent;
+    border: 4px inset brown;
+}
 
 
 
 
+.GameTitle
+{
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    display: flex;
+    font-family: cursive;
+    font-size: x-large;
+}
+
+.GameMode
+{
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    display: flex;
+    font-family: cursive;
+    font-size: x-large;
+}
+
+.MatchMakingBtn
+{
+    margin-top: 100px;
+    font-family: cursive;
+    font-size: large;
+    background-color: transparent;
+    border: 4px inset brown;
+}
+
+.PrivateBtn
+{
+    margin-top: 100px;
+    margin-left: 50px;
+    font-family: cursive;
+    font-size: large;
+    background-color: transparent;
+    border: 4px inset brown;
+}
+
+.PongTitle
+{
+    font-family: cursive;
+    font-size: xx-large;
+}
 
 
 
 .default
 {
-    background-color: black;
+    background-image: url("../../public/default.jpg") ;
     background-repeat:no-repeat;
     background-size: cover;
     width: auto;
