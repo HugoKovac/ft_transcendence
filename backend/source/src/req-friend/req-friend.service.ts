@@ -38,7 +38,7 @@ export class ReqFriendService {
 			return undefined
 		}
 	}
-	async getFriendsAsUsers(jwt: string): Promise<User[]>{//get id from jwt decoded
+	async getFriendsAsUsers(jwt: string): Promise<User[]>{
 		const {id} = decode(jwt) as JwtPayload
 		try{
 			const {friends} = await this.userRepo.findOne({where: {id: id}, relations: ['friends'] })
@@ -61,7 +61,7 @@ export class ReqFriendService {
 			return one
 		}catch{
 
-			throw (`${user_id} don't exist`)
+			throw (`this user don't exist !`)
 		}
 	}
 
@@ -70,12 +70,13 @@ export class ReqFriendService {
         let {id} = decode(jwt) as JwtPayload
         if ( id != user_id)
            return "sender id dont match your cookie"
-           const req : ReqFriend = await this.reqfriendRepo.findOne({where : {from_id : send_id}})
             const oneUser : User = await this.userRepo.findOne({where : {id : user_id}, relations : ['recvReqFriend']})
-        	if ( req == undefined || oneUser.recvReqFriend.filter(e => e.id == req.id).length <= 0)
-                return `request doesn't exist`
-            this.reqfriendRepo.delete({id : req.id})
-            return `request ${req.id} has been deny successfully`
+			let list_req_friends : ReqFriend[] = oneUser.recvReqFriend.filter((e) => e.from_id == send_id);
+			if (list_req_friends.length <= 0)
+				return `no invitation has been received`
+			const req_id : number = list_req_friends[0].id
+            await this.reqfriendRepo.delete({id : req_id})
+            return `the request has been denied successfully`
     }
 
     async acceptInvit ({user_id, send_id} : {user_id:number, send_id: number}, jwt : string) : Promise<string>
@@ -85,23 +86,25 @@ export class ReqFriendService {
            return "sender id dont match your cookie"
        try 
        {
-		if (!this.canIAdd({user_id : user_id, send_id : send_id}))
-			return "cant add this user"
-        const req : ReqFriend = await this.reqfriendRepo.findOne({where : {id : send_id}})
-        const oneUser : User = await this.userRepo.findOne({where : {id : user_id}, relations : ['recvReqFriend']})
-        if ( req == undefined || oneUser.recvReqFriend.filter(e => e.id == req.id).length <= 0)
-            return `request doesn't exist`
-            const friend : User = await this.checkUserExist(req.from_id)
+			const permission : boolean = await this.canIAdd({user_id : user_id, send_id : send_id})
+			if (!permission)
+				return "You can't add this user"
+			const oneUser : User = await this.userRepo.findOne({where : {id : user_id}, relations : ['recvReqFriend']})
+			let list_req_friends : ReqFriend[] = oneUser.recvReqFriend.filter((e) => e.from_id == send_id);
+			if (list_req_friends.length <= 0)
+				return `no invitation has been received`
+			const req_id : number = list_req_friends[0].id
+            const friend : User = await this.checkUserExist(send_id)
             const new_friend_one: Friends = this.friendsRepo.create({friend_id : friend.id, friend_username : friend.username, user : oneUser})
             await this.friendsRepo.save(new_friend_one)
             const new_friend_two: Friends = this.friendsRepo.create({friend_id : oneUser.id, friend_username : oneUser.username, user : friend})
             await this.friendsRepo.save(new_friend_two)
             console.log("list des req en attente : ", oneUser.recvReqFriend)
-            this.reqfriendRepo.delete({id : req.id})
+            await this.reqfriendRepo.delete({id : req_id})
             console.log("after delete : ", oneUser.recvReqFriend)
-            return `${user_id} and ${req.from_id} are now friends !`
+            return `a new friendship has been created !`
         } catch {
-            return `new friend doesn't exist`
+            return `Error while adding friend`
        }
     }
 
@@ -120,23 +123,22 @@ export class ReqFriendService {
             return "sender id dont match your cookie"
         try 
         {
-			if (!this.canIAdd({user_id : user_id, send_id : send_id}))
+			const permission : boolean = await this.canIAdd({user_id : user_id, send_id : send_id})
+			if (!permission)
 				return "cant add this user"
-            const userEntity: User = await this.userRepo.findOne({where: {id: user_id}, relations : ["friends", "recvReqFriend",  "sendReqFriend", "block_me"]})
+            const userEntity: User = await this.userRepo.findOne({where: {id: user_id}, relations : ["friends", "recvReqFriend",  "sendReqFriend"]})
             let dest_user : User = await this.checkUserExist(send_id)
             for (let i of userEntity.friends){
                 console.log(`i = `, JSON.stringify(i))
 				if (i.friend_id == send_id)
-					return `${send_id} is already your friend`
+					return `this user is already your friend`
 			}
 			for (let i of userEntity.sendReqFriend){
                 console.log(`i = `, JSON.stringify(i))
                 await this.reqfriendRepo.delete(i)
 				if (i.to_id == send_id)
-					return `invitation to ${send_id} already sent`
-                //userEntity.sendReqFriend.splice(userEntity.sendReqFriend.indexOf(i), 1)
+					return `invitation to this user already sent`
 			}
-            //userEntity.sendReqFriend = []
 			for (let req_id of userEntity.recvReqFriend){
 				if (req_id.from_id == send_id)
 					return await this.acceptInvit({user_id : user_id, send_id : send_id}, jwt)
@@ -146,7 +148,7 @@ export class ReqFriendService {
             return "invitation has been send!"
         } catch
         {
-            return `error while adding user ${send_id}`
+            return `error while sending an invitation to this user`
         }
     }
 
@@ -168,6 +170,7 @@ export class ReqFriendService {
     {
         const user : User = await this.userRepo.findOne({where : {id : actual_id}, relations : ['friends']})
         let has_been_found : boolean = false
+		console.log ("friends : ", JSON.stringify(user.friends, null, 2))
         for (let i of user.friends)
         {
             if ( i.friend_id == friend_id)
@@ -189,14 +192,16 @@ export class ReqFriendService {
 			const req : ReqFriend = await this.reqfriendRepo.findOne({where : [{from_id : send_id, to_id : user_id}, {from_id : user_id, to_id : send_id}]})
 			if (req)
 			{
-				this.reqfriendRepo.delete({id : req.id})
-				return "request deleted"
+				await this.reqfriendRepo.delete({id : req.id})
+				console.log("req = ", JSON.stringify(req, null, 2))
+				return "Invitation deleted"
 			}
             await this.deleteFromFriendList(user_id, send_id)
-            await this.deleteFromFriendList(send_id, user_id)
-            return `${user_id} and ${send_id} are no longer friends ...`
-        } catch {
-            return `error while delete of ${user_id} and ${send_id} friendship`
+//ATTENTION : remets ce code			
+            //await this.deleteFromFriendList(send_id, user_id)
+			return `You two are no longer friends ...`
+		} catch {
+            return `error while deleting this friendship`
         }
     }
 
@@ -207,12 +212,10 @@ export class ReqFriendService {
            return "sender id dont match your cookie"
         try {
 			// rm friendship and req
-			this.removeFriend({user_id : user_id, send_id : send_id}, jwt)
-			await this.reqfriendRepo.delete({from_id : send_id, to_id : user_id})
-
+			await this.removeFriend({user_id : user_id, send_id : send_id}, jwt)
             const userEntity: User = await this.userRepo.findOne({where: {id: user_id}, relations : ["blocked", "block_me"]})
-            if (userEntity.blocked.filter((e) => {e.to_id == send_id}).length > 0)
-				return `this user is already your blocked`
+            if (userEntity.blocked.filter((e) => e.to_id == send_id ).length > 0)
+				return `this user is already blocked`
 			else if (userEntity.block_me.filter((e) => {e.from_id == send_id}).length > 0)
 				return `this user has blocked you before ...`
 			
@@ -221,7 +224,7 @@ export class ReqFriendService {
 			await this.blockpeopleRepo.save(new_req)
             return `this user has been blocked`
         } catch {
-            return `error while blocking user ${send_id}`
+            return `error while blocking user`
         }
     }
     async unblockUser({user_id, send_id} :  {user_id:number, send_id:number}, jwt : string) : Promise<string>
@@ -241,7 +244,7 @@ export class ReqFriendService {
 			await this.blockpeopleRepo.delete({id : del_req.id})
             return `this user has been unblocked`
         } catch {
-            return `error while unblocking user ${send_id}`
+            return `error while unblocking this user`
         }
     }
 	async getBlockUser({user_id} :  {user_id:number}, jwt : string) : Promise<User[]>
@@ -258,7 +261,8 @@ export class ReqFriendService {
 		}
 		return user_one.blocked.map(x => x.dest)
 	}
-	//a revoir si je veux manage les erreurs
+
+	//send relativeState bwtn 2 users
 	async getUserRelativeState({user_id, send_id} :  {user_id:number, send_id : number}, jwt : string) : Promise<string>
 	{
         let {id} = decode(jwt) as JwtPayload
@@ -278,7 +282,7 @@ export class ReqFriendService {
 		if (user_one.blocked.filter(e => e.to_id == send_id).length > 0)
 			return "blocked"
 		if (user_one.block_me.filter(e => e.from_id == send_id).length > 0)
-			return "blocked_me"
+			return "block_me"
 		if (user_one.friends.filter(e => e.friend_id == send_id).length > 0)
 			return "friend"
 		return "nothing"
