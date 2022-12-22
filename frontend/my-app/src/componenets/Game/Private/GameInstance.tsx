@@ -10,7 +10,6 @@ import { CANVASHEIGHT, CANVASWIDTH, BALLSPEED } from "../GameConstant"
 import React from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { Navigate, NavLink } from "react-router-dom";
 
 export default function GameInstance()
 {
@@ -21,9 +20,7 @@ export default function GameInstance()
     const CurrentLobbyState = useRecoilValue(LobbyState);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [SpectatorMode, SetSpectatorMode] = useState(false);
-    // const [Skin, SetSkin] = useState("default");
     const [numberOfSpectator, SetnumberOfSpectator] = useState(0);
-
     const netcolor = React.useRef<string>("#fff");
 
     const Player1 = useRef<Paddle> ({
@@ -78,8 +75,8 @@ export default function GameInstance()
     const Player2UpArrow = React.useRef(false);
     const Player2DownArrow = React.useRef(false);
 
-    const gameStart = React.useRef(false);
-    const gameEnd = React.useRef(false);
+    const [gameStart, setGameStart] = useState(false);
+    const [gameEnd, setGameEnd] = useState(false);
 
     const requestRef = React.useRef(0);
 
@@ -159,23 +156,6 @@ export default function GameInstance()
                 context.fillStyle = "#fff";
                 context.fillText(scoreOne.current.toString(), canvasWidth.current / 2 - 60, 30);
                 context.fillText(scoreTwo.current.toString(), canvasWidth.current / 2 + 60, 30);
-            }
-        }
-    });
-
-    const drawFinalScore = ( ( ) => {
-        if (canvasRef.current)
-        {
-            const canvas = canvasRef.current;
-            const context = canvas.getContext('2d');
-            if (context) 
-            {
-                context.font = "18px cursive";
-                context.fillStyle = "#fff";
-                if ( Player1Win.current === true )
-                    context.fillText("Player 1 Won !", canvasWidth.current / 2 - 60, canvasHeight.current / 2);
-                else if ( Player2Win.current === true )
-                    context.fillText("Player 2 Won !", canvasWidth.current / 2 - 60, canvasHeight.current / 2);
             }
         }
     });
@@ -279,7 +259,7 @@ export default function GameInstance()
         if ( event.defaultPrevented ) 
             return ;
 
-        if ( event.code === "Space" && gameStart.current === false )
+        if ( event.code === "Space" && gameStart === false )
             socket.emit(ClientEvents.ReadyState);
 
         if ( event.code === "ArrowUp")
@@ -302,7 +282,7 @@ export default function GameInstance()
         if ( event.defaultPrevented ) 
             return ;
 
-        if ( event.code === "Space" && gameStart.current === false )
+        if ( event.code === "Space" && gameStart === false )
             socket.emit(ClientEvents.ReadyState);
 
         if ( event.code === "ArrowUp" )
@@ -422,7 +402,7 @@ export default function GameInstance()
 
     const clientPrediction = ( () => {
 
-        if ( gameStart.current === true && gameEnd.current === false )
+        if ( gameStart === true && gameEnd=== false )
         {
             updateVar();
             BallBounce();
@@ -496,9 +476,9 @@ export default function GameInstance()
             netHeight.current = CurrentLobbyState.netHeight;
             netWidth.current = CurrentLobbyState.netWidth;
 
-            gameEnd.current = CurrentLobbyState.gameEnd;
-            gameStart.current = CurrentLobbyState.gameStart;
-
+            setGameEnd(CurrentLobbyState.gameEnd);
+            setGameStart(CurrentLobbyState.gameStart);
+            
             scoreOne.current = CurrentLobbyState.scoreOne;
             scoreTwo.current = CurrentLobbyState.scoreTwo;
 
@@ -532,9 +512,12 @@ export default function GameInstance()
 
     });
 
+    
     const gameloop = ( () => 
     {
+        console.log(gameEnd);
         startClock.current = Date.now();
+
         if ( CurrentLobbyState )
         {
             if ( CurrentLobbyState.Player1id === socket.id )
@@ -556,27 +539,25 @@ export default function GameInstance()
         drawScore();
         drawPaddle(Player1.current);
         drawPaddle(Player2.current);
-        if ( gameStart.current === true && gameEnd.current === false )
+        
+        if ( gameStart === true && gameEnd === false )
         {
             drawLine();
             drawBall(Ball.current);
         }
-        else if ( Player1Win.current === true || Player2Win.current === true )
-            drawFinalScore();
-        else if ( gameEnd.current === true )
+        else if ( gameEnd === true )
             drawEndGame();
         else
             waitForOpponent();
 
-
         deltatime.current = Date.now() - startClock.current;
         requestRef.current = requestAnimationFrame(gameloop);
-
     });
 
 
     useEffect( () => 
     {
+        console.log("RENDERING");
         requestRef.current = requestAnimationFrame(gameloop);
         return () =>
             cancelAnimationFrame(requestRef.current);
@@ -597,6 +578,7 @@ export default function GameInstance()
     const BackToLobby = () =>
     {
         navigate('/game/');
+        window.location.reload();
     }
 
     return (
@@ -609,8 +591,9 @@ export default function GameInstance()
                     <canvas className="Canvas" ref={canvasRef} width={800} height={500}></canvas> 
                 </div>
                 <div className="InstanceButton">
-                    {!gameStart.current && !gameEnd.current && (<button className="CopyLink" onClick={() => {CopyInvitationLink()}}> Copy Invitation Link </button>)}
-                    {gameEnd.current && <button className="BackToLobby" onClick={() => {BackToLobby()}}>{'Back To Lobby'}</button>}
+                    {!gameStart && !gameEnd &&  <button className="BackToLobby" onClick={() => {BackToLobby()}}>{'Go Back to Lobby'}</button>}
+                    {!gameStart && !gameEnd && (<button className="CopyLink" onClick={() => {CopyInvitationLink()}}> Copy Invitation Link </button>)}
+                    {gameEnd && <button className="BackToLobby" onClick={() => {BackToLobby()}}>{'Back To Lobby'}</button>}
                 </div>
                 <ToastContainer />
         </div>

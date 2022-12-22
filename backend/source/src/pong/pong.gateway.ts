@@ -48,7 +48,6 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
       const lobby = this.lobbyManager.generateLobby(data.skin, data.Paddle1color, data.Paddle2color, data.Ballcolor, data.Netcolor);
       lobby.addClient(client);
     }
-    
 
     @SubscribeMessage(ClientEvents.JoinLobby)
     onLobbyJoin( client: AuthenticatedSocket, data: LobbyJoinDto )
@@ -68,7 +67,8 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.toggleReadyState(client.id);
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.toggleReadyState(client.id);
     }
 
     @SubscribeMessage(ClientEvents.GameLoop)
@@ -109,7 +109,8 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.Player1ArrowDownRelease();
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.Player1ArrowDownRelease();
     }
 
     @SubscribeMessage(ClientEvents.Player1ArrowDownPress)
@@ -117,7 +118,8 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.Player1ArrowDownPress();
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.Player1ArrowDownPress();
     }
 
     @SubscribeMessage(ClientEvents.Player1ArrowUpRelease)
@@ -125,7 +127,8 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.Player1ArrowUpRelease();
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.Player1ArrowUpRelease();
     }
 
     @SubscribeMessage(ClientEvents.Player1ArrowUpPress)
@@ -133,7 +136,8 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.Player1ArrowUpPress();
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.Player1ArrowUpPress();
     }
 
     @SubscribeMessage(ClientEvents.Player2ArrowDownRelease)
@@ -141,7 +145,8 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.Player2ArrowDownRelease();
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.Player2ArrowDownRelease();
     }
 
     @SubscribeMessage(ClientEvents.Player2ArrowDownPress)
@@ -149,7 +154,8 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.Player2ArrowDownPress();
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.Player2ArrowDownPress();
     }
 
     @SubscribeMessage(ClientEvents.Player2ArrowUpRelease)
@@ -157,7 +163,8 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.Player2ArrowUpRelease();
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.Player2ArrowUpRelease();
     }
 
     @SubscribeMessage(ClientEvents.Player2ArrowUpPress)
@@ -165,7 +172,8 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.Player2ArrowUpPress();
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.Player2ArrowUpPress();
     }
 
     //! Annoying key handler

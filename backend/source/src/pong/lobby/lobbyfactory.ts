@@ -4,6 +4,7 @@ import { Lobby } from "./lobby";
 import { Cron } from '@nestjs/schedule';
 import { LOBBYLIFETIME } from "../instance/gameConstant";
 import { WsException } from "@nestjs/websockets";
+import { ServerEvents } from "src/shared/server/Server.Events";
 
 export class LobbyFactory {
 

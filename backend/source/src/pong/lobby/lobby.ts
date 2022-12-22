@@ -47,7 +47,6 @@ export class Lobby
         }
         else { this.instance.numberOfSpectator += 1; } //! Else go to spectator mode
         
-        // this.server.to(this.id).emit(ServerEvents.LobbyID, {lobbyid: this.id});
         this.refreshLobby();
     }
 
@@ -63,6 +62,8 @@ export class Lobby
             else if ( client.id == this.instance.Player2id )
                 this.instance.finishGame("Player 2 Left Lobby");
         }
+        if ( this.instance.gameEnd == true )
+                this.server.to(this.id).emit(ServerEvents.LobbyClear);
         
         if ( client.id == this.instance.Player1id )
         {

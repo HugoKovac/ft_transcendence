@@ -256,7 +256,9 @@ export class Instance
     public finishGame( endMessage: string )
     {
         this.gameEnd = true;
+        this.gameStart = false;
         this.endMessage = endMessage;
+        this.lobby.refreshLobby();
     }
 
     public checkFinish()
@@ -264,12 +266,12 @@ export class Instance
         if ( this.scoreOne >= WINCONDITION )
         {
             this.Player1Win = true;
-            this.gameEnd = true;
+            this.finishGame("Player 1 Won !");
         }
         else if ( this.scoreTwo >= WINCONDITION )
         {
             this.Player2Win = true;
-            this.gameEnd = true;
+            this.finishGame("Player 2 Won !");
         }
     }
 
@@ -282,7 +284,7 @@ export class Instance
             this.updateVar();
             this.checkFinish();
         }
-        if (this.gameEnd  === true)
+        if ( this.gameEnd  === true )
         {
             this.lobby.refreshLobby();
             clearInterval(this.lobby.gameloop);

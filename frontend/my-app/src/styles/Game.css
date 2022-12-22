@@ -60,10 +60,15 @@
     font-weight: 100;
 }
 
+
 .SkinList
 {
     background-color:black;
     border: 4px inset brown;
+}
+.SkinList:hover
+{
+    background-color: crimson;
 }
 
 .CreateLobbyBtn
@@ -71,6 +76,10 @@
     background-color: black;
     width: 200px;
     border: 4px inset brown;
+}
+.CreateLobbyBtn:hover
+{
+    background-color: crimson;
 }
 
 .CreateLobby
@@ -98,11 +107,19 @@
     margin-right: 100px;
     background-color: black;
 }
+.Paddle1ColorPicker:hover
+{
+    background-color: crimson;
+}
 
 .Paddle2ColorPicker
 {
     background-color: black;
 
+}
+.Paddle2ColorPicker:hover
+{
+    background-color: crimson;
 }
 
 .NetColorPicker
@@ -110,12 +127,19 @@
     margin-right: 100px;
     background-color: black;
 }
-
+.NetColorPicker:hover
+{
+    background-color: crimson;
+}
 
 .BallColorPicker
 {
     margin-right: 100px;
     background-color: black;
+}
+.BallColorPicker:hover
+{
+    background-color: crimson;
 }
 
 
@@ -145,6 +169,10 @@
     background-color:transparent;
     border: 4px inset brown;
 }
+.BackToLobby:hover
+{
+    background-color: crimson;
+}
 
 .CopyLink
 {
@@ -152,6 +180,10 @@
     font-size: large;
     background-color: transparent;
     border: 4px inset brown;
+}
+.CopyLink:hover
+{
+    background-color: crimson;
 }
 
 
@@ -185,6 +217,10 @@
     background-color: transparent;
     border: 4px inset brown;
 }
+.MatchMakingBtn:hover
+{
+    background-color: crimson;
+}
 
 .PrivateBtn
 {
@@ -194,6 +230,10 @@
     font-size: large;
     background-color: transparent;
     border: 4px inset brown;
+}
+.PrivateBtn:hover
+{
+    background-color: crimson;
 }
 
 .PongTitle
