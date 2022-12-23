@@ -10,6 +10,15 @@ export type AuthenticatedSocket = Socket & {
   
 };
 
+export type InQueuePlayer =
+{
+  joined_time: number,
+  id: string,
+  pref_skin: string
+  socket: AuthenticatedSocket,
+};
+
+
 export type ServerPayload = {
 
   [ServerEvents.LobbyCreation]: {

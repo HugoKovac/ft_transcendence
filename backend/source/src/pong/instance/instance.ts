@@ -181,7 +181,7 @@ export class Instance
         else if ( clientId === this.Player2id && this.Player2Ready == true )
             this.Player2Ready = false;
         
-        if ( this.Player2Ready == true  && this.Player1Ready == true )
+        if ( this.Player2Ready == true && this.Player1Ready == true )
             this.gameStart = true;
         
         this.lobby.refreshLobby();
@@ -243,16 +243,6 @@ export class Instance
         this.lobby.refreshLobby();
     }
 
-    public PlayerRetrieveConnection()
-    {
-        this.PauseGame = false;
-    }
-
-    public PlayerLostConnection()
-    {
-        this.PauseGame = true;
-    }
-
     public finishGame( endMessage: string )
     {
         this.gameEnd = true;
@@ -277,7 +267,7 @@ export class Instance
 
     public gameLoop()
     {
-        if ( this.gameStart == true && this.PauseGame == false && this.gameEnd == false )
+        if ( this.gameStart == true && this.gameEnd == false )
         {
             this.BallBounce();
             this.BallCollision();

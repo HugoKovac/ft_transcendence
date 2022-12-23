@@ -64,6 +64,7 @@ export class LobbyFactory {
             throw new WsException('This Lobby doesnt exist !')
 
         lobby.addClient(client);
+        lobby.server.to(lobby.id).emit(ServerEvents.LobbyJoin, {lobbyid: lobby.id});
     }
 
     @Cron('*/5 * * * *') //? Execute this method every 5 minutes (pretty cool)

@@ -1,9 +1,11 @@
-import { OnGatewayConnection, OnGatewayInit, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
+import { OnGatewayConnection, OnGatewayInit, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse, WsException } from '@nestjs/websockets';
 import { ClientEvents } from '../shared/client/Client.Events'
 import { Server, Socket } from 'socket.io'
 import { LobbyFactory } from './lobby/lobbyfactory';
-import { LobbyJoinDto, LobbyCreateDto } from './lobby/lobbydtos';
-import { AuthenticatedSocket } from './types'
+import { LobbyJoinDto, LobbyCreateDto, JoinMatchmakingDto } from './lobby/lobbydtos';
+import { AuthenticatedSocket, InQueuePlayer } from './types'
+import { ServerEvents } from 'src/shared/server/Server.Events';
+import { Matchmaking } from './lobby/matchmaking';
 
 @WebSocketGateway({
     cors:{
@@ -13,12 +15,14 @@ import { AuthenticatedSocket } from './types'
 )
 export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGatewayDisconnect {
 
-    constructor( private readonly lobbyManager: LobbyFactory ) {}
+    constructor( private readonly lobbyManager: LobbyFactory, private readonly matchmaking: Matchmaking ) { setInterval( () => { this.matchmaking.SearchAndMatch() }, 1000);}
+
 
     afterInit(server: Server) {
       
       this.lobbyManager.server = server;
-
+      this.matchmaking.server = server;
+      this.matchmaking.LobbyGenerator = this.lobbyManager;
     }
  
 
@@ -47,6 +51,7 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       const lobby = this.lobbyManager.generateLobby(data.skin, data.Paddle1color, data.Paddle2color, data.Ballcolor, data.Netcolor);
       lobby.addClient(client);
+      lobby.server.to(lobby.id).emit(ServerEvents.LobbyJoin, {lobbyid: lobby.id});
     }
 
     @SubscribeMessage(ClientEvents.JoinLobby)
@@ -70,37 +75,6 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
       if ( client.data.lobby.instance.gameEnd == false )
         client.data.lobby.instance.toggleReadyState(client.id);
     }
-
-    @SubscribeMessage(ClientEvents.GameLoop)
-    onGameLoop( client : AuthenticatedSocket )
-    {
-      if (!client.data.lobby)
-        return ;
-      client.data.lobby.instance.gameLoop();
-    }
-
-    @SubscribeMessage(ClientEvents.PlayerLostConnection)
-    onPlayerLostConnection( client : AuthenticatedSocket )
-    {
-      if (!client.data.lobby)
-        return ;
-      client.data.lobby.instance.PlayerLostConnection();
-    }
-
-    @SubscribeMessage(ClientEvents.PlayerRetrieveConnection)
-    onPlayerRetrieveConnection( client : AuthenticatedSocket )
-    {
-      if (!client.data.lobby)
-        return ;
-      client.data.lobby.instance.PlayerRetrieveConnection();
-    }
-
-
-
-
-
-
-
 
     //! Annoying key handler
 
@@ -180,7 +154,20 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
 
 
 
+    @SubscribeMessage(ClientEvents.JoinMatchmaking)
+    onJoinMatchMaking( client : AuthenticatedSocket, data : JoinMatchmakingDto )
+    {
+      if ( client.data.lobby )
+        throw new WsException('You are already in a lobby !');
 
+      this.matchmaking.addClientToQueue(client, data.SkinPref);
+    }
+
+    @SubscribeMessage(ClientEvents.LeaveMatchmaking)
+    onLeaveMatchMaking( client : AuthenticatedSocket )
+    {
+      this.matchmaking.removeClientFromQueue(client);
+    }
 
 
 

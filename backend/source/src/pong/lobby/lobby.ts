@@ -5,7 +5,6 @@ import { ServerEvents } from 'src/shared/server/Server.Events';
 import { Instance } from '../instance/instance';
 import { CANVASHEIGHT, CANVASWIDTH, NETHEIGHT, NETWIDTH, } from "../instance/gameConstant";
 import { ServerPayload } from '../types';
-import { clear } from 'console';
 
 export class Lobby 
 {
@@ -62,8 +61,6 @@ export class Lobby
             else if ( client.id == this.instance.Player2id )
                 this.instance.finishGame("Player 2 Left Lobby");
         }
-        if ( this.instance.gameEnd == true )
-                this.server.to(this.id).emit(ServerEvents.LobbyClear);
         
         if ( client.id == this.instance.Player1id )
         {

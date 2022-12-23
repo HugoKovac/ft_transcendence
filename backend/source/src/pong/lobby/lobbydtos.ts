@@ -23,3 +23,9 @@ export class LobbyCreateDto
     @IsString()
     Netcolor: string;
 }
+
+export class JoinMatchmakingDto
+{
+    @IsString()
+    SkinPref: string;
+}

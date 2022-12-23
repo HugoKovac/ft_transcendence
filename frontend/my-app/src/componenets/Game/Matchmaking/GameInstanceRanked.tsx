@@ -567,18 +567,11 @@ export default function GameInstance()
 
     const [lobby, setLobby] = useRecoilState(LobbyState);
 
-
-    const CopyInvitationLink = () =>
-    {
-        navigator.clipboard.writeText(window.location.href);
-        toast("Link coppied to clipboard !");
-    }
-
     const BackToLobby = () =>
     {
         socket.emit(ClientEvents.LeaveLobby);
         setLobby(null);
-        navigate('/game/lobby');
+        navigate('/game/matchmaking');
     }
 
     return (
@@ -592,7 +585,6 @@ export default function GameInstance()
                 </div>
                 <div className="InstanceButton">
                     {!gameStart && !gameEnd &&  <button className="BackToLobby" onClick={() => {BackToLobby()}}>{'Go Back to Lobby'}</button>}
-                    {!gameStart && !gameEnd && (<button className="CopyLink" onClick={() => {CopyInvitationLink()}}> Copy Invitation Link </button>)}
                     {gameEnd && <button className="BackToLobby" onClick={() => {BackToLobby()}}>{'Back To Lobby'}</button>}
                 </div>
                 <ToastContainer />

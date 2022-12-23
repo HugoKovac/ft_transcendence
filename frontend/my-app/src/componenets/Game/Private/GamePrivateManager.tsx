@@ -19,7 +19,6 @@ export default function GamePrivateManager()
 
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const searchParamsString = searchParams.get('id');
 
     useEffect( () => {
 
@@ -29,14 +28,11 @@ export default function GamePrivateManager()
         
         socket.on('exception', (data) => { toast(data.message); });
 
-        socket.on(ServerEvents.LobbyState, (data) => 
-        {
-            setLobby(data);
-            if ( !searchParams.toString() )
-                setSearchParams({id: data.lobbyid});
-        });
+        socket.on(ServerEvents.ServerMessage, (data) => { toast(data.message); });
 
-        socket.on(ServerEvents.LobbyClear, () => {});
+        socket.on(ServerEvents.LobbyState, (data) => { setLobby(data); });
+
+        socket.on(ServerEvents.LobbyJoin, (data) => { if ( !searchParams.toString() ) setSearchParams({id: data.lobbyid}); });
 
        
 
@@ -45,6 +41,7 @@ export default function GamePrivateManager()
             socket.off('connect');
             socket.off('disconnect');
             socket.off(ServerEvents.LobbyState);
+            socket.off(ServerEvents.LobbyJoin);
         }
 
     }, [searchParams, setLobby, socket, setSearchParams]);

@@ -2,8 +2,8 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { ClientEvents } from '../../../shared/client/Client.Events'
 import NavBar from '../../NavBar';
 import { WebsocketContext } from './../WebsocketContext';
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { useSearchParams } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import { Ball, CANVASHEIGHT, CANVASWIDTH, Paddle, PADDLEHEIGHT, PADDLEWIDTH } from '../GameConstant';
 
 
@@ -62,7 +62,8 @@ export default function GameLobby() {
     const canvasHeight = 500;
     const netWidth = 5;
     const netHeight = 600;
-
+    
+    
 
     useEffect( () => {
 

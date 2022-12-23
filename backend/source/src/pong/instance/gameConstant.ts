@@ -18,3 +18,6 @@ export const MINUTE = SECOND * 60;
 export const HOUR = MINUTE * 60;
 
 export const LOBBYLIFETIME = MINUTE * 4;
+
+
+export const MAXTIME_IN_QUEUE = MINUTE * 3;
