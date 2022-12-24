@@ -1,0 +1,295 @@
+.Canvas
+{
+    justify-content: center;
+    align-items: center;
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    background: rgb(0, 0, 0, 0.5);
+    border: 10px inset brown;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.CanvasPreview
+{
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    background: rgb(0, 0, 0, 0.5);
+    border: 10px inset brown;
+}
+
+.SkinLabel
+{
+    margin-top: 25px;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-family: cursive;
+    font-size: x-large;
+    font-weight: 100;
+}
+
+.SkinSelector
+{
+    margin-top: 25px;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-family: cursive;
+    font-size: x-large;
+    font-weight: 100;
+}
+
+
+.SkinList
+{
+    background-color:black;
+    border: 4px inset brown;
+}
+.SkinList:hover
+{
+    background-color: crimson;
+}
+
+.CreateLobbyBtn
+{
+    background-color: black;
+    width: 200px;
+    border: 4px inset brown;
+}
+.CreateLobbyBtn:hover
+{
+    background-color: crimson;
+}
+
+.CreateLobby
+{
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.ColorPicker
+{
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    font-family: cursive;
+    font-size: x-large;
+    font-weight: 100;
+}
+
+.Paddle1ColorPicker
+{
+    margin-right: 100px;
+    background-color: black;
+}
+.Paddle1ColorPicker:hover
+{
+    background-color: crimson;
+}
+
+.Paddle2ColorPicker
+{
+    background-color: black;
+
+}
+.Paddle2ColorPicker:hover
+{
+    background-color: crimson;
+}
+
+.NetColorPicker
+{
+    margin-right: 100px;
+    background-color: black;
+}
+.NetColorPicker:hover
+{
+    background-color: crimson;
+}
+
+.BallColorPicker
+{
+    margin-right: 100px;
+    background-color: black;
+}
+.BallColorPicker:hover
+{
+    background-color: crimson;
+}
+
+
+
+
+.Spectator
+{
+    font-family: cursive;
+    font-size: large;
+    background-color:transparent; 
+}
+
+.InstanceButton
+{
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.BackToLobby
+{
+    font-family: cursive;
+    font-size: large;
+    background-color:transparent;
+    border: 4px inset brown;
+}
+.BackToLobby:hover
+{
+    background-color: crimson;
+}
+
+.CopyLink
+{
+    font-family: cursive;
+    font-size: large;
+    background-color: transparent;
+    border: 4px inset brown;
+}
+.CopyLink:hover
+{
+    background-color: crimson;
+}
+
+
+
+
+.GameTitle
+{
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    display: flex;
+    font-family: cursive;
+    font-size: x-large;
+}
+
+.GameMode
+{
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    display: flex;
+    font-family: cursive;
+    font-size: x-large;
+}
+
+.MatchMakingBtn
+{
+    margin-top: 100px;
+    font-family: cursive;
+    font-size: large;
+    background-color: transparent;
+    border: 4px inset brown;
+}
+.MatchMakingBtn:hover
+{
+    background-color: crimson;
+}
+
+.PrivateBtn
+{
+    margin-top: 100px;
+    margin-left: 50px;
+    font-family: cursive;
+    font-size: large;
+    background-color: transparent;
+    border: 4px inset brown;
+}
+.PrivateBtn:hover
+{
+    background-color: crimson;
+}
+
+.PongTitle
+{
+    font-family: cursive;
+    font-size: xx-large;
+}
+
+
+
+.default
+{
+    background-image: url("../../public/default.jpg") ;
+    background-repeat:no-repeat;
+    background-size: cover;
+    width: auto;
+    min-width: 100vh;
+    min-height: 100vh;  
+}
+
+.BananaGIF
+{
+    background-image: url("../../public/BananaGIF.gif") ;
+    background-repeat:no-repeat;
+    background-size: cover;
+    width: auto;
+    min-width: 100vh;
+    min-height: 100vh;
+}
+
+.SpaceGIF
+{
+    background-image: url("../../public/goodsize.gif") ;
+    background-repeat:no-repeat;
+    background-size: cover;
+    width: auto;
+    min-width: 100vh;
+    min-height: 100vh;
+}
+
+.neonsunsetoverdrive
+{
+    background-image: url("../../public/Big\ GIF.gif") ;
+    background-repeat:no-repeat;
+    background-size: cover;
+    width: auto;
+    min-width: 100vh;
+    min-height: 100vh;
+}
+
+.gotham
+{
+    background-image: url("../../public/GothamCity.jpg") ;
+    background-repeat:no-repeat;
+    background-size: cover;
+    width: auto;
+    min-width: 100vh;
+    min-height: 100vh;
+}
