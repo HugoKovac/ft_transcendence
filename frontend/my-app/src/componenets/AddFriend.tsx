@@ -17,7 +17,7 @@ const AddFriend = () => {
 	const HandleNewFriend = async (e: any) => {
 		e.preventDefault()
 		try{
-			alert(await axInst.post('friends/add', payload).then(res => res.data))
+			alert(await axInst.post('req-friend/add', payload).then(res => res.data))
 			setRerender(true)
 		}catch(e){
 			console.error(e)

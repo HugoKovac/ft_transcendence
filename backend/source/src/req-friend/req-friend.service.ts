@@ -116,6 +116,13 @@ export class ReqFriendService {
 			return false
 		return true
 	}
+    async sendInvitByName ({id, add} : {id : number, add : string}, jwt : string) : Promise<string>
+    {
+		const friendData : User = await this.userRepo.findOne({where : {username : add}})
+		if (!friendData)
+			return `add doesn't exist`
+		return this.sendInvit({user_id : id, send_id : friendData.id}, jwt)
+    }
     async sendInvit ({user_id, send_id} : {user_id:number, send_id:number}, jwt : string) : Promise<string>
     {
         let {id} = decode(jwt) as JwtPayload
@@ -156,11 +163,11 @@ export class ReqFriendService {
     {
         const {id} = decode(jwt) as JwtPayload
 		try{
-			const {recvReqFriend} = await this.userRepo.findOne({where: {id: id}, relations: ['recvReqFriend', 'recvReqFriend.dest']})
+			const {recvReqFriend} = await this.userRepo.findOne({where: {id: id}, relations: ['recvReqFriend', 'recvReqFriend.owner']})
 			if (!recvReqFriend)
 				return undefined
 			console.log(JSON.stringify(recvReqFriend, null, 2))
-			return recvReqFriend.map(x => x.dest)
+			return recvReqFriend.map(x => x.owner)
 		}catch{
 			return undefined
 		}
@@ -197,8 +204,7 @@ export class ReqFriendService {
 				return "Invitation deleted"
 			}
             await this.deleteFromFriendList(user_id, send_id)
-//ATTENTION : remets ce code			
-            //await this.deleteFromFriendList(send_id, user_id)
+            await this.deleteFromFriendList(send_id, user_id)
 			return `You two are no longer friends ...`
 		} catch {
             return `error while deleting this friendship`

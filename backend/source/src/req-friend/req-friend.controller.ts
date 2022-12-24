@@ -24,6 +24,12 @@ export class ReqFriendController {
             let i : string = await this.ReqFriendService.sendInvit(bod, req.cookies['jwt'])
             return i
         }
+        @Post('add')
+        @UseGuards(AuthGuard('jwt'))
+        async sendInvitByName(@Body()bod: {id : number, add : string}, @Req() req){
+            let i : string = await this.ReqFriendService.sendInvitByName(bod, req.cookies['jwt'])
+            return i
+        }
         @Post('blockUser')
         @UseGuards(AuthGuard('jwt'))
         async blockUser(@Body()bod: ReqInvitFriend, @Req() req){
