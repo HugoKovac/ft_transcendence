@@ -15,7 +15,7 @@ import { Matchmaking } from './lobby/matchmaking';
 )
 export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGatewayDisconnect {
 
-    constructor( private readonly lobbyManager: LobbyFactory, private readonly matchmaking: Matchmaking ) { setInterval( () => { this.matchmaking.SearchAndMatch() }, 1000);}
+constructor( private readonly lobbyManager: LobbyFactory, private readonly matchmaking: Matchmaking ) { /*setInterval( () => { this.matchmaking.SearchAndMatch() }, 1000);*/  }
 
 
     afterInit(server: Server) {
@@ -49,7 +49,7 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     @SubscribeMessage(ClientEvents.CreateLobby)
     onLobbyCreation( client: AuthenticatedSocket, data: LobbyCreateDto )
     {
-      const lobby = this.lobbyManager.generateLobby(data.skin, data.Paddle1color, data.Paddle2color, data.Ballcolor, data.Netcolor);
+      const lobby = this.lobbyManager.generateLobby(data.skin, data.Paddle1color, data.Paddle2color, data.Ballcolor, data.Netcolor, false);
       lobby.addClient(client);
       lobby.server.to(lobby.id).emit(ServerEvents.LobbyJoin, {lobbyid: lobby.id});
     }
@@ -64,7 +64,11 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     onLobbyLeave( client: AuthenticatedSocket, data: LobbyJoinDto )
     {
       if ( client.data.lobby )
+      {
+        if ( client.data.lobby.MatchMakingMode == true )
+          client.data.lobby.instance.finishRankedGame(client.id);
         client.data.lobby.removeClient(client);
+      }
     }
 
     @SubscribeMessage(ClientEvents.ReadyState)

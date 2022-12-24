@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import { AuthenticatedSocket } from "../types";
+import { AuthenticatedSocket, InQueuePlayer } from "../types";
 import { Lobby } from "./lobby";
 import { Cron } from '@nestjs/schedule';
 import { LOBBYLIFETIME } from "../instance/gameConstant";
@@ -20,11 +20,15 @@ export class LobbyFactory {
     public terminateClient( client: AuthenticatedSocket )
     {
         if ( client.data.lobby )
+        {
+            if ( client.data.lobby.MatchMakingMode == true )
+                client.data.lobby.instance.finishRankedGame(client.id);
             client.data.lobby.removeClient(client);
+        }
     }
 
     //? Generate a new lobby and insert the client that created it
-    public generateLobby( skin: string, player1Color: string, player2Color: string, ballColor: string, netColor: string ) : Lobby 
+    public generateLobby( skin: string, player1Color: string, player2Color: string, ballColor: string, netColor: string, MatchMakingMode: boolean ) : Lobby 
     {
         let defaultskin = "default";
 
@@ -47,10 +51,8 @@ export class LobbyFactory {
                 break ;
         }
 
-        const lobby = new Lobby(this.server, defaultskin, player1Color, player2Color, ballColor, netColor);
-
+        const lobby = new Lobby(this.server, defaultskin, player1Color, player2Color, ballColor, netColor, MatchMakingMode);
         this.lobbies.set(lobby.id, lobby);
-
         return lobby;
     }
 

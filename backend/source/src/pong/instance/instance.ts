@@ -182,7 +182,10 @@ export class Instance
             this.Player2Ready = false;
         
         if ( this.Player2Ready == true && this.Player1Ready == true )
+        {
             this.gameStart = true;
+            this.lobby.createdAT.setDate(Date.now());
+        }
         
         this.lobby.refreshLobby();
     }
@@ -248,6 +251,17 @@ export class Instance
         this.gameEnd = true;
         this.gameStart = false;
         this.endMessage = endMessage;
+        this.lobby.refreshLobby();
+    }
+
+    public finishRankedGame( playerID : string )
+    {
+        this.gameEnd = true;
+        this.gameStart = false;
+        if ( playerID == this.Player1id )
+            this.endMessage = "Player 1 Left lobby, Player 2 Won !";
+        else if ( playerID == this.Player2id )
+            this.endMessage = "Player 2 Left lobby, Player 1 Won !";
         this.lobby.refreshLobby();
     }
 

@@ -22,6 +22,7 @@ export default function GameInstance()
     const [SpectatorMode, SetSpectatorMode] = useState(false);
     const [numberOfSpectator, SetnumberOfSpectator] = useState(0);
     const netcolor = React.useRef<string>("#fff");
+    const [lobby, setLobby] = useRecoilState(LobbyState);
 
     const Player1 = useRef<Paddle> ({
         x : 0,
@@ -60,7 +61,6 @@ export default function GameInstance()
     const canvasHeight = React.useRef(0);
     const netWidth = React.useRef(0);
     const netHeight = React.useRef(0);
-
     
     let endMessage : string;
 
@@ -565,7 +565,6 @@ export default function GameInstance()
     //? Client game loop
 
 
-    const [lobby, setLobby] = useRecoilState(LobbyState);
 
     const BackToLobby = () =>
     {

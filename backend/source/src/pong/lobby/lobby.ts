@@ -18,7 +18,8 @@ export class Lobby
 
     public readonly gameloop: any;
 
-    constructor( public readonly server: Server, public readonly skin: string, public readonly player1Color: string, public readonly player2Color: string, public readonly ballColor: string, public readonly netColor: string )
+    constructor( public readonly server: Server, public readonly skin: string, public readonly player1Color: string, public readonly player2Color: string, public readonly ballColor: string, public readonly netColor: string,
+                 public readonly MatchMakingMode : boolean )
     {
         this.instance.Player1.color = player1Color;
         this.instance.Player2.color = player2Color;
