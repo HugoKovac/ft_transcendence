@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToMany, OneToMany, PrimaryGeneratedColu
 import { BanEnity } from "./ban.entity";
 import Conv from "./conv.entity";
 import { Friends } from "./friends.entity";
+import { GameHistory } from "./gamehistory.entity";
 import { GroupConv } from "./groupConv.entity";
 import { MuteEntity } from "./mute.entity";
 
@@ -85,4 +86,11 @@ export class User {
 		ban => ban.user_muted
 	)
 	mute_groups: MuteEntity[]
+
+
+	@OneToMany(
+        () => GameHistory,
+        history => history.user_owner
+    )
+  	match_history: GameHistory[]
 }

@@ -5,8 +5,9 @@ import { Message } from './message.entity'
 import { User } from './user.entity'
 import { BanEnity } from './ban.entity'
 import { MuteEntity } from './mute.entity'
+import { GameHistory } from './gamehistory.entity'
 
-const entities = [User, Message, Friends, Conv, GroupConv, BanEnity, MuteEntity]
+const entities = [User, Message, Friends, Conv, GroupConv, BanEnity, MuteEntity, GameHistory]
 
-export {User, Message, Friends, Conv, GroupConv, BanEnity, MuteEntity}
+export {User, Message, Friends, Conv, GroupConv, BanEnity, MuteEntity, GameHistory}
 export default entities

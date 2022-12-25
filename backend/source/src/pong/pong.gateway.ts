@@ -3,7 +3,7 @@ import { ClientEvents } from '../shared/client/Client.Events'
 import { Server, Socket } from 'socket.io'
 import { LobbyFactory } from './lobby/lobbyfactory';
 import { LobbyJoinDto, LobbyCreateDto, JoinMatchmakingDto } from './lobby/lobbydtos';
-import { AuthenticatedSocket, InQueuePlayer } from './types'
+import { AuthenticatedSocket } from './types'
 import { ServerEvents } from 'src/shared/server/Server.Events';
 import { Matchmaking } from './lobby/matchmaking';
 
