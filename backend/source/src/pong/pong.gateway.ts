@@ -15,7 +15,7 @@ import { Matchmaking } from './lobby/matchmaking';
 )
 export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGatewayDisconnect {
 
-constructor( private readonly lobbyManager: LobbyFactory, private readonly matchmaking: Matchmaking ) { /*setInterval( () => { this.matchmaking.SearchAndMatch() }, 1000);*/  }
+constructor( private readonly lobbyManager: LobbyFactory, private readonly matchmaking: Matchmaking ) { setInterval( () => { this.matchmaking.SearchAndMatch() }, 1000);  }
 
 
     afterInit(server: Server) {
@@ -42,6 +42,8 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
     async handleDisconnect( client: AuthenticatedSocket ) : Promise<void> 
     {
       this.lobbyManager.terminateClient(client);
+      if ( this.matchmaking.MatchmakingQueue.has(client.id) )
+          this.matchmaking.MatchmakingQueue.delete(client.id);
     }
 
     //? Blind mode

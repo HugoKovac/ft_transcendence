@@ -169,7 +169,8 @@ export default function GameInstance()
             {
                 context.font = "18px cursive";
                 context.fillStyle = "#fff";
-                context.fillText(endMessage, canvasWidth.current / 2 - 60, canvasHeight.current / 2);
+                context.textAlign = 'center'
+                context.fillText(endMessage, canvasWidth.current / 2, canvasHeight.current / 2);
             }
         }
     });
@@ -559,7 +560,7 @@ export default function GameInstance()
         requestRef.current = requestAnimationFrame(gameloop);
         return () =>
             cancelAnimationFrame(requestRef.current);
-    }, [CurrentLobbyState]);
+    }, [CurrentLobbyState, gameEnd, gameStart]);
 
 
     //? Client game loop
@@ -583,11 +584,10 @@ export default function GameInstance()
                     <canvas className="Canvas" ref={canvasRef} width={800} height={500}></canvas> 
                 </div>
                 <div className="InstanceButton">
-                    {!gameStart && !gameEnd &&  <button className="BackToLobby" onClick={() => {BackToLobby()}}>{'Go Back to Lobby'}</button>}
                     {gameEnd && <button className="BackToLobby" onClick={() => {BackToLobby()}}>{'Back To Lobby'}</button>}
                 </div>
                 <ToastContainer />
         </div>
         
-    );
+    );  
 }

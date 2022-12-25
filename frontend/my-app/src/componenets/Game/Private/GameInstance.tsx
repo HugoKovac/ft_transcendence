@@ -9,7 +9,7 @@ import { Paddle, Ball } from "../GameConstant"
 import { CANVASHEIGHT, CANVASWIDTH, BALLSPEED } from "../GameConstant"
 import React from "react";
 import { toast, ToastContainer } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function GameInstance()
 {
@@ -559,18 +559,22 @@ export default function GameInstance()
         requestRef.current = requestAnimationFrame(gameloop);
         return () =>
             cancelAnimationFrame(requestRef.current);
-    }, [CurrentLobbyState]);
+    }, [CurrentLobbyState, gameEnd, gameStart]);
 
 
     //? Client game loop
 
 
     const [lobby, setLobby] = useRecoilState(LobbyState);
-
+    const [searchParams] = useSearchParams();
+    const searchParamsString = searchParams.get('id');
 
     const CopyInvitationLink = () =>
     {
-        navigator.clipboard.writeText(window.location.href);
+        if ( searchParamsString )
+            navigator.clipboard.writeText(window.location.href);
+        else
+            navigator.clipboard.writeText(window.location.href + "?id=" + CurrentLobbyState?.lobbyid);
         toast("Link coppied to clipboard !");
     }
 

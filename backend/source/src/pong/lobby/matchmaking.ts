@@ -38,7 +38,7 @@ export class Matchmaking
         }
 
         if ( this.MatchmakingQueue.has(client.id) )
-        this.server.to(client.id).emit(ServerEvents.ServerMessage, "You are already in a queue !");
+            this.server.to(client.id).emit(ServerEvents.ServerMessage, "You are already in a queue !");
         else
         {
             this.MatchmakingQueue.set(client.id, {joined_time: Date.now(), id: client.id, pref_skin: defaultskinpref, socket: client} );
@@ -85,10 +85,8 @@ export class Matchmaking
     
     public SearchAndMatch()
     {
-        console.log("lol")
         if ( this.MatchmakingQueue.size <= 1 )
             return ;
-
         for ( const [p1, p1data] of this.MatchmakingQueue )
         {
             for ( const [p2, p2data] of this.MatchmakingQueue )

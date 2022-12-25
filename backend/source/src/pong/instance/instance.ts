@@ -262,7 +262,6 @@ export class Instance
             this.endMessage = "Player 1 Left lobby, Player 2 Won !";
         else if ( playerID == this.Player2id )
             this.endMessage = "Player 2 Left lobby, Player 1 Won !";
-        this.lobby.refreshLobby();
     }
 
     public checkFinish()

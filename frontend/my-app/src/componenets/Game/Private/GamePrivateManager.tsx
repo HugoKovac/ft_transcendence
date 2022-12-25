@@ -30,7 +30,7 @@ export default function GamePrivateManager()
 
         socket.on(ServerEvents.ServerMessage, (data) => { toast(data.message); });
 
-        socket.on(ServerEvents.LobbyState, (data) => { setLobby(data); });
+        socket.on(ServerEvents.LobbyState, (data) => { setLobby(data); console.log("server tick"); });
 
         socket.on(ServerEvents.LobbyJoin, (data) => { if ( !searchParams.toString() ) setSearchParams({id: data.lobbyid}); });
 
@@ -41,6 +41,7 @@ export default function GamePrivateManager()
             socket.off('connect');
             socket.off('disconnect');
             socket.off(ServerEvents.LobbyState);
+            socket.off(ServerEvents.ServerMessage);
             socket.off(ServerEvents.LobbyJoin);
         }
 
