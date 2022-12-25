@@ -1,12 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { decode } from "jsonwebtoken";
-import { Message, User } from "src/typeorm";
+import { BanEnity, Message, MuteEntity, User } from "src/typeorm";
 import Conv from "src/typeorm/conv.entity";
 import { GroupConv } from "src/typeorm/groupConv.entity";
 import { Repository } from "typeorm";
 import * as DTO from './input.dto'
 import * as bcrypt from 'bcrypt';
+import { WebSocketServer } from "@nestjs/websockets";
+import {Server} from 'socket.io'
 
 @Injectable()
 export class ChatService{
@@ -17,7 +19,14 @@ export class ChatService{
 	@InjectRepository(GroupConv)
 	private readonly groupConvRepo : Repository<GroupConv>,
 	@InjectRepository(User)
-	private readonly userRepo : Repository<User>){}
+	private readonly userRepo : Repository<User>,
+	@InjectRepository(BanEnity)
+	private readonly banRepo : Repository<BanEnity>,
+	@InjectRepository(MuteEntity)
+	private readonly muteRepo : Repository<MuteEntity>){}
+
+	@WebSocketServer()
+	serv: Server
 
 	// CONV SETTER
 
@@ -86,7 +95,7 @@ export class ChatService{
 	// CONV GETTER
 
 	async getConvMsg({conv_id}:DTO.getConvMsgDTO, jwt:string){
-		let tokenUserInfo: any = decode(jwt)//!verifier si la conv est bien au user_id du token
+		let tokenUserInfo: any = decode(jwt)
 
 		try{
 
@@ -102,7 +111,7 @@ export class ChatService{
 			return conv
 		}
 		catch{
-			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
+			console.error('Error: getConvMsg')
 			return false
 		}
 	}
@@ -142,7 +151,7 @@ export class ChatService{
 			return add_username
 		}
 		catch{
-			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
+			console.error('Error: getAllConv')
 			return false
 		}
 	}
@@ -153,29 +162,81 @@ export class ChatService{
 		let tokenUserInfo: any = decode(jwt)
 
 		try{
-			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users'], order:{messages:{msg_id: 'ASC'}}})
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users', 'ban_users', 'ban_users.user_banned', 'mute_users', 'mute_users.user_muted', 'admin', 'owner'], order:{messages:{msg_id: 'ASC'}}})
 
 			if (!conv || conv.isPrivate === true)
 				return false
 
-			return conv
+			let kick = true
+			for (let i of conv.users)
+				if (i.id === tokenUserInfo.id)
+					kick = false
+
+			const date = new Date()
+			for (let i of conv.ban_users){
+				if ((i.user_banned.id === tokenUserInfo.id) && (i.end > date)){
+					kick = true
+				}
+				if (i.end < date)
+					await this.banRepo.delete(i.id)
+			}
+			
+			if (kick){
+				return false
+			}
+
+			for (let i of conv.mute_users)
+				if ((i.user_muted.id === tokenUserInfo.id) && (i.end > date))
+					await this.muteRepo.delete(i.id)
+
+			return {...conv, password:''}
 		}
 		catch{
-			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
+			console.error('Error: getGroupConvMsg')
 			return false
 		}
 	}
-	/**
-	 * getGroupConvMsg return conv if not private
-	 * Pour les private convs passer par un autre service qui return la conv si le message passe en payload est le bon
-	 * check le hash du password pour tous les messages envoye
-	 */
 
-	 async getGroupSecretConvMsg({group_conv_id, password}:DTO.getGroupSecretConvMsgDTO, jwt:string){
+	async getConvUsers({group_conv_id}:DTO.getGroupConvMsgDTO, jwt:string){
+		let tokenUserInfo: any = decode(jwt)
+		try{
+			const conv = await this.groupConvRepo.findOne({where:{group_conv_id: group_conv_id}, relations:['users', 'admin']})
+
+			if (!conv)
+				return false
+
+			let kick = true
+			let rtn = []
+			for (let i of conv.users){
+				if (i.id === tokenUserInfo.id)
+					kick = false
+				if (i.id !== tokenUserInfo.id){
+					let ad = false
+					for (let j of conv.admin)
+						if (j.id === i.id)
+							ad = true
+					rtn.push({...i, admin:ad})
+				}
+			}
+
+			if (kick)
+				return false
+
+			return rtn
+		}
+		catch(e){
+			console.error(e)
+		}
+	}
+
+	async getGroupSecretConvMsg({group_conv_id, password}:DTO.getGroupSecretConvMsgDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 
 		try{
-			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users'], order:{messages:{msg_id: 'ASC'}}})
+			const conv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations:['messages', 'users', 'admin', 'owner'], order:{messages:{msg_id: 'ASC'}}})
+
+			if (!conv || conv.isPrivate === false)
+				return
 
 			let kick = true
 			for (let i of conv.users)
@@ -185,10 +246,10 @@ export class ChatService{
 			if (!conv || kick || !await bcrypt.compare(password, conv.password))
 				return false
 
-			return conv
+			return {...conv, password:''}
 		}
 		catch{
-			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
+			console.error('Error: getGroupSecretConvMsg')
 			return false
 		}
 	}
@@ -196,15 +257,29 @@ export class ChatService{
 	async getAllGroupConv(jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		try{
-			const conv: GroupConv[] = await this.groupConvRepo.find({relations: ['users'], where: {users:{id: tokenUserInfo.id}}})
+			const convs: GroupConv[] = await this.groupConvRepo.find({relations: ['users', 'ban_users', 'ban_users.user_banned'], where: {users:{id: tokenUserInfo.id}}})
 
-			if (!conv)
+			if (!convs)
 				return false
 
-			return conv
+			const rtn: GroupConv[] = []
+
+			const time = new Date()
+
+			for (let i of convs){
+				let push = true
+				for (let j of i.ban_users){
+					if ((j.user_banned.id === tokenUserInfo.id) && j.end > time)
+						push = false
+				}
+				if (push)
+				rtn.push(i)
+			}
+
+			return rtn
 		}
 		catch{
-			console.error(`Error when looking for user_id=${tokenUserInfo.id} convs`)
+			console.error('Error: getAllGroupConv')
 			return false
 		}
 	}
@@ -217,17 +292,133 @@ export class ChatService{
 			if (!group_name)
 				return false
 			let users: User[] = []
+			let owner: User
+
 			for (let i of user_ids){
 				const user: User = await this.userRepo.findOne({where: {id: i}})
 				if (user)
 					users.push(user)
+				if (user.id === tokenUserInfo.id)
+					owner = user
 			}
 
-			const newGroup = this.groupConvRepo.create({group_name: group_name, users: users})
+			const newGroup = this.groupConvRepo.create({group_name: group_name, users: users, owner: owner, admin: [owner]})
 			
 			await this.groupConvRepo.save(newGroup)
 
 			return true
+		}catch(e){
+			console.error(e)
+			return false
+		}
+	}
+
+	async banUser({group_conv_id, user_id, to}: DTO.banUserDTO, jwt:string){
+		let tokenUserInfo: any = decode(jwt)
+		try{
+			const conv = await this.groupConvRepo.findOne({where:{group_conv_id:group_conv_id}, relations:['owner', 'ban_users', 'messages']})
+			const user = await this.userRepo.findOne({where:{id:user_id}})
+
+			if (!conv || conv.owner.id !== tokenUserInfo.id || !user || user_id === tokenUserInfo.id)
+				return false
+				
+			let new_msgs = []
+
+			for (let i of conv.messages)
+				if (i.sender_id !== user_id)
+					new_msgs.push(i)
+
+			await this.groupConvRepo.save({...conv, messages: new_msgs})
+			var date = new Date();
+			date.setSeconds(date.getSeconds() + to);
+			const new_ban: BanEnity = this.banRepo.create({from_group:conv, user_banned: user, end: date})
+			await this.banRepo.save(new_ban)
+
+
+			return true
+				
+		}catch(e){
+			console.error(e)
+			return false
+		}
+	}
+
+	async muteUser({group_conv_id, user_id, to}: DTO.banUserDTO, jwt:string){
+		let tokenUserInfo: any = decode(jwt)
+		try{
+			const conv = await this.groupConvRepo.findOne({where:{group_conv_id:group_conv_id}, relations:['owner', 'mute_users', 'messages']})
+			const user = await this.userRepo.findOne({where:{id:user_id}})
+
+			if (!conv || conv.owner.id !== tokenUserInfo.id || !user || user_id === tokenUserInfo.id)
+				return false
+
+			var date = new Date();
+			date.setSeconds(date.getSeconds() + to);
+			const new_mute: MuteEntity = this.muteRepo.create({from_group:conv, user_muted: user, end: date})
+			await this.muteRepo.save(new_mute)
+
+			return true
+		}catch(e){
+			console.error(e)
+			return false
+		}
+	}
+
+	async newAdmin({group_conv_id, admin_ids}: DTO.newAdminDTO, jwt:string){
+		let tokenUserInfo: any = decode(jwt)
+		try{
+			const conv: GroupConv = await this.groupConvRepo.findOne({where: {group_conv_id}, relations:['owner', 'admin']})
+			
+			if (!conv || conv.owner.id !== tokenUserInfo.id)
+				return false
+
+			let new_admin = conv.admin
+
+			for (let i of admin_ids){
+				const admin = await this.userRepo.findOne({where: {id: i}})
+				if (admin)
+					new_admin.push(admin)
+			}
+
+			const new_conv = this.groupConvRepo.create({...conv, admin: new_admin})
+			await this.groupConvRepo.save(new_conv)
+
+			return true
+		}catch(e){
+			console.error(e)
+			return false
+		}
+
+	}
+
+	async delAdmin({group_conv_id, admin_ids}: DTO.newAdminDTO, jwt:string){
+		let tokenUserInfo: any = decode(jwt)
+
+		const isInIt = (v:number) =>{
+			for (let i of admin_ids){
+				if (i === parseInt(v.toString()))
+					return false
+			}
+			return true
+		}
+
+		try{
+			const conv = await this.groupConvRepo.findOne({where:{group_conv_id:group_conv_id}, relations:['admin', 'owner']})
+
+			if (!conv || conv.owner.id !== tokenUserInfo.id)
+				return false
+
+			let new_admin = []
+			for (let i of conv.admin)
+				if (isInIt(i.id)){
+					new_admin.push(i)
+				}
+
+			const new_conv = this.groupConvRepo.create({...conv, admin: new_admin})
+			await this.groupConvRepo.save(new_conv)
+
+			return true
+			
 		}catch(e){
 			console.error(e)
 			return false
@@ -239,10 +430,36 @@ export class ChatService{
 		if (!message)
 			return false
 		try{
-			const group_conv: GroupConv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}})
+			const group_conv: GroupConv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations: ['ban_users', 'ban_users.user_banned', 'users', 'mute_users', 'mute_users.user_muted']})
 
 			if (!group_conv || group_conv.isPrivate)
 				return false
+
+			let kick = true
+			for (let i of group_conv.users)
+				if (i.id === tokenUserInfo.id){
+					kick = false
+				}
+				
+			const date = new Date()
+
+			for (let i of group_conv.ban_users){
+				if ((i.user_banned.id === tokenUserInfo.id) && (i.end > date)){
+					// console.log(banEnt.end, date)
+					kick = true
+				}
+			}
+
+			for (let i of group_conv.mute_users){
+				if ((i.user_muted.id === tokenUserInfo.id) && (i.end > date)){
+					// console.log(banEnt.end, date)
+					kick = true
+				}
+			}
+
+			if (kick){
+				return false
+			}
 
 			const newMsg = this.messRepo.create({sender_id: tokenUserInfo.id, message: message, group_conv: group_conv})
 			await this.messRepo.save(newMsg)
@@ -413,6 +630,33 @@ export class ChatService{
 			await this.groupConvRepo.save(new_conv)
 
 			return true
+		}catch(e){
+			console.error(e)
+			return false
+		}
+	}
+
+	//GETTER FOR ALL
+
+	async getConvId(jwt: string){
+		let tokenUserInfo: any = decode(jwt)
+
+		try{
+			const convs = await this.convRepo.find({where: [{user_id_1: tokenUserInfo.id}, {user_id_2: tokenUserInfo.id}]})
+			const group_convs = await this.groupConvRepo.find({where: {users: {id: tokenUserInfo.id}}})
+
+			// console.log(convs)
+			// console.log(group_convs)
+
+			let ids: number[] = []
+			for (let i of convs)
+				ids.push(i.conv_id)
+			for (let i of group_convs)
+				ids.push(i.group_conv_id * -1)
+
+			// console.log(ids)
+
+			return ids
 		}catch(e){
 			console.error(e)
 			return false

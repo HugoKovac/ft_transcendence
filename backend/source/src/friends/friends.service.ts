@@ -33,7 +33,6 @@ export class FriendsService {
 			const {friends} = await this.userRepo.findOne({where: {id: id}, relations: ['friends']})
 			if (!friends)
 				return undefined
-			console.log(JSON.stringify(friends))
 			return friends
 		}catch{
 			return undefined

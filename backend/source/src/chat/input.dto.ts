@@ -28,6 +28,30 @@ export class newGroupConvDTO{
 	group_name:string
 }
 
+export class newAdminDTO{
+	@IsNotEmpty()
+	@IsNumber()
+	group_conv_id:number
+
+	@IsArray()
+	@ArrayMinSize(1)
+	admin_ids:number[]
+}
+
+export class banUserDTO{
+	@IsNotEmpty()
+	@IsNumber()
+	group_conv_id:number
+
+	@IsNotEmpty()
+	@IsNumber()
+	user_id:number
+
+	@IsNotEmpty()
+	@IsNumber()
+	to:number
+}
+
 export class newGroupMsgDTO{
 	@IsNotEmpty()
 	@IsNumber()
@@ -114,6 +138,12 @@ export class changeGroupNameDTO{
 	@IsString()
 	@MaxLength(35)
 	new_name:string
+}
+
+export class refreshConvDTO{
+	@IsNotEmpty()
+	@IsNumber()
+	group_conv_id:number
 }
 
 export class changeVisibilityDTO{
