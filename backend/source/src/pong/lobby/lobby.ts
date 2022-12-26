@@ -5,6 +5,7 @@ import { ServerEvents } from 'src/shared/server/Server.Events';
 import { Instance } from '../instance/instance';
 import { CANVASHEIGHT, CANVASWIDTH, NETHEIGHT, NETWIDTH, } from "../instance/gameConstant";
 import { ServerPayload } from '../types';
+import { GameEndReason } from '../enums';
 
 export class Lobby 
 {
@@ -55,12 +56,19 @@ export class Lobby
         this.clients.delete(client.id);
         client.leave(this.id);
 
-        if ( this.instance.gameStart == true )
+        if ( this.MatchMakingMode == true && this.instance.gameEnd == false )
         {
             if ( client.id == this.instance.Player1id )
-                this.instance.finishGame("Player 1 Left Lobby");
+                this.instance.finishGame(GameEndReason.Player1LeftRanked, this.MatchMakingMode);
             else if ( client.id == this.instance.Player2id )
-                this.instance.finishGame("Player 2 Left Lobby");
+                this.instance.finishGame(GameEndReason.Player2LeftRanked, this.MatchMakingMode);
+        }
+        else if ( this.instance.gameStart == true && this.instance.gameEnd == false )
+        {
+            if ( client.id == this.instance.Player1id )
+                this.instance.finishGame(GameEndReason.Player1Left, this.MatchMakingMode);
+            else if ( client.id == this.instance.Player2id )
+                this.instance.finishGame(GameEndReason.Player2Left, this.MatchMakingMode);
         }
         
         if ( client.id == this.instance.Player1id )
@@ -100,7 +108,6 @@ export class Lobby
 
             gameEnd: this.instance.gameEnd,
             gameStart: this.instance.gameStart,
-            PauseGame: this.instance.PauseGame,
 
             scoreOne: this.instance.scoreOne,
             scoreTwo: this.instance.scoreTwo,

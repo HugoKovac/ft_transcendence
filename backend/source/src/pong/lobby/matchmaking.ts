@@ -80,7 +80,6 @@ export class Matchmaking
         const lobby = this.LobbyGenerator.generateLobby(skin, "#FF0000", "#001EFF", "#FFFFFF", "#FFFFFF", true); //? Special color for ranked games
         lobby.addClient(Player1.socket);
         lobby.addClient(Player2.socket);
-        lobby.server.to(lobby.id).emit(ServerEvents.LobbyJoin, {lobbyid: lobby.id});
     }
     
     public SearchAndMatch()

@@ -5,6 +5,7 @@ import { Cron } from '@nestjs/schedule';
 import { LOBBYLIFETIME } from "../instance/gameConstant";
 import { WsException } from "@nestjs/websockets";
 import { ServerEvents } from "src/shared/server/Server.Events";
+import { GameEndReason } from "../enums";
 
 export class LobbyFactory {
 
@@ -20,11 +21,7 @@ export class LobbyFactory {
     public terminateClient( client: AuthenticatedSocket )
     {
         if ( client.data.lobby )
-        {
-            if ( client.data.lobby.MatchMakingMode == true )
-                client.data.lobby.instance.finishRankedGame(client.id);
             client.data.lobby.removeClient(client);
-        }
     }
 
     //? Generate a new lobby and insert the client that created it
@@ -79,7 +76,7 @@ export class LobbyFactory {
 
             if ( lobbyLifeTimer > LOBBYLIFETIME )
             {
-                lobby.instance.finishGame("Lobby Timed Out.");
+                lobby.instance.finishGame(GameEndReason.LobbyTimedOut, false);
                 lobby.refreshLobby();
                 this.lobbies.delete(lobby.id);
             }

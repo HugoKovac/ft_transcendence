@@ -10,6 +10,7 @@ import { Socket } from "socket.io-client";
 import { ClientEvents } from "../../../shared/client/Client.Events";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LoginStateContext from '../../Login/LoginStateContext'
 
 export default function GamePrivateManager() 
 {
@@ -24,15 +25,13 @@ export default function GamePrivateManager()
 
         socket.on('connect', () => {});
 
-        socket.on('disconnect', (reason : Socket.DisconnectReason) => { socket.emit(ClientEvents.LeaveLobby); });
+        socket.on('disconnect', (reason : Socket.DisconnectReason) => { toast (reason) });
         
         socket.on('exception', (data) => { toast(data.message); });
 
-        socket.on(ServerEvents.ServerMessage, (message) => { console.log("TICK"); toast(message); });
+        socket.on(ServerEvents.ServerMessage, (message) => { toast(message); });
 
-        socket.on(ServerEvents.LobbyState, (data) => { console.log("server tick"); setLobby(data); });
-
-        socket.on(ServerEvents.LobbyJoin, (data) => { if ( !searchParams.toString() ) setSearchParams({id: data.lobbyid}); });
+        socket.on(ServerEvents.LobbyState, (data) => { setLobby(data); });
 
         return () => 
         {
@@ -47,7 +46,6 @@ export default function GamePrivateManager()
 
     if ( lobby === null )
     {
-        console.log("GameMatcher")
         return (
             <div>
                 <GameMatcher/>
@@ -55,6 +53,5 @@ export default function GamePrivateManager()
             </div>
         );
     }
-    console.log("GameInstanceRanked")
     return <GameInstanceRanked/>;
 }

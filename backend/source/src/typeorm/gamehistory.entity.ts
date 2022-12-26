@@ -1,4 +1,5 @@
-import { Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, OneToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { GameRanked } from "./gameranked.entity";
 import { User } from "./user.entity";
 
 
@@ -10,22 +11,10 @@ export class GameHistory
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    Player1ID : number;
+    @OneToMany( () => GameRanked, games => games.Stats )
+    Games: GameRanked[]
 
-    @Column()
-    Player2ID : number;
-
-    @Column()
-    Player1Score: number;
-
-    @Column()
-    Player2Score: number;
-
-    @Column({ default: new Date() })
-    Date : Date;
-
-    @ManyToOne(
+    @OneToOne(
         () => User,
         user => user.match_history
     )

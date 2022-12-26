@@ -18,7 +18,6 @@ export type InQueuePlayer =
   socket: AuthenticatedSocket,
 };
 
-
 export type ServerPayload = {
 
   [ServerEvents.LobbyCreation]: {
@@ -43,7 +42,6 @@ export type ServerPayload = {
 
     gameEnd: boolean,
     gameStart: boolean,
-    PauseGame: boolean,
 
     scoreOne: number,
     scoreTwo: number,

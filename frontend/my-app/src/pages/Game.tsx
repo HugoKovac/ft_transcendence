@@ -1,15 +1,18 @@
+import { useContext } from 'react';
 import GameMenu from '../componenets/Game/GameMenu';
-import { socket, WebsocketProvider } from '../componenets/Game/WebsocketContext';
+import { WebsocketProvider } from '../componenets/Game/WebsocketContext';
+import LoginStateContext from '../componenets/Login/LoginStateContext';
 import NavBar from '../componenets/NavBar';
 import '../styles/Game.css'
 
 const Game = () => {
 
+
     return (
         <body>
             <div className="SpaceGIF">
                 <NavBar />
-                    <WebsocketProvider value={socket}>
+                    <WebsocketProvider>
                         <GameMenu/>
                     </WebsocketProvider>
             </div>

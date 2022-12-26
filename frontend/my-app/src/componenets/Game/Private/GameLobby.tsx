@@ -5,7 +5,7 @@ import { WebsocketContext } from './../WebsocketContext';
 import { useSearchParams } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { Ball, CANVASHEIGHT, CANVASWIDTH, Paddle, PADDLEHEIGHT, PADDLEWIDTH } from '../GameConstant';
-
+import LoginStateContext from '../../Login/LoginStateContext'
 
 export default function GameLobby() {
 
@@ -41,6 +41,7 @@ export default function GameLobby() {
         gravity: 6
     })
 
+	const {logState} = useContext(LoginStateContext);
     const socket = useContext(WebsocketContext);
     const requestRef = useRef(0);
     const [searchParams] = useSearchParams();
@@ -120,7 +121,8 @@ export default function GameLobby() {
             Paddle1color: Paddle1Color,
             Paddle2color: Paddle2Color,
             Ballcolor: BallColor,
-            Netcolor: NetColor
+            Netcolor: NetColor,
+            userID: logState,
         });
     }
 

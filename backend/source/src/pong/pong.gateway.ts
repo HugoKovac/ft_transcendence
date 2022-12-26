@@ -6,6 +6,9 @@ import { LobbyJoinDto, LobbyCreateDto, JoinMatchmakingDto } from './lobby/lobbyd
 import { AuthenticatedSocket } from './types'
 import { ServerEvents } from 'src/shared/server/Server.Events';
 import { Matchmaking } from './lobby/matchmaking';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/typeorm';
+import { Repository } from "typeorm";
 
 @WebSocketGateway({
     cors:{
@@ -13,9 +16,13 @@ import { Matchmaking } from './lobby/matchmaking';
     },  
   }
 )
-export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGatewayDisconnect {
+export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
-constructor( private readonly lobbyManager: LobbyFactory, private readonly matchmaking: Matchmaking ) { setInterval( () => { this.matchmaking.SearchAndMatch() }, 1000);  }
+constructor( private readonly lobbyManager: LobbyFactory, private readonly matchmaking: Matchmaking, 
+  @InjectRepository(User) private userRepo: Repository<User>) 
+  { 
+    setInterval( () => { this.matchmaking.SearchAndMatch() }, 1000);  
+  }
 
 
     afterInit(server: Server) {
@@ -28,14 +35,7 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
 
     async handleConnection( client: Socket ) : Promise<void> 
     {
-
-      
-      //? Cette fonction se lancera automatiquement a la connection d'un client (socket)
-      //? Cette fonction permettera d'itentifier l'utilisateur, s'il est connecter ou a le droit de jouer au jeu.
-      //? De la nous pouvons verifier son token, s'il est dans la database ect...
-
-      //? Si tout c'est bien passer nous pourrons passer au restes des methodes ci-dessous
-
+      console.log(client.handshake.query);
       this.lobbyManager.initializeClient(client as AuthenticatedSocket);
     }
 
@@ -53,7 +53,6 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
     {
       const lobby = this.lobbyManager.generateLobby(data.skin, data.Paddle1color, data.Paddle2color, data.Ballcolor, data.Netcolor, false);
       lobby.addClient(client);
-      lobby.server.to(lobby.id).emit(ServerEvents.LobbyJoin, {lobbyid: lobby.id});
     }
 
     @SubscribeMessage(ClientEvents.JoinLobby)
@@ -66,11 +65,7 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
     onLobbyLeave( client: AuthenticatedSocket, data: LobbyJoinDto )
     {
       if ( client.data.lobby )
-      {
-        if ( client.data.lobby.MatchMakingMode == true )
-          client.data.lobby.instance.finishRankedGame(client.id);
         client.data.lobby.removeClient(client);
-      }
     }
 
     @SubscribeMessage(ClientEvents.ReadyState)
@@ -165,7 +160,8 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
     {
       if ( client.data.lobby )
         throw new WsException('You are already in a lobby !');
-
+      
+        console.log(data.userID);
       this.matchmaking.addClientToQueue(client, data.SkinPref);
     }
 
