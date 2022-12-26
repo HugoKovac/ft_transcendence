@@ -21,8 +21,8 @@ export interface Ball
     gravity : number;
 }
 
-export const CANVASHEIGHT = 600;
-export const CANVASWIDTH = 1000;
+export const CANVASHEIGHT = 500;
+export const CANVASWIDTH = 800;
 
 export const NETWIDTH = 5;
 export const NETHEIGHT = CANVASHEIGHT;
@@ -34,3 +34,8 @@ export const BALLSPEED = 3;
 export const BALLGRAVITY = 3;
 
 export const WINCONDITION = 10;
+
+
+
+
+

@@ -13,11 +13,13 @@ import { PongModule } from './pong/pong.module';
 import { ReqFriendModule } from './req-friend/req-friend.module';
 import { ProfileModule } from './profile/profile.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ScheduleModule } from '@nestjs/schedule';
 import { join } from 'path';
 
 @Module({
   imports: [
 	ConfigModule.forRoot({isGlobal: true, load: [config]}),
+		ScheduleModule.forRoot(),
 	TypeOrmModule.forRootAsync({
 		imports: [ConfigModule,
 			ServeStaticModule.forRoot({
@@ -53,4 +55,4 @@ import { join } from 'path';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

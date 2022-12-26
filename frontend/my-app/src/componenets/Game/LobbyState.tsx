@@ -19,6 +19,7 @@ export type ServerPayload = {
     endMessage: string,
     message: string;
     skin: string;
+    NetColor: string,
     lobbyid : string,
     numberOfSpectator: number,
 
@@ -63,7 +64,6 @@ export type ServerPayload = {
     Ballgravity: number,
   };
 };
-
 
 export const LobbyState = atom<ServerPayload[ServerEvents.LobbyState] | null> ({
     key: 'LobbyState',

@@ -7,6 +7,7 @@ export enum ClientEvents
     LeaveLobby = 'client.leavelobby',
 
     JoinMatchmaking = 'client.joinmatchmaking',
+    LeaveMatchmaking = 'client.leavematchmaking',
 
     ReadyState = 'client.readystate',
 
@@ -28,5 +29,6 @@ export enum ClientEvents
     PlayerRetrieveConnection = 'client.playerretrieveconnection',
 
 
+    ClearLobby = 'client.clearlobby',
     GameLoop = 'client.gameloop',
 }

@@ -1,44 +1,51 @@
-import { useEffect } from 'react';
-import { io } from 'socket.io-client';
+import GameInstanceRanked from "./GameInstanceRanked";
+import GameMatcher from "./GameMatcher";
+import { useContext, useEffect } from 'react';
 import { ServerEvents } from '../../../shared/server/Server.Events'
-import { ClientEvents } from '../../../shared/client/Client.Events'
-import NavBar from '../../NavBar';
+import { WebsocketContext } from "../WebsocketContext";
+import { LobbyState } from "../LobbyState";
+import { useRecoilState } from 'recoil';
+import { useSearchParams } from "react-router-dom";
+import { Socket } from "socket.io-client";
+import { ClientEvents } from "../../../shared/client/Client.Events";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+export default function GamePrivateManager() 
+{
+    const socket = useContext(WebsocketContext);
+
+    const [lobby, setLobby] = useRecoilState(LobbyState);
+
+    const [searchParams, setSearchParams] = useSearchParams();
 
 
-export default function GameMatchmaking() {
-
-    const socket = io('http://localhost:3000');
-    
     useEffect( () => {
 
-        socket.on('connect', () => {
-            console.log('Connected !'); 
-        });
+        socket.on('connect', () => {});
 
-        socket.on(ServerEvents.LobbyState, (data) => {
-            console.log(data);
-        });
+        socket.on('disconnect', (reason : Socket.DisconnectReason) => { socket.emit(ClientEvents.LeaveLobby); });
+        
+        socket.on('exception', (data) => { toast(data.message); });
 
-        return () => {
-            console.log('Disconnected');
+        socket.on(ServerEvents.ServerMessage, (message) => { toast(message); });
+
+        socket.on(ServerEvents.LobbyState, (data) => { setLobby(data); });
+
+        socket.on(ServerEvents.LobbyJoin, (data) => { if ( !searchParams.toString() ) setSearchParams({id: data.lobbyid}); });
+
+        return () => 
+        {
             socket.off('connect');
+            socket.off('disconnect');
             socket.off(ServerEvents.LobbyState);
+            socket.off(ServerEvents.LobbyJoin);
         }
-    });
 
-    const emitMatchmaking = () => {
-        socket.emit(ClientEvents.JoinMatchmaking);
-    }
+    }, [searchParams, setLobby, socket, setSearchParams]);
+
+    if ( lobby === null )
+        return <GameMatcher/>
     
-    return (
-
-        <div>
-            <NavBar />
-            <h4>Join Matchmaking !</h4>
-            <button onClick={emitMatchmaking}> Join Matchmaking </button>
-
-        </div>
-
-    );
-
+    return <GameInstanceRanked/>;
 }
