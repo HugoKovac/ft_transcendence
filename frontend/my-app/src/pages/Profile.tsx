@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 
 
-const Profile = () => {
+/*const Profile = () => {
 	const [activeButton, setActiveButton] = useState(false)
 	useEffect(() => {
 		const axInst = axios.create({
@@ -33,4 +33,4 @@ const Profile = () => {
 	)
 }
 
-export default Profile
+export default Profile*/

@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Req } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {DeleteResult, Repository} from 'typeorm';
 import {User} from '../typeorm/user.entity'
 import { CreateUserDto } from './users.dto';
+import { decode, JwtPayload } from 'jsonwebtoken';
+
 
 
 @Injectable()
@@ -52,4 +54,7 @@ export class UsersService {
 	// 	}
 	// 	throw new NotFoundException('Login or password not found')
 	// }
+
+
+
 }

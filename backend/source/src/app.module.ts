@@ -11,12 +11,19 @@ import { config } from './auth/strategy/marvin.startegy';
 import { FriendsModule } from './friends/friends.module';
 import { PongModule } from './pong/pong.module';
 import { ReqFriendModule } from './req-friend/req-friend.module';
+import { ProfileModule } from './profile/profile.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
 	ConfigModule.forRoot({isGlobal: true, load: [config]}),
 	TypeOrmModule.forRootAsync({
-		imports: [ConfigModule],
+		imports: [ConfigModule,
+			ServeStaticModule.forRoot({
+				rootPath: '/usr/src/app/profile-pictures',
+				serveRoot: '/profile-pictures'
+			  })],
 		useFactory: (configService: ConfigService) => {
 			// console.log(configService.get('DB_HOST'))
 			// console.log(configService.get('DB_PORT') as number)
@@ -41,6 +48,7 @@ import { ReqFriendModule } from './req-friend/req-friend.module';
 	FriendsModule,
 	PongModule,
 	ReqFriendModule,
+	ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

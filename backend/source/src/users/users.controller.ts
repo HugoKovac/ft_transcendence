@@ -44,6 +44,7 @@ export class UsersController {
 		return this.usersService.remove(id);
 	}
 
+
 	@Post('create')//!remove if web site don't take password
 	//@UseGuards(AuthGuard('jwt'))
 	//@UsePipes(new ValidationPipe({whitelist: true}))
