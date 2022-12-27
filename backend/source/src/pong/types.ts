@@ -6,6 +6,7 @@ export type AuthenticatedSocket = Socket & {
 
     data: {
       lobby: null | Lobby;
+      userID: string;
     };
   
 };
@@ -17,6 +18,17 @@ export type InQueuePlayer =
   pref_skin: string
   socket: AuthenticatedSocket,
 };
+
+export type RankedGameData = 
+{
+  Player1ID : string,
+  Player2ID : string,
+  Player1Score: number,
+  Player2Score: number,
+  Player1Won: boolean,
+  Player2Won: boolean,
+  GameEndReason: string,
+}
 
 export type ServerPayload = {
 

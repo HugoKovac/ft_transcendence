@@ -1,11 +1,12 @@
 import { v4 } from 'uuid';
 import { Server, Socket } from "socket.io";
-import { AuthenticatedSocket } from '../types';
+import { AuthenticatedSocket, RankedGameData } from '../types';
 import { ServerEvents } from 'src/shared/server/Server.Events';
 import { Instance } from '../instance/instance';
 import { CANVASHEIGHT, CANVASWIDTH, NETHEIGHT, NETWIDTH, } from "../instance/gameConstant";
 import { ServerPayload } from '../types';
 import { GameEndReason } from '../enums';
+import { PongService } from '../pong.service';
 
 export class Lobby 
 {
@@ -20,7 +21,7 @@ export class Lobby
     public readonly gameloop: any;
 
     constructor( public readonly server: Server, public readonly skin: string, public readonly player1Color: string, public readonly player2Color: string, public readonly ballColor: string, public readonly netColor: string,
-                 public readonly MatchMakingMode : boolean )
+                 public readonly MatchMakingMode : boolean, private pongservice : PongService )
     {
         this.instance.Player1.color = player1Color;
         this.instance.Player2.color = player2Color;
@@ -38,11 +39,13 @@ export class Lobby
 
         if ( this.instance.Player1Online == false )
         {
+            this.instance.Player1userid = client.data.userID;
             this.instance.Player1id = client.id;
             this.instance.Player1Online = true;
         }
         else if ( this.instance.Player2Online == false )
         {
+            this.instance.Player2userid = client.data.userID;
             this.instance.Player2id = client.id;
             this.instance.Player2Online = true;
         }
@@ -74,12 +77,14 @@ export class Lobby
         if ( client.id == this.instance.Player1id )
         {
             this.instance.Player1id = null;
+            this.instance.Player1userid = null;
             this.instance.Player1Online = false;
             this.instance.Player1Ready = false;
         }
         else if ( client.id == this.instance.Player2id )
         {  
             this.instance.Player2id = null;
+            this.instance.Player2userid = null;
             this.instance.Player2Online = false;
             this.instance.Player2Ready = false;
         }
@@ -88,6 +93,27 @@ export class Lobby
         client.data.lobby = null;
 
         this.refreshLobby();
+    }
+
+    public async saveGame( payload: RankedGameData, endReason: string )
+    {
+        await this.pongservice.addRankedGame(payload);
+
+        if ( endReason != GameEndReason.LobbyTimedOut )
+        {
+            if ( payload.Player1Won == true )
+            {
+                console.log(await this.pongservice.incrementeUserVictory(payload.Player1ID));
+                console.log(await this.pongservice.incrementeUserDefeat(payload.Player2ID));
+            }
+            else if ( payload.Player2Won == true )
+            {
+                console.log(await this.pongservice.incrementeUserVictory(payload.Player2ID));
+                console.log(await this.pongservice.incrementeUserDefeat(payload.Player1ID));
+            }
+        }
+
+        console.log(await this.pongservice.getGetGamesById(payload.Player1ID));
     }
 
     public refreshLobby()

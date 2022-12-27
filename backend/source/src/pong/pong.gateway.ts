@@ -9,6 +9,7 @@ import { Matchmaking } from './lobby/matchmaking';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/typeorm';
 import { Repository } from "typeorm";
+import { PongService } from './pong.service';
 
 @WebSocketGateway({
     cors:{
@@ -18,8 +19,8 @@ import { Repository } from "typeorm";
 )
 export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
-constructor( private readonly lobbyManager: LobbyFactory, private readonly matchmaking: Matchmaking, 
-  @InjectRepository(User) private userRepo: Repository<User>) 
+constructor( private readonly lobbyManager: LobbyFactory, private readonly matchmaking: Matchmaking,
+  private readonly pongservice: PongService ) 
   { 
     setInterval( () => { this.matchmaking.SearchAndMatch() }, 1000);  
   }
@@ -28,6 +29,7 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
     afterInit(server: Server) {
       
       this.lobbyManager.server = server;
+      this.lobbyManager.pongservice = this.pongservice;
       this.matchmaking.server = server;
       this.matchmaking.LobbyGenerator = this.lobbyManager;
     }
@@ -35,8 +37,14 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
 
     async handleConnection( client: Socket ) : Promise<void> 
     {
-      console.log(client.handshake.query);
-      this.lobbyManager.initializeClient(client as AuthenticatedSocket);
+      this.lobbyManager.initializeClient(client as AuthenticatedSocket, client.handshake.query.userID );
+
+      const check = await this.pongservice.checkUserID(client.data.userID);
+      if ( !check )
+      {
+        console.log("user not found")
+        this.handleDisconnect(client as AuthenticatedSocket);
+      }
     }
 
     async handleDisconnect( client: AuthenticatedSocket ) : Promise<void> 
@@ -51,6 +59,8 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
     @SubscribeMessage(ClientEvents.CreateLobby)
     onLobbyCreation( client: AuthenticatedSocket, data: LobbyCreateDto )
     {
+      if ( !client.data.userID )
+        throw new WsException(' User not found ');
       const lobby = this.lobbyManager.generateLobby(data.skin, data.Paddle1color, data.Paddle2color, data.Ballcolor, data.Netcolor, false);
       lobby.addClient(client);
     }
@@ -58,12 +68,16 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
     @SubscribeMessage(ClientEvents.JoinLobby)
     onLobbyJoin( client: AuthenticatedSocket, data: LobbyJoinDto )
     {
+      if ( !client.data.userID )
+        throw new WsException(' User not found ');
       this.lobbyManager.joinLobby(data.lobbyId, client);
     }
 
     @SubscribeMessage(ClientEvents.LeaveLobby)
     onLobbyLeave( client: AuthenticatedSocket, data: LobbyJoinDto )
     {
+      if ( !client.data.userID )
+        throw new WsException(' User not found ');
       if ( client.data.lobby )
         client.data.lobby.removeClient(client);
     }
@@ -158,16 +172,19 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
     @SubscribeMessage(ClientEvents.JoinMatchmaking)
     onJoinMatchMaking( client : AuthenticatedSocket, data : JoinMatchmakingDto )
     {
+      if ( !client.data.userID )
+        throw new WsException(' User not found ');
       if ( client.data.lobby )
         throw new WsException('You are already in a lobby !');
       
-        console.log(data.userID);
       this.matchmaking.addClientToQueue(client, data.SkinPref);
     }
 
     @SubscribeMessage(ClientEvents.LeaveMatchmaking)
     onLeaveMatchMaking( client : AuthenticatedSocket )
     {
+      if ( !client.data.userID )
+        throw new WsException(' User not found ');
       this.matchmaking.removeClientFromQueue(client);
     }
 

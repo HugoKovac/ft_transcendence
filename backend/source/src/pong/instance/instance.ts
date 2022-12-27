@@ -44,6 +44,10 @@ export class Instance
 
     public Player2id : string = null;
 
+    public Player1userid : string = null;
+
+    public Player2userid : string = null;
+
     public gameEnd = false;
     public gameStart = false;
 
@@ -253,16 +257,22 @@ export class Instance
 
         switch ( reason )
         {
-            case GameEndReason.Player1Left || GameEndReason.Player1LeftRanked:
+            case GameEndReason.Player1Left, GameEndReason.Player1LeftRanked:
                 this.Player2Win = true;
                 break ;
-            case GameEndReason.Player2Left || GameEndReason.Player2LeftRanked:
+            case GameEndReason.Player2Left, GameEndReason.Player2LeftRanked:
                 this.Player1Win = true;
                 break ;
         }
 
         if ( MatchMakingMode == true )
-            console.log("need to save stat on data base !")
+            this.lobby.saveGame({Player1ID: this.Player1userid,
+                                Player2ID: this.Player2userid,
+                                Player1Score: this.scoreOne,
+                                Player2Score: this.scoreTwo,
+                                Player1Won: this.Player1Win,
+                                Player2Won: this.Player2Win,
+                                GameEndReason: reason}, reason);
 
         this.endMessage = reason;
     }

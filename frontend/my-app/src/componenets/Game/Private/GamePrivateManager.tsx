@@ -24,8 +24,6 @@ export default function GamePrivateManager()
 
         socket.on('connect', () => {});
 
-        socket.on('disconnect', (reason : Socket.DisconnectReason) => { toast(reason) });
-        
         socket.on('exception', (data) => { toast(data.message); });
 
         socket.on(ServerEvents.ServerMessage, (message) => { toast(message); });
