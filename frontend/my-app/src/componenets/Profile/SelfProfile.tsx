@@ -3,6 +3,8 @@ import { ChangeEvent, useContext, useState, useEffect} from 'react'
 import { userProto } from "./Profile"
 import GamePartProfile from "./GamePartProfile"
 import axios from "axios"
+import { NavLink } from "react-router-dom"
+import Disconnect from "../Disconnect"
 import "./profile_style.scss"
 
 const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | undefined) => void}) => {
@@ -12,7 +14,23 @@ const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | 
 	const newPathSaMere : string = userData.pp
 	let path : JSX.Element = <img className="ppUser" src={userData.pp ? newPathSaMere : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0D8RJLIfGu9BfAEv3oMYyxiGfkGsGABeSsY6K2Ugy&s"}/>
 	const {logState} = useContext(LoginStateContext)
-	console.log("here im")
+	//disconnect and a2f
+	const [activeButton, setActiveButton] = useState(false)
+	useEffect(() => {
+		const axInst = axios.create({
+			baseURL: 'http://localhost:3000/api/auth',
+			withCredentials: true,
+		})
+
+		axInst.get('is_active').then((res) => {
+			console.log(res.data)
+			if (res.data === false)
+				setActiveButton(true)
+		}).catch((e) => {
+			console.error((e));
+		})
+	})
+	const button = activeButton ? <NavLink to='/active2FA'>Active 2FA</NavLink> : <></>
 
 	function setUsername () {
 		if (newUsername == props.userData.username)
@@ -51,6 +69,10 @@ const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | 
 
 	return <div className="profilePage">
 		<div className="profileHeader">
+			<div className="disconnect">
+				<Disconnect />
+				{button}
+			</div>
 			<div className="pp">
 			{path}
 			<div className="buttonModif">

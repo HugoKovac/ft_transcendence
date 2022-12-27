@@ -56,9 +56,11 @@ const LineUser = (props : {name : string, img_path: string, id : number, default
     //will redirect to the profile onclick
 	console.log("relativeState : ", relative_state)
     return <li>
-		<div onClick={() => {}} className="profileLine">
+		<div className="profileLine">
 		<ToastContainer/>
-        {renderImg}
+		<a href={"/profile?userId?" + logState}>
+        	{renderImg}
+		</a>
         <p>{props.name}</p>
         <ButtonRelativeState relative_state={relative_state} setRelativeReqState={copySetRelativeReqState}/>
         </div>

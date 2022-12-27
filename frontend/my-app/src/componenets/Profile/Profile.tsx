@@ -69,7 +69,14 @@ export const ProfileComp = () => {
 				<p className="name">{dataUser?.username}</p>
 			</div>
 			<div className="status">
-				<p className="status">{dataUser?.status}</p>
+				<div className="titleStatus">
+				<p className="status">Status : {dataUser?.status}</p>
+				</div>
+				<div>
+					<button className="enterInGame">
+						watch the game
+					</button>
+				</div>
 			</div>
 		</div>
 		<GamePartProfile user_id={Number(user_id)}/>
