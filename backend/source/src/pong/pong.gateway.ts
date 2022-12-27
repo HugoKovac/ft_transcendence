@@ -3,9 +3,13 @@ import { ClientEvents } from '../shared/client/Client.Events'
 import { Server, Socket } from 'socket.io'
 import { LobbyFactory } from './lobby/lobbyfactory';
 import { LobbyJoinDto, LobbyCreateDto, JoinMatchmakingDto } from './lobby/lobbydtos';
-import { AuthenticatedSocket, InQueuePlayer } from './types'
+import { AuthenticatedSocket } from './types'
 import { ServerEvents } from 'src/shared/server/Server.Events';
 import { Matchmaking } from './lobby/matchmaking';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/typeorm';
+import { Repository } from "typeorm";
+import { PongService } from './pong.service';
 
 @WebSocketGateway({
     cors:{
@@ -13,14 +17,19 @@ import { Matchmaking } from './lobby/matchmaking';
     },  
   }
 )
-export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGatewayDisconnect {
+export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
-    constructor( private readonly lobbyManager: LobbyFactory, private readonly matchmaking: Matchmaking ) { setInterval( () => { this.matchmaking.SearchAndMatch() }, 1000);}
+constructor( private readonly lobbyManager: LobbyFactory, private readonly matchmaking: Matchmaking,
+  private readonly pongservice: PongService ) 
+  { 
+    setInterval( () => { this.matchmaking.SearchAndMatch() }, 1000);  
+  }
 
 
     afterInit(server: Server) {
       
       this.lobbyManager.server = server;
+      this.lobbyManager.pongservice = this.pongservice;
       this.matchmaking.server = server;
       this.matchmaking.LobbyGenerator = this.lobbyManager;
     }
@@ -28,20 +37,21 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
 
     async handleConnection( client: Socket ) : Promise<void> 
     {
+      this.lobbyManager.initializeClient(client as AuthenticatedSocket, client.handshake.query.userID );
 
-      
-      //? Cette fonction se lancera automatiquement a la connection d'un client (socket)
-      //? Cette fonction permettera d'itentifier l'utilisateur, s'il est connecter ou a le droit de jouer au jeu.
-      //? De la nous pouvons verifier son token, s'il est dans la database ect...
-
-      //? Si tout c'est bien passer nous pourrons passer au restes des methodes ci-dessous
-
-      this.lobbyManager.initializeClient(client as AuthenticatedSocket);
+      const check = await this.pongservice.checkUserID(client.data.userID);
+      if ( !check )
+      {
+        console.log("user not found")
+        this.handleDisconnect(client as AuthenticatedSocket);
+      }
     }
 
     async handleDisconnect( client: AuthenticatedSocket ) : Promise<void> 
     {
       this.lobbyManager.terminateClient(client);
+      if ( this.matchmaking.MatchmakingQueue.has(client.id) )
+          this.matchmaking.MatchmakingQueue.delete(client.id);
     }
 
     //? Blind mode
@@ -49,20 +59,25 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     @SubscribeMessage(ClientEvents.CreateLobby)
     onLobbyCreation( client: AuthenticatedSocket, data: LobbyCreateDto )
     {
-      const lobby = this.lobbyManager.generateLobby(data.skin, data.Paddle1color, data.Paddle2color, data.Ballcolor, data.Netcolor);
+      if ( !client.data.userID )
+        throw new WsException(' User not found ');
+      const lobby = this.lobbyManager.generateLobby(data.skin, data.Paddle1color, data.Paddle2color, data.Ballcolor, data.Netcolor, false);
       lobby.addClient(client);
-      lobby.server.to(lobby.id).emit(ServerEvents.LobbyJoin, {lobbyid: lobby.id});
     }
 
     @SubscribeMessage(ClientEvents.JoinLobby)
     onLobbyJoin( client: AuthenticatedSocket, data: LobbyJoinDto )
     {
+      if ( !client.data.userID )
+        throw new WsException(' User not found ');
       this.lobbyManager.joinLobby(data.lobbyId, client);
     }
 
     @SubscribeMessage(ClientEvents.LeaveLobby)
     onLobbyLeave( client: AuthenticatedSocket, data: LobbyJoinDto )
     {
+      if ( !client.data.userID )
+        throw new WsException(' User not found ');
       if ( client.data.lobby )
         client.data.lobby.removeClient(client);
     }
@@ -157,15 +172,19 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     @SubscribeMessage(ClientEvents.JoinMatchmaking)
     onJoinMatchMaking( client : AuthenticatedSocket, data : JoinMatchmakingDto )
     {
+      if ( !client.data.userID )
+        throw new WsException(' User not found ');
       if ( client.data.lobby )
         throw new WsException('You are already in a lobby !');
-
+      
       this.matchmaking.addClientToQueue(client, data.SkinPref);
     }
 
     @SubscribeMessage(ClientEvents.LeaveMatchmaking)
     onLeaveMatchMaking( client : AuthenticatedSocket )
     {
+      if ( !client.data.userID )
+        throw new WsException(' User not found ');
       this.matchmaking.removeClientFromQueue(client);
     }
 

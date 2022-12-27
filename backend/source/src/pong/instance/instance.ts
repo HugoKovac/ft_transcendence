@@ -1,5 +1,7 @@
 import { Lobby } from "../lobby/lobby";
+import { GameEndReason } from "../enums";
 import { BALLGRAVITY, BALLSPEED, CANVASHEIGHT, CANVASWIDTH, PADDLEHEIGHT, PADDLEWIDTH, WINCONDITION } from "./gameConstant";
+import { AuthenticatedSocket } from "../types";
 
 interface Paddle
 {
@@ -42,9 +44,12 @@ export class Instance
 
     public Player2id : string = null;
 
+    public Player1userid : string = null;
+
+    public Player2userid : string = null;
+
     public gameEnd = false;
     public gameStart = false;
-    public PauseGame = false;
 
     public Player1UpArrow = false;
     public Player1DownArrow = false;
@@ -58,7 +63,6 @@ export class Instance
     public numberOfSpectator = 0;
 
     public endMessage : string = null;
-
 
     public Player1 : Paddle = ({
         x : 10,
@@ -182,7 +186,10 @@ export class Instance
             this.Player2Ready = false;
         
         if ( this.Player2Ready == true && this.Player1Ready == true )
+        {
             this.gameStart = true;
+            this.lobby.createdAT.setDate(Date.now());
+        }
         
         this.lobby.refreshLobby();
     }
@@ -243,26 +250,39 @@ export class Instance
         this.lobby.refreshLobby();
     }
 
-    public finishGame( endMessage: string )
+    public finishGame( reason: string, MatchMakingMode: boolean )
     {
         this.gameEnd = true;
         this.gameStart = false;
-        this.endMessage = endMessage;
-        this.lobby.refreshLobby();
+
+        switch ( reason )
+        {
+            case GameEndReason.Player1Left, GameEndReason.Player1LeftRanked:
+                this.Player2Win = true;
+                break ;
+            case GameEndReason.Player2Left, GameEndReason.Player2LeftRanked:
+                this.Player1Win = true;
+                break ;
+        }
+
+        if ( MatchMakingMode == true )
+            this.lobby.saveGame({Player1ID: this.Player1userid,
+                                Player2ID: this.Player2userid,
+                                Player1Score: this.scoreOne,
+                                Player2Score: this.scoreTwo,
+                                Player1Won: this.Player1Win,
+                                Player2Won: this.Player2Win,
+                                GameEndReason: reason}, reason);
+
+        this.endMessage = reason;
     }
 
     public checkFinish()
     {
         if ( this.scoreOne >= WINCONDITION )
-        {
-            this.Player1Win = true;
-            this.finishGame("Player 1 Won !");
-        }
+            this.finishGame(GameEndReason.Player1Win, this.lobby.MatchMakingMode);
         else if ( this.scoreTwo >= WINCONDITION )
-        {
-            this.Player2Win = true;
-            this.finishGame("Player 2 Won !");
-        }
+            this.finishGame(GameEndReason.Player2Win, this.lobby.MatchMakingMode);
     }
 
     public gameLoop()
@@ -275,10 +295,7 @@ export class Instance
             this.checkFinish();
         }
         if ( this.gameEnd  === true )
-        {
-            this.lobby.refreshLobby();
             clearInterval(this.lobby.gameloop);
-        }
         this.lobby.refreshLobby();
     }
 }

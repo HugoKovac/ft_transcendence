@@ -4,20 +4,22 @@ import { ToastContainer } from "react-toastify";
 import { ClientEvents } from "../../../shared/client/Client.Events";
 import NavBar from "../../NavBar";
 import { WebsocketContext } from "../WebsocketContext";
-
+import LoginStateContext from '../../Login/LoginStateContext'
+import { io } from "socket.io-client";
 
 export default function GameMatcher()
 {
     const socket = useContext(WebsocketContext);
+
     const SkinPref = React.useRef<string>("default");
 
     useEffect( () => {
         document.getElementById('skin')?.addEventListener('change', RetrieveSkin);
     }, [])
 
-    const emitJoinQueue = ( () => { socket.emit(ClientEvents.JoinMatchmaking, { SkinPref: SkinPref.current }); });
+    const emitJoinQueue = ( () => { console.log("Event Emitted"); socket.emit(ClientEvents.JoinMatchmaking, { SkinPref: SkinPref.current }); });
 
-    const emitLeaveQueue = ( () => { socket.emit(ClientEvents.LeaveMatchmaking); });
+    const emitLeaveQueue = ( () => { console.log("Event Emitted"); socket.emit(ClientEvents.LeaveMatchmaking); });
 
     function RetrieveSkin( event : any )
     {

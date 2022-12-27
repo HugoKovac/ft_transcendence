@@ -8,8 +8,9 @@ import { useRecoilState } from 'recoil';
 import { useSearchParams } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import { ClientEvents } from "../../../shared/client/Client.Events";
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LoginStateContext from '../../Login/LoginStateContext'
 
 export default function GamePrivateManager() 
 {
@@ -24,7 +25,7 @@ export default function GamePrivateManager()
 
         socket.on('connect', () => {});
 
-        socket.on('disconnect', (reason : Socket.DisconnectReason) => { socket.emit(ClientEvents.LeaveLobby); });
+        socket.on('disconnect', (reason : Socket.DisconnectReason) => { toast (reason) });
         
         socket.on('exception', (data) => { toast(data.message); });
 
@@ -32,20 +33,25 @@ export default function GamePrivateManager()
 
         socket.on(ServerEvents.LobbyState, (data) => { setLobby(data); });
 
-        socket.on(ServerEvents.LobbyJoin, (data) => { if ( !searchParams.toString() ) setSearchParams({id: data.lobbyid}); });
-
         return () => 
         {
             socket.off('connect');
             socket.off('disconnect');
             socket.off(ServerEvents.LobbyState);
             socket.off(ServerEvents.LobbyJoin);
+            socket.off(ServerEvents.ServerMessage);
         }
 
-    }, [searchParams, setLobby, socket, setSearchParams]);
+    }, [searchParams, lobby]);
 
     if ( lobby === null )
-        return <GameMatcher/>
-    
+    {
+        return (
+            <div>
+                <GameMatcher/>
+                <ToastContainer />
+            </div>
+        );
+    }
     return <GameInstanceRanked/>;
 }

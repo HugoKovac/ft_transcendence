@@ -1,30 +1,39 @@
 import { Server } from "socket.io";
-import { AuthenticatedSocket } from "../types";
+import { AuthenticatedSocket, InQueuePlayer } from "../types";
 import { Lobby } from "./lobby";
 import { Cron } from '@nestjs/schedule';
 import { LOBBYLIFETIME } from "../instance/gameConstant";
 import { WsException } from "@nestjs/websockets";
 import { ServerEvents } from "src/shared/server/Server.Events";
+import { GameEndReason } from "../enums";
+import { PongService } from "../pong.service";
 
 export class LobbyFactory {
 
     public server: Server;
 
+    public pongservice: PongService;
+
+    constructor() {}
+
     private readonly lobbies: Map<Lobby['id'], Lobby > = new Map<Lobby['id'], Lobby >();
 
-    public initializeClient( client: AuthenticatedSocket )
+    public async initializeClient( client: AuthenticatedSocket , userID : string | string[] )
     {
         client.data.lobby = null;
+        client.data.userID = userID as string;
     }
 
     public terminateClient( client: AuthenticatedSocket )
     {
         if ( client.data.lobby )
             client.data.lobby.removeClient(client);
+        if ( client.data.userID )
+            client.data.userID = null;
     }
 
     //? Generate a new lobby and insert the client that created it
-    public generateLobby( skin: string, player1Color: string, player2Color: string, ballColor: string, netColor: string ) : Lobby 
+    public generateLobby( skin: string, player1Color: string, player2Color: string, ballColor: string, netColor: string, MatchMakingMode: boolean ) : Lobby 
     {
         let defaultskin = "default";
 
@@ -47,10 +56,8 @@ export class LobbyFactory {
                 break ;
         }
 
-        const lobby = new Lobby(this.server, defaultskin, player1Color, player2Color, ballColor, netColor);
-
+        const lobby = new Lobby(this.server, defaultskin, player1Color, player2Color, ballColor, netColor, MatchMakingMode, this.pongservice);
         this.lobbies.set(lobby.id, lobby);
-
         return lobby;
     }
 
@@ -77,7 +84,7 @@ export class LobbyFactory {
 
             if ( lobbyLifeTimer > LOBBYLIFETIME )
             {
-                lobby.instance.finishGame("Lobby Timed Out.");
+                lobby.instance.finishGame(GameEndReason.LobbyTimedOut, false);
                 lobby.refreshLobby();
                 this.lobbies.delete(lobby.id);
             }

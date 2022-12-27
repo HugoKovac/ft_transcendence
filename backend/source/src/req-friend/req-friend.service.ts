@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import e from 'express';
 import { decode, JwtPayload } from 'jsonwebtoken';
-import { send } from 'process';
 import { Friends, ReqFriend, User, BlockPeople } from 'src/typeorm';
 import { Repository } from 'typeorm';
 

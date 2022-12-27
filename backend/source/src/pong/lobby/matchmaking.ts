@@ -9,7 +9,7 @@ export class Matchmaking
 {
     public server: Server;
 
-    private readonly MatchmakingQueue: Map<string, InQueuePlayer > = new Map<string, InQueuePlayer >();
+    public readonly MatchmakingQueue: Map<string, InQueuePlayer > = new Map<string, InQueuePlayer >();
 
     public LobbyGenerator : LobbyFactory;
 
@@ -38,10 +38,10 @@ export class Matchmaking
         }
 
         if ( this.MatchmakingQueue.has(client.id) )
-        this.server.to(client.id).emit(ServerEvents.ServerMessage, "You are already in a queue !");
+            this.server.to(client.id).emit(ServerEvents.ServerMessage, "You are already in a queue !");
         else
         {
-            this.MatchmakingQueue.set(client.id, {joined_time: Date.now(), id: client.id, pref_skin: SkinPref, socket: client} );
+            this.MatchmakingQueue.set(client.id, {joined_time: Date.now(), id: client.id, pref_skin: defaultskinpref, socket: client} );
             this.server.to(client.id).emit(ServerEvents.ServerMessage, "Join the queue !");
         }
     }
@@ -66,7 +66,6 @@ export class Matchmaking
 
     public Match( Player1 : InQueuePlayer, Player2: InQueuePlayer )
     {
-        console.log("hello");
         let skin = "default";
         if ( Player1.pref_skin != Player2.pref_skin )
         {
@@ -78,18 +77,15 @@ export class Matchmaking
         else
             skin = Player1.pref_skin;
 
-        const lobby = this.LobbyGenerator.generateLobby(skin, "#FF0000", "#001EFF", "#FFFFFF", "#FFFFFF"); //? Special color for ranked games
+        const lobby = this.LobbyGenerator.generateLobby(skin, "#FF0000", "#001EFF", "#FFFFFF", "#FFFFFF", true); //? Special color for ranked games
         lobby.addClient(Player1.socket);
         lobby.addClient(Player2.socket);
-        lobby.server.to(lobby.id).emit(ServerEvents.LobbyJoin, {lobbyid: lobby.id});
     }
     
     public SearchAndMatch()
     {
-        console.log(this.MatchmakingQueue.size)
         if ( this.MatchmakingQueue.size <= 1 )
             return ;
-
         for ( const [p1, p1data] of this.MatchmakingQueue )
         {
             for ( const [p2, p2data] of this.MatchmakingQueue )
@@ -116,6 +112,5 @@ export class Matchmaking
                 }
             }
         }
-        
     }
 }

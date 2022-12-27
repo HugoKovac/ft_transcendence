@@ -4,6 +4,9 @@ export class LobbyJoinDto
 {
     @IsString()
     lobbyId: string;
+
+    @IsString()
+    userID: string;
 }
 
 export class LobbyCreateDto
@@ -22,10 +25,16 @@ export class LobbyCreateDto
 
     @IsString()
     Netcolor: string;
+
+    @IsString()
+    userID: string;
 }
 
 export class JoinMatchmakingDto
 {
     @IsString()
     SkinPref: string;
+
+    @IsString()
+    userID: string;
 }

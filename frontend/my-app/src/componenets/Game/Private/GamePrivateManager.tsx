@@ -24,17 +24,11 @@ export default function GamePrivateManager()
 
         socket.on('connect', () => {});
 
-        socket.on('disconnect', (reason : Socket.DisconnectReason) => { socket.emit(ClientEvents.LeaveLobby); });
-        
         socket.on('exception', (data) => { toast(data.message); });
 
-        socket.on(ServerEvents.ServerMessage, (data) => { toast(data.message); });
+        socket.on(ServerEvents.ServerMessage, (message) => { toast(message); });
 
         socket.on(ServerEvents.LobbyState, (data) => { setLobby(data); });
-
-        socket.on(ServerEvents.LobbyJoin, (data) => { if ( !searchParams.toString() ) setSearchParams({id: data.lobbyid}); });
-
-       
 
         return () => 
         {
@@ -42,6 +36,7 @@ export default function GamePrivateManager()
             socket.off('disconnect');
             socket.off(ServerEvents.LobbyState);
             socket.off(ServerEvents.LobbyJoin);
+            socket.off(ServerEvents.ServerMessage);
         }
 
     }, [searchParams, setLobby, socket, setSearchParams]);

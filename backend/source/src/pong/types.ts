@@ -6,6 +6,7 @@ export type AuthenticatedSocket = Socket & {
 
     data: {
       lobby: null | Lobby;
+      userID: string;
     };
   
 };
@@ -18,6 +19,16 @@ export type InQueuePlayer =
   socket: AuthenticatedSocket,
 };
 
+export type RankedGameData = 
+{
+  Player1ID : string,
+  Player2ID : string,
+  Player1Score: number,
+  Player2Score: number,
+  Player1Won: boolean,
+  Player2Won: boolean,
+  GameEndReason: string,
+}
 
 export type ServerPayload = {
 
@@ -43,7 +54,6 @@ export type ServerPayload = {
 
     gameEnd: boolean,
     gameStart: boolean,
-    PauseGame: boolean,
 
     scoreOne: number,
     scoreTwo: number,

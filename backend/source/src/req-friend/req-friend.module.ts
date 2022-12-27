@@ -3,7 +3,6 @@ import { ReqFriendService } from './req-friend.service';
 import { ReqFriendController } from './req-friend.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Friends, User, ReqFriend, BlockPeople } from 'src/typeorm';
-import {  } from 'src/typeorm';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Friends, User, ReqFriend, BlockPeople])],

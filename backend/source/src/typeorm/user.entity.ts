@@ -1,11 +1,12 @@
-import { Column, Entity, JoinColumn, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 import { BanEnity } from "./ban.entity";
 import Conv from "./conv.entity";
 import { Friends } from "./friends.entity";
 import { GroupConv } from "./groupConv.entity";
 import { MuteEntity } from "./mute.entity";
-import { BlockPeople } from "./blockPeople.entity";
+import { BlockPeople } from "./blockPeople.entity"
 import { ReqFriend } from "./ReqFriend.entity";
+import { GameRanked } from "./gameranked.entity";
 
 @Entity()
 export class User {
@@ -73,7 +74,7 @@ export class User {
 	@JoinColumn({
 		name: 'blocked'
 	})
-blocked: BlockPeople[];
+	blocked: BlockPeople[];
 	
 	@OneToMany(
 		() => ReqFriend,
@@ -137,4 +138,14 @@ blocked: BlockPeople[];
 		default: ''
 	})
 	secret_ascii: string
+
+	@Column( { type:'bigint', default: 0 })
+	GameVictory: number;
+
+	@Column( { type:'bigint', default: 0 })
+	GameDefeat: number;
+
+	@ManyToMany( () => GameRanked, games => games.User )
+	@JoinTable()
+	Games: GameRanked[]
 }
