@@ -5,7 +5,7 @@ import { WebsocketContext } from './../WebsocketContext';
 import { useSearchParams } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { Ball, CANVASHEIGHT, CANVASWIDTH, Paddle, PADDLEHEIGHT, PADDLEWIDTH } from '../GameConstant';
-import LoginStateContext from '../../Login/LoginStateContext'
+import { CustomiseContext } from './CustomiseContext';
 
 export default function GameLobby() {
 
@@ -41,16 +41,12 @@ export default function GameLobby() {
         gravity: 6
     })
 
-	const {logState} = useContext(LoginStateContext);
     const socket = useContext(WebsocketContext);
     const requestRef = useRef(0);
     const [searchParams] = useSearchParams();
     const searchParamsString = searchParams.get('id');
-    const [Paddle1Color, SetPaddle1Color] = useState("#fff"); 
-    const [Paddle2Color, SetPaddle2Color] = useState("#fff"); 
-    const [BallColor, SetBallColor] = useState("#fff");
-    const [NetColor, SetNetColor] = useState("#fff");
-    const [Skin, SetSkin] = useState("default");
+
+    const Customise = useContext(CustomiseContext);
 
     const Paddle1CPRef = useRef<any>();
     const Paddle2CPRef = useRef<any>();
@@ -67,6 +63,7 @@ export default function GameLobby() {
     
 
     useEffect( () => {
+
 
         SkinListRef.current = document.getElementById('skin');
         SkinListRef.current.addEventListener('change', RetrieveSkin);
@@ -93,14 +90,14 @@ export default function GameLobby() {
         requestRef.current = requestAnimationFrame(previewloop);
         return () =>
             cancelAnimationFrame(requestRef.current);
-    }, [searchParamsString, socket, Paddle1Color, Paddle2Color, BallColor, NetColor, Skin]);
+    }, [searchParamsString, socket, Customise.Paddle1Color, Customise.Paddle2Color, Customise.BallColor, Customise.NetColor, Customise.Skin]);
 
 
     const previewloop = () =>
     {
-        Paddle1.current.color = Paddle1Color;
-        Paddle2.current.color = Paddle2Color;
-        Ball.current.color = BallColor;
+        Paddle1.current.color = Customise.Paddle1Color;
+        Paddle2.current.color = Customise.Paddle2Color;
+        Ball.current.color = Customise.BallColor;
 
         clear();
         BallBounce();
@@ -117,12 +114,11 @@ export default function GameLobby() {
     {
         socket.emit(ClientEvents.CreateLobby, 
         {
-            skin: Skin,
-            Paddle1color: Paddle1Color,
-            Paddle2color: Paddle2Color,
-            Ballcolor: BallColor,
-            Netcolor: NetColor,
-            userID: logState,
+            skin: Customise.Skin,
+            Paddle1color: Customise.Paddle1Color,
+            Paddle2color: Customise.Paddle2Color,
+            Ballcolor: Customise.BallColor,
+            Netcolor: Customise.NetColor,
         });
     }
 
@@ -131,28 +127,27 @@ export default function GameLobby() {
 
     function RetrieveSkin( event : any )
     {
-        if ( event.target.value )
-            SetSkin(event.target.value);
+        Customise.SetSkin(event.target.value);
     }
 
     function Paddle1ColorPicker(event : any) 
     {
-        SetPaddle1Color(event.target.value);
+        Customise.SetPaddle1Color(event.target.value);
     }
 
     function Paddle2ColorPicker(event : any) 
     {
-        SetPaddle2Color(event.target.value);
+        Customise.SetPaddle2Color(event.target.value);
     }
 
     function BallColorPicker(event : any) 
     {
-        SetBallColor(event.target.value);
+        Customise.SetBallColor(event.target.value);
     }
 
     function NetColorPicker(event : any) 
     {
-        SetNetColor(event.target.value);
+        Customise.SetNetColor(event.target.value);
     }
 
     
@@ -214,7 +209,7 @@ export default function GameLobby() {
             if (context) 
             {
                 context.font = "18px Arial";
-                context.fillStyle = NetColor;
+                context.fillStyle = Customise.NetColor;
                 context.fillRect(canvasWidth / 2, 0, netWidth, netHeight);
             }
         }
@@ -276,7 +271,7 @@ export default function GameLobby() {
     }
 
     return (
-        <div className={Skin}>
+        <div className={Customise.Skin}>
             <NavBar />
             <div className="ColorPicker">
                 <label> Player 1 <input type="color" id="Paddle1CP" className="Paddle1ColorPicker"/></label>

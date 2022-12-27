@@ -8,7 +8,7 @@ import { ClientEvents } from "../../../shared/client/Client.Events";
 import { Paddle, Ball } from "../GameConstant"
 import { CANVASHEIGHT, CANVASWIDTH, BALLSPEED } from "../GameConstant"
 import React from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 export default function GameInstance()

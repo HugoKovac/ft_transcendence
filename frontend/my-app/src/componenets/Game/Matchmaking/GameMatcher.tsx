@@ -4,8 +4,6 @@ import { ToastContainer } from "react-toastify";
 import { ClientEvents } from "../../../shared/client/Client.Events";
 import NavBar from "../../NavBar";
 import { WebsocketContext } from "../WebsocketContext";
-import LoginStateContext from '../../Login/LoginStateContext'
-import { io } from "socket.io-client";
 
 export default function GameMatcher()
 {

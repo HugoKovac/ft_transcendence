@@ -10,7 +10,6 @@ export const WebsocketProvider = ({children}:any) => {
 	const {logState} = useContext(LoginStateContext);
     const socket = io('http://localhost:3000', {query: { userID : logState }});
 
-	console.log("connect")
 	return (
 		<WebsocketContext.Provider value={socket}>
 			{children}

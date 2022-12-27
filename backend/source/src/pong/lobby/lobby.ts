@@ -103,17 +103,15 @@ export class Lobby
         {
             if ( payload.Player1Won == true )
             {
-                console.log(await this.pongservice.incrementeUserVictory(payload.Player1ID));
-                console.log(await this.pongservice.incrementeUserDefeat(payload.Player2ID));
+                await this.pongservice.incrementeUserVictory(payload.Player1ID);
+                await this.pongservice.incrementeUserDefeat(payload.Player2ID);
             }
             else if ( payload.Player2Won == true )
             {
-                console.log(await this.pongservice.incrementeUserVictory(payload.Player2ID));
-                console.log(await this.pongservice.incrementeUserDefeat(payload.Player1ID));
+                await this.pongservice.incrementeUserVictory(payload.Player2ID);
+                await this.pongservice.incrementeUserDefeat(payload.Player1ID);
             }
         }
-
-        console.log(await this.pongservice.getGetGamesById(payload.Player1ID));
     }
 
     public refreshLobby()

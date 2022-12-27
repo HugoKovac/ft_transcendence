@@ -169,6 +169,7 @@ export default function GameInstance()
             {
                 context.font = "18px cursive";
                 context.fillStyle = "#fff";
+                context.textAlign = 'center'
                 context.fillText(endMessage, canvasWidth.current / 2 - 60, canvasHeight.current / 2);
             }
         }
