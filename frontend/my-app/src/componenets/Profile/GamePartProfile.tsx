@@ -3,6 +3,7 @@ import {useContext, useState, useEffect} from 'react'
 import MatchDisplay from "./MatchDisplay"
 import AchivementDisplay from "./AchivementDisplay"
 import "./profile_style.scss"
+import axios from "axios"
 
 type protoMatch = {
 	playerone_id : number,
@@ -17,7 +18,14 @@ type protoMatch = {
 const GamePartProfile = (props : {user_id : number}) => {
 	const {logState} = useContext(LoginStateContext)
 	const [History, setHistory]  = useState<protoMatch[]>([])
-	useEffect(() => {}, [])
+	useEffect(() => {
+		const req_base = axios.create({ baseURL: 'http://localhost:3000/api/profile/', withCredentials: true})
+		req_base.post("getDataGames", {user_id : logState}).then((res) => {
+			if (!res.data)
+				console.log("Error : no data transferred")
+			setHistory(res.data)
+		})
+	}, [])
 	/*const History : protoMatch[] = [
 		{ playerone_id : logState, playertwo_id : 34, playerone_score : 2, playertwo_score : 50,
 			playerone_username : "Bob", playertwo_username : "string", date : new Date()},

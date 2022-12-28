@@ -6,7 +6,18 @@ import { diskStorage } from 'multer'
 import { FileInterceptor, MulterModule } from '@nestjs/platform-express';
 import { extname, join } from 'path';
 import { decode, JwtPayload } from 'jsonwebtoken';
+import { GameRanked } from 'src/typeorm';
+import { userInfo } from 'os';
 
+export type protoMatch = {
+	playerone_id : number,
+	playertwo_id : number,
+	playerone_score : number,
+	playertwo_score : number,
+	playerone_username : string,
+	playertwo_username : string,
+	date : Date
+}
 
 @Controller('profile')
 export class ProfileController {
@@ -69,4 +80,12 @@ export class ProfileController {
 		const str : string = await this.profileService.updateUsername(bod.user_id, bod.username, req.cookies['jwt'])
 		return str
 	}
+
+	@Post('getDataGames')
+	@UseGuards(AuthGuard('jwt'))
+	async getDataGames(@Body() bod : {user_id : number}, @Req() req) : Promise<protoMatch[]>
+	{
+		return await this.profileService.getDataGames(bod.user_id, req.cookies['jwt'])
+	}
+
 }
