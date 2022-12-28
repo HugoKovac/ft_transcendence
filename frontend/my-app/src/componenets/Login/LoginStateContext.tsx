@@ -33,7 +33,7 @@ export async function CheckLogState(logState: number, setLogState: (state: numbe
 
 export const LoginStateProvider = ({children}:any) => {
 
-	const [logState, setLogState] = useState(1)
+	const [logState, setLogState] = useState(0)
 	const [rerender, setRerender] = useState(false)
 
 	return (

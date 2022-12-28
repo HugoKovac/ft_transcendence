@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
     
 export default function GamePrivateManager() 
 {
+
     const socket = useContext(WebsocketContext);
 
     const [lobby, setLobby] = useRecoilState(LobbyState);

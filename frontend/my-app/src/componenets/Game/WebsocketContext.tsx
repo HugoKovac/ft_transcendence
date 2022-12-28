@@ -8,7 +8,7 @@ export const WebsocketContext = createContext<Socket>(socket);
 export const WebsocketProvider = ({children}:any) => {
 
 	const {logState} = useContext(LoginStateContext);
-    const socket = io('http://localhost:3000', {query: { userID : logState }});
+    const socket = io('http://localhost:3000/game', {query: { userID : logState }});
 
 	return (
 		<WebsocketContext.Provider value={socket}>

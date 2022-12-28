@@ -4,14 +4,11 @@ import { Server, Socket } from 'socket.io'
 import { LobbyFactory } from './lobby/lobbyfactory';
 import { LobbyJoinDto, LobbyCreateDto, JoinMatchmakingDto } from './lobby/lobbydtos';
 import { AuthenticatedSocket } from './types'
-import { ServerEvents } from 'src/shared/server/Server.Events';
 import { Matchmaking } from './lobby/matchmaking';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/typeorm';
-import { Repository } from "typeorm";
 import { PongService } from './pong.service';
 
 @WebSocketGateway({
+    namespace: 'game',
     cors:{
       origin:['http://localhost:3000'],
     },  
@@ -31,12 +28,14 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
       this.lobbyManager.server = server;
       this.lobbyManager.pongservice = this.pongservice;
       this.matchmaking.server = server;
+      this.matchmaking.pongservice = this.pongservice;
       this.matchmaking.LobbyGenerator = this.lobbyManager;
     }
  
 
     async handleConnection( client: Socket ) : Promise<void> 
     {
+      console.log(client.handshake.query)
       this.lobbyManager.initializeClient(client as AuthenticatedSocket, client.handshake.query.userID );
 
       const check = await this.pongservice.checkUserID(client.data.userID);
@@ -44,7 +43,9 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
       {
         console.log("user not found")
         this.handleDisconnect(client as AuthenticatedSocket);
+        return ;
       }
+      console.log("user found");
     }
 
     async handleDisconnect( client: AuthenticatedSocket ) : Promise<void> 
@@ -173,7 +174,7 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
     onJoinMatchMaking( client : AuthenticatedSocket, data : JoinMatchmakingDto )
     {
       if ( !client.data.userID )
-        throw new WsException(' User not found ');
+        throw new WsException('User not found');
       if ( client.data.lobby )
         throw new WsException('You are already in a lobby !');
       
