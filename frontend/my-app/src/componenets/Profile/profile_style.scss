@@ -17,6 +17,24 @@
 	}
 }
 
+.matchWon
+{
+	border: 3px solid greenyellow;
+	background-color: greenyellow;
+	p {
+		font-size: 30px;
+		color: black;
+	}
+}
+.matchLoose
+{
+	border: 3px solid rgb(128, 0, 0);
+	background-color: rgb(128, 0, 0);
+	p {
+		font-size: 30px;
+		color: white;
+	}
+}
 .matchDisplay
 {
 	margin-bottom: 20px;
@@ -27,12 +45,7 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	border: 3px solid #292d39;
-	background-color: #292d39;
-	p {
-		font-size: 30px;
-		color: white;
-	}
+
 	.score
 	{
 		display: flex;

@@ -114,7 +114,8 @@ export class ProfileService {
 				playertwo_score : e.Player2Score,
 				playerone_username : e.player1Username,
 				playertwo_username : e.player2Username,
-				date : e.Date
+				date : e.Date,
+				playerone_won : e.Player1Won
 			}
 			return pop
 		})

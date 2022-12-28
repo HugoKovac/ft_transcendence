@@ -12,12 +12,14 @@ type protoMatch = {
 	playertwo_score : number,
 	playerone_username : string,
 	playertwo_username : string,
-	date : Date
+	date : Date,
+	playerone_won : boolean
+
 }
 
 const GamePartProfile = (props : {user_id : number}) => {
 	const {logState} = useContext(LoginStateContext)
-	const [History, setHistory]  = useState<protoMatch[]>([])
+	/*const [History, setHistory]  = useState<protoMatch[]>([])
 	useEffect(() => {
 		const req_base = axios.create({ baseURL: 'http://localhost:3000/api/profile/', withCredentials: true})
 		req_base.post("getDataGames", {user_id : logState}).then((res) => {
@@ -25,39 +27,39 @@ const GamePartProfile = (props : {user_id : number}) => {
 				console.log("Error : no data transferred")
 			setHistory(res.data)
 		})
-	}, [])
-	/*const History : protoMatch[] = [
+	}, [])*/
+	const History : protoMatch[] = [
 		{ playerone_id : logState, playertwo_id : 34, playerone_score : 2, playertwo_score : 50,
-			playerone_username : "Bob", playertwo_username : "string", date : new Date()},
+			playerone_username : "Bob", playertwo_username : "string", date : new Date(), playerone_won : true},
 		{ playerone_id : logState, playertwo_id : 34, playerone_score : 4, playertwo_score : 2,
-			playerone_username : "Bob", playertwo_username : "string", date : new Date()},
+			playerone_username : "Bob", playertwo_username : "string", date : new Date(), playerone_won : true},
 		{ playerone_id : logState, playertwo_id : 34, playerone_score : 4, playertwo_score : 2,
-			playerone_username : "Bob", playertwo_username : "string", date : new Date()},
+			playerone_username : "Bob", playertwo_username : "string", date : new Date(), playerone_won : true},
 		{ playerone_id : logState, playertwo_id : 34, playerone_score : 4, playertwo_score : 2,
-			playerone_username : "Bob", playertwo_username : "string", date : new Date()},
+			playerone_username : "Bob", playertwo_username : "string", date : new Date(), playerone_won : true},
 		{ playerone_id : logState, playertwo_id : 34, playerone_score : 4, playertwo_score : 2,
-			playerone_username : "Bob", playertwo_username : "string", date : new Date()},
+			playerone_username : "Bob", playertwo_username : "string", date : new Date(), playerone_won : false},
 		{ playerone_id : logState, playertwo_id : 34, playerone_score : 4, playertwo_score : 2,
-			playerone_username : "Bob", playertwo_username : "string", date : new Date()},
+			playerone_username : "Bob", playertwo_username : "string", date : new Date(), playerone_won : false},
 		{ playerone_id : logState, playertwo_id : 36, playerone_score : 4, playertwo_score : 2,
-			playerone_username : "Bob", playertwo_username : "string", date : new Date()},
+			playerone_username : "Bob", playertwo_username : "string", date : new Date(), playerone_won : true},
 		{ playerone_id : logState, playertwo_id : 30, playerone_score : 4, playertwo_score : 2,
-			playerone_username : "Bob", playertwo_username : "string", date : new Date()},
+			playerone_username : "Bob", playertwo_username : "string", date : new Date(), playerone_won : false},
 		{ playerone_id : logState, playertwo_id : 31, playerone_score : 4, playertwo_score : 2,
-			playerone_username : "Bob", playertwo_username : "string", date : new Date()},
+			playerone_username : "Bob", playertwo_username : "string", date : new Date(), playerone_won : false},
 		{ playerone_id : logState, playertwo_id : 32, playerone_score : 4, playertwo_score : 2,
-			playerone_username : "Bob", playertwo_username : "string", date : new Date()},
+			playerone_username : "Bob", playertwo_username : "string", date : new Date(), playerone_won : true},
 		{ playerone_id : logState, playertwo_id : 34, playerone_score : 4, playertwo_score : 2,
-			playerone_username : "Bob", playertwo_username : "string", date : new Date()},
+			playerone_username : "Bob", playertwo_username : "string", date : new Date(), playerone_won : true},
 		
 		{ playerone_id : 23, playertwo_id : logState, playerone_score : 2, playertwo_score : 50,
-			playerone_username : "string2", playertwo_username : "sBob", date : new Date()},
+			playerone_username : "string2", playertwo_username : "sBob", date : new Date(), playerone_won : true},
 		{ playerone_id : logState, playertwo_id : 34, playerone_score : 50, playertwo_score : 50,
-			playerone_username : "Bob", playertwo_username : "string", date : new Date()},
-				]*/
+			playerone_username : "Bob", playertwo_username : "string", date : new Date(), playerone_won : true},
+				]
 	const games : JSX.Element[] = History.map((e) => {
 		return <MatchDisplay player1={{id : e.playerone_id, username : e.playerone_username, score : e.playerone_score}}
-		player2={{id : e.playertwo_id, username : e.playertwo_username, score : e.playertwo_score}} time={e.date}/>
+		player2={{id : e.playertwo_id, username : e.playertwo_username, score : e.playertwo_score}} time={e.date} P1W={e.playerone_won}/>
 	})
 	const displayListGames = () : JSX.Element => {
 		if ( games.length == 0)

@@ -16,7 +16,8 @@ export type protoMatch = {
 	playertwo_score : number,
 	playerone_username : string,
 	playertwo_username : string,
-	date : Date
+	date : Date,
+	playerone_won : boolean
 }
 
 @Controller('profile')
