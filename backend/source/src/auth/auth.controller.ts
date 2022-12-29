@@ -19,13 +19,17 @@ export class AuthController {
 	@UseGuards(MarvinAuthGuard)
 	async returnCookie(@Res() res, @Req() req){
 		const token = await this.authService.signIn(req.user)
-		await res.cookie('jwt', token)//!Give the token if code not valid ?
-		if (await this.authService.is2FAactive(token)){
+		await res.cookie('jwt', token[0])//!Give the token if code not valid ?
+		if (await this.authService.is2FAactive(token[0])){
 			res.redirect(301, 'http://localhost:3002/redirect/verify_2fa')
 			return
 		}
-		this.authService.generate2FA(token)
-		res.redirect(301, 'http://localhost:3002/redirect/check_token')
+		this.authService.generate2FA(token[0])
+		console.log(token, "    <----- voici")
+		if (token[1] === "true")
+			res.redirect(301, 'http://localhost:3002/redirect/check_token_first')
+		else
+			res.redirect(301, 'http://localhost:3002/redirect/check_token')
 	}
 
 	@Post('active2fa')

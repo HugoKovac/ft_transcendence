@@ -7,18 +7,30 @@ import Home from "../pages/Home"
 import Login from "../pages/Login"
 import Profile from "../pages/Profile_bis"
 import Unauthorized from "../pages/Unauthorized"
-import CheckTokenAfterLogin, { CheckTokenFirstMount } from "./Login/CheckToken"
+import CheckTokenAfterLogin, { CheckTokenFirstMount, CheckTokenAfterFirstLogin } from "./Login/CheckToken"
 import LoginStateContext from "./Login/LoginStateContext"
 import GameMatchmaking from "./Game/Matchmaking/GameMatchmaking"
 import GamePrivateManager from "./Game/Private/GamePrivateManager"
 import Verify2fa from "./Login/VerifyTwoFA"
 import Active2FA from "../pages/ActiveTwoFA"
+import Setup from "../pages/Setup"
 import { WebsocketProvider } from "./Game/WebsocketContext"
 
 
 
 
 const ProtectedRoute = () : React.ReactElement => {
+	
+	const { logState } = useContext(LoginStateContext)
+
+	return (
+			<div>
+				{logState ? <Outlet /> : <Unauthorized />}
+			</div> 
+		)
+}
+
+const FirstConnection = () : React.ReactElement => {
 	
 	const { logState } = useContext(LoginStateContext)
 
@@ -54,10 +66,14 @@ const RoutesBrowser = () : React.ReactElement => {
 					<Route path='/game/lobby' element={<ProtectedRoute />}>
 						<Route path='/game/lobby' element={ <WebsocketProvider> <GamePrivateManager/> </WebsocketProvider>}/>
 					</Route>
+					<Route path='/Setup' element={<FirstConnection />}>
+						<Route path='/Setup' element={<Setup/>}/>
+					</Route>
+				<Route path='/redirect/check_token_first' element={<CheckTokenAfterFirstLogin />} />
 				<Route path='/redirect/check_token' element={<CheckTokenAfterLogin />} />
 				<Route path='/redirect/verify_2fa' element={<Verify2fa />} />
 				<Route path='/active2FA' element={<Active2FA />} />
-			</Routes>
+			</Routes> 
 		</BrowserRouter>
 		)	
 }

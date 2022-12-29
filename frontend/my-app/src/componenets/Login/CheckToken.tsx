@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { useContext } from "react"
-import { Navigate } from "react-router-dom"
+import { Navigate, useSearchParams } from "react-router-dom"
 import LoginStateContext, { CheckLogState } from "./LoginStateContext"
 
 export async function CheckTokenFirstMount(){
@@ -25,8 +25,14 @@ export async function CheckTokenFirstMount(){
 		localStorage.setItem('jwt', 'true')
 		const {logState, setLogState} = useContext(LoginStateContext)
 		useEffect(() => {CheckLogState(logState, setLogState)}, [logState, setLogState])
-
 		return <Navigate to='/' />
+	}
+
+export	function CheckTokenAfterFirstLogin(){
+		localStorage.setItem('jwt', 'true')
+		const {logState, setLogState} = useContext(LoginStateContext)
+		useEffect(() => {CheckLogState(logState, setLogState)}, [logState, setLogState])
+		return <Navigate to='/Setup' />
 	}
 
 export default CheckTokenAfterLogin

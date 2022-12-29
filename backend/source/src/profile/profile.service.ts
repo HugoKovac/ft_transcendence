@@ -24,9 +24,11 @@ export class ProfileService {
 		if (user_id != id)
 			return undefined
 		const user_one : User = await this.userRepo.findOne({where : {id : id}, relations : ['block_me']})
-		if (user_one.block_me.filter((e) => e.from_id == user_id).length > 0)
+		if (user_one.block_me.filter((e) => e.from_id == target_id).length > 0)
 			return undefined
-		return await this.userRepo.findOne({where : {id : target_id}})
+		const return_pro = await this.userRepo.findOne({where : {id : target_id}})
+		console.log("gromage => ", return_pro)
+		return return_pro
 	}
 	async uploadPp(file: Express.Multer.File, jwt : string) : Promise<string>
 	{

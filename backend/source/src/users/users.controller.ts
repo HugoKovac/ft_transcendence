@@ -52,7 +52,7 @@ export class UsersController {
 		const newUser : User = await this.usersService.create(createUserDto);
 		const token = await this.authService.signIn(newUser)
 		console.log("new user = ", JSON.stringify(newUser))
-		await res.cookie('jwt', token)
+		await res.cookie('jwt', token[0])
 		// console.log("jwt = ", token)
         // let {id} = decode(token) as JwtPayload
         // console.log("id = ", id)

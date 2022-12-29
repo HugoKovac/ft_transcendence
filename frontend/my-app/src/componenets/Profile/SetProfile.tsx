@@ -4,6 +4,11 @@ import { userProto } from "./Profile"
 import axios from "axios"
 import { NavLink } from "react-router-dom"
 
+import { ToastContainer, toast } from 'react-toastify';
+import ButtonRelativeState from "../relatives/ButtonRelativeState"
+
+
+
 
 const SetProfile = () : JSX.Element => {
     const [newUsername, setNewUsername] = useState<string>("")
@@ -32,9 +37,12 @@ const SetProfile = () : JSX.Element => {
     }
 
     useEffect(() => {
+        if (newUsername == "")
+            return 
 		const req_base = axios.create({ baseURL: 'http://localhost:3000/api/profile/', withCredentials: true})
 		req_base.post("setUsername", {user_id : logState, username : newUsername}).then((res) => {
 			console.log("from change username : " + JSON.stringify(res))
+            toast(res.data)
 			setDataUser("loading")
 		}).catch((e) => console.log(e))
 
@@ -51,8 +59,9 @@ const SetProfile = () : JSX.Element => {
     		formData.append('file',newPp)
 			req_base.post("uploadPp", formData, {headers : { "Content-Type": "multipart/form-data" }}).then((res) => {
 				console.log(res)
+                toast(res.data)
 				setDataUser("loading")
-			}).catch((e) => console.log(e))
+			}).catch((e) => console.log(e.response))
 		}
 	}
 	function delPp() {
@@ -62,6 +71,7 @@ const SetProfile = () : JSX.Element => {
 			})
 			req_base.post("delPp", {user_id : logState}).then((res) => {
 				console.log(res)
+                toast(res.data)
 				setDataUser("loading")
 			}).catch((e) => console.log(e))
 		}
@@ -97,11 +107,18 @@ const SetProfile = () : JSX.Element => {
 			<p className="name">Name : {dataUser?.username}</p>
 			<div className="buttonModif">
 				<input type="text" placeholder="Bob" onChange={(e) => buffUN = e.target.value}/>
-				<button onClick={() => buffUN == "" ?? setNewUsername(buffUN)}>
+				<button onClick={() =>{
+                    if (buffUN != "")
+                        setNewUsername(buffUN)
+                } }>
 					change username
 				</button>
 			</div>
-            <NavLink to="/Home" className={(nav) : any => (nav.isActive ? "ancr nav-active" : "ancr")}>
+            <ToastContainer />
+            <NavLink to="/" onClick={(e) => {
+                if (dataUser?.username == "")
+                    e.preventDefault()  
+            }} className={(nav) : any => (nav.isActive ? "ancr nav-active" : "ancr")}>
 				<button className="buttonProps">Save settings</button>
 		</NavLink>
 		</div>

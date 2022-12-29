@@ -54,7 +54,7 @@ export class ProfileController {
 	}))
 	async uploadFile(@UploadedFile(
     new ParseFilePipeBuilder().addMaxSizeValidator({
-      maxSize: 1000000
+      maxSize: 10000000
     })
     .build({
       errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY

@@ -39,13 +39,13 @@ export class AuthService{
 		if (!userDB)
 			throw new UnauthorizedException()
 
-		return this.createToken({
+		return [this.createToken({
 			id: userDB.id,
 			username: username,
 			providerId: providerId,
 			pp: pp,
 			email: email,
-		})
+		}), "false"]
 	}
 
 	async createUser(userDTO: CreateUserDto){
@@ -53,13 +53,13 @@ export class AuthService{
 			const newUser = this.userRepo.create(userDTO)
 			await this.userRepo.save(newUser)
 			
-			return this.createToken({
+			return [this.createToken({
 				id: newUser.id,
 				username: newUser.username,
 				providerId: newUser.providerId,
 				pp: newUser.pp,
 				email: newUser.email,
-			})
+			}), "true"]
 		}
 		catch {
 			throw new InternalServerErrorException()
