@@ -1,40 +1,57 @@
-.CreateGroupPopup{
+.CreateGroupPopup {
 	display: flex;
 	flex-direction: column;
 	height: calc(100% - (45px + 9px * 3));
-	.groupName{
+
+	.groupName {
 		width: 100%;
 		display: flex;
 		height: 62px;
-		label{
+
+		label {
 			width: 100px;
 			margin: 20px;
 		}
-		input{
+
+		input {
 			border: 0;
 			margin: 10px;
 			width: calc(100% - (100px + 60px));
-			&:focus{
+
+			&:focus {
 				border: 0;
 			}
 		}
 	}
-	.friendList{
-		margin: 20px;
-		display: flex;
-		flex-direction: column;
-		overflow-y: auto;
+
+	.friendList {
+		
+		ul {
+			background-color: rgba(0, 0, 0, 0.141);
+			border-radius: 10px;
+			margin: 20px;
+			display: flex;
+			flex-direction: column;
+		}
+		overflow: auto;
+
 		height: calc(100% - (45px + (20px * 3)));
 		font-size: 20px;
+
+		li {
+			color: black
+		}
 	}
-	button{
+
+	button {
 		height: 40px;
 		margin-top: auto;
 		border: 0;
 		padding: 0;
 		font-size: 20px;
 		background-color: rgba(0, 0, 0, 0.141);
-		&:hover{
+
+		&:hover {
 			cursor: pointer;
 			color: white;
 			background-color: rgba(0, 0, 0, 0.535);

@@ -11,9 +11,16 @@ type Friend = {
 	friend_username: string
 }
 
+const ChoiceFriend = ({ friend_id, friend_username, onChange }: { friend_id: number, friend_username: string, onChange: (e: any) => void }) => {
+	return <li>
+		<label>{friend_username}</label>
+		<input onChange={onChange} value={friend_id} type="checkbox" />
+	</li>
+}
+
 const CreateGroupPopup = (props: { setPopup: (v: boolean) => void }) => {
 	const [groupName, setGroupName] = useState('')
-	const [friendList, setFriendList] = useState([<label></label>])
+	const [friendList, setFriendList] = useState<JSX.Element[]>([])
 	const [checkboxState, setCheckboxState] = useState([false])
 	const { logState } = useContext(LoginStateContext)
 
@@ -31,9 +38,8 @@ const CreateGroupPopup = (props: { setPopup: (v: boolean) => void }) => {
 				withCredentials: true
 			})
 			await axInst.get('list').then((res) => {
-				console.log(res.data)
 				let list = res.data
-				setFriendList(list.map((i: Friend) => <label key={i.friend_id}><input onChange={handleCheckedBox} value={i.friend_id} type="checkbox" /> {i.friend_username}</label>))
+				setFriendList(list.map((i: Friend) => (<ChoiceFriend key={i.friend_id} friend_id={i.friend_id} friend_username={i.friend_username} onChange={handleCheckedBox} />)))
 			}).catch((e) => { console.error(e) })
 		}
 		get()
@@ -63,14 +69,16 @@ const CreateGroupPopup = (props: { setPopup: (v: boolean) => void }) => {
 		}).catch((e) => { console.log(e); toast.error(e.response.data.message[0]) })
 	}
 
-	return <div className='CreateGroupPopup'>
+	return <div key={5465} className='CreateGroupPopup'>
 		<ToastContainer />
 		<div className='groupName'>
 			<label htmlFor='groupName'>Group Name :</label>
 			<input id='groupName' name='groupName' type="text" placeholder="Group Name" maxLength={35} onChange={(e) => (setGroupName(e.target.value))} autoFocus />
 		</div>
 		<div className='friendList'>
-			{friendList}
+			<ul>
+				{friendList}
+			</ul>
 		</div>
 		<button onClick={groupSubmit}>Create Group</button>
 	</div>
