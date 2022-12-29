@@ -79,13 +79,16 @@ export class ProfileService {
 			if (e.player2Username == "" && buffIds.filter((el) => el.id == e.Player2ID).length == 0)
 				buffIds.push({id : e.Player2ID, username : ""})
 		})
-		await buffIds.map(async (e) => {
+
+		for (let e of buffIds)
+		{
 			const user_one : User = await this.userRepo.findOne({where : {id : e.id}})
 			if (!user_one)
 				throw("Error while finding users")
 			e.username = user_one.username
-		})
-		Games.map(async (e) => {
+		}
+		for (let e of Games)
+		{
 			if (e.player1Username == "" || e.player2Username == "")
 			{
 				if (e.player1Username == "")
@@ -94,7 +97,8 @@ export class ProfileService {
 					e.player2Username = buffIds.filter((el) => el.id == e.Player2ID)[0].username
 				await this.gameRankedRepo.save(e)
 			}
-		})
+		}
+
 		return Games
 	}
 	async getDataGames(user_id : number, jwt : string) : Promise<protoMatch[]>

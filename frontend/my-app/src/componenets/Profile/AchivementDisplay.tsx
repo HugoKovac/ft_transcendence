@@ -37,7 +37,7 @@ const AchivementDisplay = (props : {history : protoMatch[]}) => {
 		const result : string = " Play 1 game"
 		let emote : string = "❌"
 		let className : string = "not-achieved"
-		if (copyHistory.length > 1)
+		if (copyHistory.length >= 1)
 		{
 			emote = "✔️"
 			className = "achieved"

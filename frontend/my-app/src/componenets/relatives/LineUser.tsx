@@ -5,6 +5,7 @@ import LoginStateContext from "./../Login/LoginStateContext"
 import "./relatives.scss"
 import { ToastContainer, toast } from 'react-toastify';
 import { statusDetermine } from '../Profile/Profile'
+import Parsepp from '../imgParse'
 
 
 
@@ -53,7 +54,7 @@ const LineUser = (props : {name : string, img_path: string, id : number, default
 	useEffect(() => {get()}, [])
 	useEffect(() => {get()}, [relative_req])
 
-	const renderImg = props.img_path ? <img src={props.img_path} alt="pp" className='pp'/> : <></>
+	const renderImg = props.img_path ? <img src={Parsepp(props.img_path)} alt="pp" className='pp'/> : <></>
     //will redirect to the profile onclick
 	console.log("relativeState : ", relative_state)
     return <li>

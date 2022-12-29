@@ -28,7 +28,12 @@ const ListRelative  = (props : {}) => {
 			if (!res.data)
 				return ;
 			let listUserFriends : userProto[] = res.data
-			setter(listUserFriends.map((ele) => <LineUser name={ele.username} img_path={ele.pp} id={ele.id} default_state={defaultState} status={ele.status} lobbyID={ele.LobbyID}/>))
+			setter(listUserFriends.map((ele) => {
+			let pp : string = ele.pp
+			if (pp && pp.startsWith('localhost:3000/profile-pictures/'))
+				pp = 'http://' + pp
+			return <LineUser name={ele.username} img_path={pp} id={ele.id} default_state={defaultState} status={ele.status} lobbyID={ele.LobbyID}/>
+			}))
 			console.log("list of friends modified : ", JSON.stringify(listUserFriends, null, 2))
 		}).catch()
 
