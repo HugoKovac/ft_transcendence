@@ -122,6 +122,8 @@ export class Lobby
 
         await this.pongservice.ChangeUserStatus(check1, 1, null);
         await this.pongservice.ChangeUserStatus(check2, 1, null);
+
+        console.log(await this.pongservice.getUserStatus(check1));
     }
 
     public refreshLobby()

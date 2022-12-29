@@ -31,7 +31,7 @@ export class StatusGateway implements OnGatewayConnection, OnGatewayDisconnect
         return ;
       }
       await this.statusservice.ChangeUserStatus(check, 1, null);
-      // console.log(await this.statusservice.getUserStatus(check))
+      console.log(await this.statusservice.getUserStatus(check))
     }
 
     async handleDisconnect( client: Socket )
@@ -41,6 +41,6 @@ export class StatusGateway implements OnGatewayConnection, OnGatewayDisconnect
         return ;
       await this.statusservice.ChangeUserStatus(check, 0, null);
       console.log("disconnected")
-      // console.log(await this.statusservice.getUserStatus(check))
+      console.log(await this.statusservice.getUserStatus(check))
     }
 }

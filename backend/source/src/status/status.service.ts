@@ -59,7 +59,11 @@ export class StatusService
                 StatusEntity.CurrentStatus = status;
             }
             else
+            {
                 StatusEntity.CurrentStatus = status;
+                StatusEntity.LobbyID = null;
+            }
+
 
             await this.statusRepo.save(StatusEntity);
             return StatusEntity;
