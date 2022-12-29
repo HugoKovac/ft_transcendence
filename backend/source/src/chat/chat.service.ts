@@ -537,7 +537,7 @@ export class ChatService {
 		}
 	}
 
-	async addUserToGroup({ group_conv_id, new_user_ids }: DTO.addUserToGroupDTO) {//! if admin or owner
+	async addUserToGroup({ group_conv_id, new_user_ids }: DTO.addUserToGroupDTO) {
 		if (!new_user_ids || !new_user_ids.length)
 			return true
 		try {
@@ -567,20 +567,23 @@ export class ChatService {
 		}
 	}
 
-	async delUserToGroup({ group_conv_id, del_user_ids }: DTO.delUserToGroupDTO) {//! if admin or owner
+	async delUserToGroup({ group_conv_id, del_user_ids }: DTO.delUserToGroupDTO) {
 		if (!del_user_ids || !del_user_ids.length)
 			return true
 		try {
-			const conv = await this.groupConvRepo.findOne({ where: { group_conv_id: group_conv_id }, relations: ['users'] })
+			const conv = await this.groupConvRepo.findOne({ where: { group_conv_id: group_conv_id }, relations: ['users', 'owner'] })
 			if (!conv)
 				return false
 
 			let users: User[] = []
 			for (let i of conv.users) {
 				let push: boolean = true
-				for (let j of del_user_ids)
-					if (j == i.id)
+				for (let j of del_user_ids) {
+					if (j == i.id && j != conv.owner.id)
 						push = false
+					if (j == conv.owner.id)
+						push = true
+				}
 
 				if (push)
 					users.push(i)
@@ -597,7 +600,7 @@ export class ChatService {
 		}
 	}
 
-	async changeGroupName({ group_conv_id, new_name }: DTO.changeGroupNameDTO) {//! if admin or owner
+	async changeGroupName({ group_conv_id, new_name }: DTO.changeGroupNameDTO) {
 		if (!new_name)
 			return true
 		try {
@@ -613,7 +616,7 @@ export class ChatService {
 		}
 	}
 
-	async changeVisibility({ group_conv_id, isPrivate }: DTO.changeVisibilityDTO, jwt: string) {//! if admin or owner
+	async changeVisibility({ group_conv_id, isPrivate }: DTO.changeVisibilityDTO, jwt: string) {
 		const tokenUserInfo: any = decode(jwt)
 		if (isPrivate === undefined)
 			return true
