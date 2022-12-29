@@ -1,5 +1,4 @@
 import { useContext } from "react"
-import { receiveMessageOnPort } from "worker_threads"
 import LoginStateContext from "./../Login/LoginStateContext"
 import "./profile_style.scss"
 
@@ -49,7 +48,7 @@ const AchivementDisplay = (props : {history : protoMatch[]}) => {
 		const result : string = " Win " + ach + " games"
 		let emote : string = "❌"
 		let className : string = "not-achieved"
-		if (copyHistory.filter((e) => (e.data.playerone_id == logState)).length >= ach)
+		if (copyHistory.filter((e) => (e.data.playerone_id === logState)).length >= ach)
 		{
 			emote = "✔️"
 			className = "achieved"
@@ -62,11 +61,11 @@ const AchivementDisplay = (props : {history : protoMatch[]}) => {
 		let emote : string = "❌"
 		let className : string = "not-achieved"
 		const players : number [] = copyHistory.map((e) => {
-			if (e.data.playerone_id == logState)
+			if (e.data.playerone_id === logState)
 				return e.data.playertwo_id
 			return e.data.playerone_id
 		})
-		let diffPlayers : number[] = players.filter((e) => players.lastIndexOf(e) == players.indexOf(e))
+		let diffPlayers : number[] = players.filter((e) => players.lastIndexOf(e) === players.indexOf(e))
 		if (diffPlayers.length >= 5)
 		{
 			emote = "✔️"
@@ -77,8 +76,8 @@ const AchivementDisplay = (props : {history : protoMatch[]}) => {
 	function recap() : JSX.Element
 	{
 		const total :number = copyHistory.length
-		const win : number = copyHistory.filter((e) => (e.data.playerone_id == logState)).length
-		const loose : number = copyHistory.filter((e) => (e.data.playerone_id != logState)).length
+		const win : number = copyHistory.filter((e) => (e.data.playerone_id === logState)).length
+		const loose : number = copyHistory.filter((e) => (e.data.playerone_id !== logState)).length
 		return (<div className="recap">
 			<h1>Summary :</h1>
 			<div className="listSummary">

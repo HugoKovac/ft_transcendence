@@ -1,11 +1,9 @@
 import LoginStateContext from "./../Login/LoginStateContext"
-import { ChangeEvent, useContext, useState, useEffect} from 'react'
+import { useContext, useState, useEffect} from 'react'
 import { userProto } from "./Profile"
 import axios from "axios"
 import { NavLink } from "react-router-dom"
-
 import { ToastContainer, toast } from 'react-toastify';
-import ButtonRelativeState from "../relatives/ButtonRelativeState"
 
 
 
@@ -19,7 +17,7 @@ const SetProfile = () : JSX.Element => {
 
     async function get_data_user () : Promise<void>
 	{
-		if (dataUser != undefined && dataUser != 'loading')
+		if (dataUser !== undefined && dataUser !== 'loading')
 			return
 		const req_base = axios.create({ baseURL: 'http://localhost:3000/api/profile/', withCredentials: true})
 		req_base.post("getUserData", {user_id : logState, target_id : logState}).then((res) => {
@@ -37,7 +35,7 @@ const SetProfile = () : JSX.Element => {
     }
 
     useEffect(() => {
-        if (newUsername == "")
+        if (newUsername === "")
             return 
 		const req_base = axios.create({ baseURL: 'http://localhost:3000/api/profile/', withCredentials: true})
 		req_base.post("setUsername", {user_id : logState, username : newUsername}).then((res) => {
@@ -76,9 +74,9 @@ const SetProfile = () : JSX.Element => {
 			}).catch((e) => console.log(e))
 		}
 
-    if (dataUser == 'loading')
+    if (dataUser === 'loading')
         get_data_user()
-    if (dataUser == 'loading')
+    if (dataUser === 'loading')
 	    return <div className="load"><p>Loading</p></div>
     let path : JSX.Element = <img className="ppUser" src={ dataUser?.pp ?? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0D8RJLIfGu9BfAEv3oMYyxiGfkGsGABeSsY6K2Ugy&s"}/>
     return (<div className="decideSettings">
@@ -108,7 +106,7 @@ const SetProfile = () : JSX.Element => {
 			<div className="buttonModif">
 				<input type="text" placeholder="Bob" onChange={(e) => buffUN = e.target.value}/>
 				<button onClick={() =>{
-                    if (buffUN != "")
+                    if (buffUN !== "")
                         setNewUsername(buffUN)
                 } }>
 					change username
@@ -116,7 +114,7 @@ const SetProfile = () : JSX.Element => {
 			</div>
             <ToastContainer />
             <NavLink to="/" onClick={(e) => {
-                if (dataUser?.username == "")
+                if (dataUser?.username === "")
                     e.preventDefault()  
             }} className={(nav) : any => (nav.isActive ? "ancr nav-active" : "ancr")}>
 				<button className="buttonProps">Save settings</button>

@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { useContext } from "react"
-import { Navigate, useSearchParams } from "react-router-dom"
+import { Navigate } from "react-router-dom"
 import LoginStateContext, { CheckLogState } from "./LoginStateContext"
 
 export async function CheckTokenFirstMount(){

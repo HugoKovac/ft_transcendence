@@ -1,11 +1,9 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useContext, useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { io } from "socket.io-client"
 import { ClientEvents } from "../../shared/client/Client.Events";
 import { ServerEvents } from "../../shared/server/Server.Events";
-import { WebsocketContext } from "../Game/WebsocketContext";
 import LoginStateContext from "../Login/LoginStateContext";
 import Popup from "../Popup";
 import AdminPanel from "./AdminPanel";
@@ -36,7 +34,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 		console.log(channel)
 
 		if (channel){
-			const socket = io("localhost:3000", {
+			const socket = io("localhost:3000/chat", {
 				auth: (cb) => {
 					cb({
 					  token: Cookies.get('jwt')
@@ -91,7 +89,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	const {logState} = useContext(LoginStateContext)
 
 	useEffect(()=>{
-		const socket = io("localhost:3000", {
+		const socket = io("localhost:3000/chat", {
 			auth: (cb) => {
 				cb({
 					token: Cookies.get('jwt')
@@ -116,7 +114,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	useEffect(() => {
 		if (nav !== 2)
 			return
-		const socket = io("localhost:3000", {
+		const socket = io("localhost:3000/chat", {
 			auth: (cb) => {
 				cb({
 					token: Cookies.get('jwt')
@@ -141,7 +139,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	// useEffect(() => {
 	// 	if (nav !== 2)
 	// 		return
-	// 	const socket = io("localhost:3000", {
+	// 	const socket = io("localhost:3000/chat", {
 	// 		auth: (cb) => {
 	// 			cb({
 	// 				token: Cookies.get('jwt')
@@ -163,7 +161,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	useEffect(() => {
 		if (nav !== 2)
 			return
-		const socket = io("localhost:3000", {
+		const socket = io("localhost:3000/chat", {
 			auth: (cb) => {
 					cb({
 					token: Cookies.get('jwt')
@@ -184,7 +182,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	useEffect(() => {
 		if (nav !== 2)
 			return
-		const socket = io("localhost:3000", {
+		const socket = io("localhost:3000/chat", {
 			auth: (cb) => {
 					cb({
 					token: Cookies.get('jwt')

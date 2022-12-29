@@ -22,15 +22,15 @@ const LineUser = (props : {name : string, img_path: string, id : number, default
 		const req_base = axios.create({ baseURL: 'http://localhost:3000/api/req-friend/', withCredentials: true})
 		const obj_req = {user_id: logState, send_id : props.id}
 		let strPost : string = ""
-		if (relative_req == "remove_friend")
+		if (relative_req === "remove_friend")
 			strPost = 'delete'
-		else if (relative_req == "add_friend")
+		else if (relative_req === "add_friend")
 				strPost = "sendInvit"
-		else if (relative_req == "block_user")
+		else if (relative_req === "block_user")
 			strPost = "blockUser"
-		else if (relative_req == "unblock_user")
+		else if (relative_req === "unblock_user")
 				strPost = "unblockUser"
-		else if (relative_req == "send")
+		else if (relative_req === "send")
 				strPost = "sendInvit"
 		else
 		{

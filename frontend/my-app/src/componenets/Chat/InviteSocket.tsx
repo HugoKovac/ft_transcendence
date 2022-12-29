@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect } from "react";
+import { createContext, useContext } from "react";
 import { io, Socket } from "socket.io-client"
 import LoginStateContext from "../Login/LoginStateContext";
 

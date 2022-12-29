@@ -14,7 +14,6 @@ import GamePrivateManager from "./Game/Private/GamePrivateManager"
 import Verify2fa from "./Login/VerifyTwoFA"
 import Active2FA from "../pages/ActiveTwoFA"
 import Setup from "../pages/Setup"
-import { WebsocketProvider } from "./Game/WebsocketContext"
 import { InviteProvider } from "./Chat/InviteSocket"
 
 
@@ -62,10 +61,10 @@ const RoutesBrowser = () : React.ReactElement => {
 					<Route path='/game' element={<Game />}/>
 				</Route>
 					<Route path='/game/matchmaking' element={<ProtectedRoute />}>
-						<Route path='/game/matchmaking' element={ <WebsocketProvider> <GameMatchmaking /> </WebsocketProvider>}/>
+						<Route path='/game/matchmaking' element={  <GameMatchmaking />}/>
 					</Route>
 					<Route path='/game/lobby' element={<ProtectedRoute />}>
-						<Route path='/game/lobby' element={ <WebsocketProvider> <GamePrivateManager/> </WebsocketProvider>}/>
+						<Route path='/game/lobby' element={  <GamePrivateManager/> }/>
 					</Route>
 					<Route path='/Setup' element={<FirstConnection />}>
 						<Route path='/Setup' element={<Setup/>}/>
