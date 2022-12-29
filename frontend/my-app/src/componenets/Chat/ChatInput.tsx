@@ -11,6 +11,7 @@ import Popup from "../Popup";
 import AdminPanel from "./AdminPanel";
 import './Chat.scss'
 import { userType } from "./ChatBox";
+import { InviteContext } from "./InviteSocket";
 
 function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefreshConvList, isConvPrivate, passwordInput, setPasswordInput, goodPass, setHideRight, isAdmin}:
 	{conv_id:number, setRefresh:(v:boolean)=>void, nav:number, userGroupList:userType[], setConv: (v:number)=>void, setRefreshConvList: (v:boolean)=>void, isConvPrivate:boolean, passwordInput:string, setPasswordInput:(v:string)=>void, goodPass: {conv_id:number, passState:boolean, password:string}[], setHideRight: (v:boolean)=>void, isAdmin:boolean} ){
@@ -22,6 +23,8 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	const setHideRightCpy = setHideRight
 	const setRefreshConvListCpy = setRefreshConvList
 	const convCpy = conv_id
+	const [invite, setInvite] = useState(false)
+	const [lobbyid, setlobbyid] = useState("");
 	
 	useEffect(()=>{
 		const findGoodPass = (conv_id:number) => {
@@ -30,6 +33,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 					return i
 			return goodPass[0]
 		}
+		console.log(channel)
 
 		if (channel){
 			const socket = io("localhost:3000", {
@@ -39,30 +43,37 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 					});
 				  }
 			})
-
+			
 			if (channel === 'message')
 				socket.emit('message', {
 					conv_id: conv_id,
-					message: msg
+					message: invite ? lobbyid : msg,
+					invite: invite
 				})
-			else if (channel === 'groupMessage')
+				else if (channel === 'groupMessage')
+				{
+					console.log(lobbyid)
 				socket.emit('groupMessage', {
 					group_conv_id: conv_id,
-					message: msg
+					message: invite ? lobbyid : msg,
+					invite: invite
 				})
-			else if (channel === 'privateGroupMessage')
+			}
+				else if (channel === 'privateGroupMessage')
 				socket.emit('privateGroupMessage', {
 					group_conv_id: conv_id,
-					message: msg,
-					password: findGoodPass(conv_id)?.password
+					message: invite ? lobbyid : msg,
+					password: findGoodPass(conv_id)?.password,
+					invite: invite
 				})
 
 			setInputMessage('')
 			let cpy = channel
 			setChannel(null)
+			setInvite(false)
 			return () => {socket.off(cpy)}
 		}
-	}, [channel, conv_id, goodPass, msg])
+	}, [channel, conv_id, goodPass, msg, invite, lobbyid])
 	
 	const [ids, setIds] = useState<number[]>([])
 
@@ -191,25 +202,43 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 		})
 	}, [perm, setConv, convCpy, setRefreshConvListCpy, setRefresh, setHideRightCpy])
 
-	const gameSocket = io('http://localhost:3000/game', {query: { userID : logState }});
-	const [lobbyid, setlobbyid] = useState("");
+	const gameSocket = useContext(InviteContext);
+
 
 	useEffect( () => 
 	{
-		gameSocket.on(ServerEvents.LobbyJoin, (data) => { console.log(data.lobbyid); setlobbyid(data.lobbyid) } );
+		if ( gameSocket )
+			gameSocket.on(ServerEvents.LobbyJoin, (data) => { console.log(data.lobbyid); setlobbyid(data.lobbyid) } );
+
+		console.log("No Lobby ID");
+		if ( lobbyid )
+		{
+			setInvite(true)
+			setMsg(inputMessage)
+			
+			if (nav === 1)
+				setChannel('message')
+			else if (nav === 2 && !isConvPrivate)
+				setChannel('groupMessage')
+			else if (nav === 2 && isConvPrivate)
+				setChannel('privateGroupMessage')
+		}
 		
-	}, [lobbyid, gameSocket])
+	}, [gameSocket, lobbyid])
 
 	const onPlayTogether = () =>
 	{
-		gameSocket.emit(ClientEvents.CreateLobby, 
-		{
-				skin: "gotham",
-				Paddle1color: "#FF0000",
-				Paddle2color: "#001EFF",
-				Ballcolor: "#FFFFFF",
-				Netcolor: "#FFFFFF",
-		});
+		console.log("game socket")
+		
+		if ( gameSocket )
+			gameSocket.emit(ClientEvents.CreateEmptyLobby, 
+				{
+						skin: "gotham",
+						Paddle1color: "#FF0000",
+						Paddle2color: "#001EFF",
+						Ballcolor: "#FFFFFF",
+						Netcolor: "#FFFFFF",
+				});
 	}
 
 	const [panelTrigger, setPanelTrigger] = useState(false)
@@ -229,11 +258,11 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 			e.preventDefault()
 			setMsg(inputMessage)
 			if (nav === 1)
-			setChannel('message')
+				setChannel('message')
 			else if (nav === 2 && !isConvPrivate)
-			setChannel('groupMessage')
+				setChannel('groupMessage')
 			else if (nav === 2 && isConvPrivate)
-			setChannel('privateGroupMessage')
+				setChannel('privateGroupMessage')
 			
 		}} className='chatInput'>
 				<input

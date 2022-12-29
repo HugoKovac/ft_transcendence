@@ -3,6 +3,7 @@ export enum ClientEvents
     Ping = 'client.ping',
 
     CreateLobby = 'client.createlobby',
+    CreateEmptyLobby = 'client.createemptylobby',
     JoinLobby = 'client.joinlobby',
     LeaveLobby = 'client.leavelobby',
 

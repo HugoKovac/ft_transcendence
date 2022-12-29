@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router"
 import Parsepp from "../imgParse"
+import { createSearchParams } from "react-router-dom"
 
-const Message = (props: { content: string, own: boolean, username: string, userPP: string, sender_id: number, date: string }) => {
+const Message = (props: { content: string, own: boolean, username: string, userPP: string, sender_id: number, date: string, invite: boolean }) => {
 	const date = new Date(props.date).toLocaleString()
 	const nav = useNavigate()
+
+	const lobbyidquery = { id: props.content }
 
 	return <div className={props.own ? "msg own" : "msg"}>
 		<div className="info">
@@ -11,8 +14,8 @@ const Message = (props: { content: string, own: boolean, username: string, userP
 			<p>{props.username}</p>
 			<p className="date">{date}</p>
 		</div>
-		<p>{props.content}</p>
+		{!props.invite && <p>{props.content}</p>}
+		{props.invite && <a onClick={() => {nav({pathname:'/game/lobby', search: `?${createSearchParams(lobbyidquery)}`})}}>{props.content}</a>}
 	</div>
 }
-
 export default Message

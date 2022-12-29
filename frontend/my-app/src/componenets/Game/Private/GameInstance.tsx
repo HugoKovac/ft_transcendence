@@ -220,16 +220,19 @@ export default function GameInstance()
         if ( event.defaultPrevented ) 
             return ;
 
-        if ( event.code === "ArrowUp" ) 
+        if ( socket )
         {
-            socket.emit(ClientEvents.Player1ArrowUpPress);
-            Player1UpArrow.current = true;
-        }
+            if ( event.code === "ArrowUp" ) 
+            {
+                socket.emit(ClientEvents.Player1ArrowUpPress);
+                Player1UpArrow.current = true;
+            }
 
-        else if ( event.code === "ArrowDown"  ) 
-        {
-            socket.emit(ClientEvents.Player1ArrowDownPress);
-            Player1DownArrow.current = true;
+            else if ( event.code === "ArrowDown"  ) 
+            {
+                socket.emit(ClientEvents.Player1ArrowDownPress);
+                Player1DownArrow.current = true;
+            }
         }
         
         event.preventDefault();
@@ -240,16 +243,19 @@ export default function GameInstance()
         if ( event.defaultPrevented ) 
             return ;
 
-        if ( event.code === "ArrowUp")
+        if ( socket )
         {
-            socket.emit(ClientEvents.Player2ArrowUpPress);
-            Player2UpArrow.current = true;
-        }
+            if ( event.code === "ArrowUp")
+            {
+                socket.emit(ClientEvents.Player2ArrowUpPress);
+                Player2UpArrow.current = true;
+            }
 
-        else if ( event.code === "ArrowDown"  )
-        {
-            socket.emit(ClientEvents.Player2ArrowDownPress);
-            Player2DownArrow.current = true;
+            else if ( event.code === "ArrowDown"  )
+            {
+                socket.emit(ClientEvents.Player2ArrowDownPress);
+                Player2DownArrow.current = true;
+            }
         }
         
         event.preventDefault();
@@ -260,19 +266,22 @@ export default function GameInstance()
         if ( event.defaultPrevented ) 
             return ;
 
-        if ( event.code === "Space" && gameStart === false )
-            socket.emit(ClientEvents.ReadyState);
-
-        if ( event.code === "ArrowUp")
+        if ( socket )
         {
-            socket.emit(ClientEvents.Player1ArrowUpRelease);
-            Player1UpArrow.current = false;
-        }
+            if ( event.code === "Space" && gameStart === false )
+                socket.emit(ClientEvents.ReadyState);
 
-        else if ( event.code === "ArrowDown"  )
-        {
-            socket.emit(ClientEvents.Player1ArrowDownRelease);
-            Player1DownArrow.current = false;
+            if ( event.code === "ArrowUp")
+            {
+                socket.emit(ClientEvents.Player1ArrowUpRelease);
+                Player1UpArrow.current = false;
+            }
+
+            else if ( event.code === "ArrowDown"  )
+            {
+                socket.emit(ClientEvents.Player1ArrowDownRelease);
+                Player1DownArrow.current = false;
+            }
         }
         
         event.preventDefault();
@@ -283,19 +292,22 @@ export default function GameInstance()
         if ( event.defaultPrevented ) 
             return ;
 
-        if ( event.code === "Space" && gameStart === false )
-            socket.emit(ClientEvents.ReadyState);
-
-        if ( event.code === "ArrowUp" )
+        if ( socket )
         {
-            socket.emit(ClientEvents.Player2ArrowUpRelease);
-            Player2UpArrow.current = false;
-        }
+            if ( event.code === "Space" && gameStart === false )
+                socket.emit(ClientEvents.ReadyState);
 
-        else if ( event.code === "ArrowDown" )
-        {
-            socket.emit(ClientEvents.Player2ArrowDownRelease);
-            Player2DownArrow.current = false;
+            if ( event.code === "ArrowUp" )
+            {
+                socket.emit(ClientEvents.Player2ArrowUpRelease);
+                Player2UpArrow.current = false;
+            }
+
+            else if ( event.code === "ArrowDown" )
+            {
+                socket.emit(ClientEvents.Player2ArrowDownRelease);
+                Player2DownArrow.current = false;
+            }
         }
         
         event.preventDefault();
@@ -455,7 +467,7 @@ export default function GameInstance()
                         context.fillText("Waiting for player1....", canvasWidth.current / 10, 30);
                     if ( CurrentLobbyState.Player2Ready === false )
                         context.fillText("Waiting for player2....", canvasWidth.current - canvasWidth.current / 3, 30);
-                    if ( ( CurrentLobbyState.Player1id === socket.id && CurrentLobbyState.Player1Ready === false ) || ( CurrentLobbyState.Player2id === socket.id && CurrentLobbyState.Player2Ready === false ) )
+                    if ( ( socket && CurrentLobbyState.Player1id === socket.id && CurrentLobbyState.Player1Ready === false ) || ( socket && CurrentLobbyState.Player2id === socket.id && CurrentLobbyState.Player2Ready === false ) )
                             context.fillText("Press SPACE to play", canvasWidth.current / 2.5, canvasHeight.current / 2);
                 }
             }
@@ -518,20 +530,23 @@ export default function GameInstance()
     {
         startClock.current = Date.now();
 
-        if ( CurrentLobbyState )
+        if ( socket )
         {
-            if ( CurrentLobbyState.Player1id === socket.id )
+            if ( CurrentLobbyState )
             {
-                window.addEventListener('keydown', Player1keyDownHandler);
-                window.addEventListener('keyup', Player1keyUpHandler);
+                if ( CurrentLobbyState.Player1id === socket.id )
+                {
+                    window.addEventListener('keydown', Player1keyDownHandler);
+                    window.addEventListener('keyup', Player1keyUpHandler);
+                }
+                else if ( CurrentLobbyState.Player2id === socket.id )
+                {
+                    window.addEventListener('keydown', Player2keyDownHandler);
+                    window.addEventListener('keyup', Player2keyUpHandler);
+                }
+                else { SetSpectatorMode(true); } //! Else go to spectator mode
             }
-            else if ( CurrentLobbyState.Player2id === socket.id )
-            {
-                window.addEventListener('keydown', Player2keyDownHandler);
-                window.addEventListener('keyup', Player2keyUpHandler);
-            }
-            else { SetSpectatorMode(true); } //! Else go to spectator mode
-        }
+    }
 
         clientPrediction();
         serverloop();
@@ -581,7 +596,8 @@ export default function GameInstance()
 
     const BackToLobby = () =>
     {
-        socket.emit(ClientEvents.LeaveLobby);
+        if ( socket )
+            socket.emit(ClientEvents.LeaveLobby);
         setLobby(null);
         navigate('/game/lobby');
     }
