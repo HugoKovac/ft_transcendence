@@ -16,6 +16,7 @@ export default function GameMatcher()
     const SkinPref = React.useRef<string>("default");
 
     useEffect( () => {
+        
         document.getElementById('skin')?.addEventListener('change', RetrieveSkin);
         if ( searchParamsString )
         {

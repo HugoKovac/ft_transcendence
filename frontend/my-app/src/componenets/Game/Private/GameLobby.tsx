@@ -60,10 +60,6 @@ export default function GameLobby() {
     const [BallColor, SetBallColor] = useState("#fff");
     const [Skin, SetSkin] = useState("default");
 
-    console.log("hey")
-    console.log(searchParamsString)
-
-    
     useEffect( () => 
     {
 
@@ -71,7 +67,6 @@ export default function GameLobby() {
         {
             if  ( socket )
             {
-                console.log("Emited join lobby !")
                 socket.emit(ClientEvents.JoinLobby, 
                 {
                     lobbyId: searchParamsString,
@@ -79,7 +74,7 @@ export default function GameLobby() {
             }
         }
 
-    }, [searchParamsString]);
+    }, [searchParamsString, socket]);
 
     const emitLobby = () => 
     {
@@ -329,14 +324,14 @@ export default function GameLobby() {
         <div className={Skin}>
             <NavBar />
             <div className="ColorPicker">
-                <label> Player 1 <input type="color" value={Paddle1Color} id="Paddle1CP" className="Paddle1ColorPicker"/></label>
-                <label> Ball <input type="color" value={BallColor} id="BallCP" className="BallColorPicker"/></label>
-                <label> Net <input type="color" value={NetColor} id="NetCP" className="NetColorPicker"/></label>
-                <label> Player 2 <input type="color" value={Paddle2Color} id="Paddle2CP" className="Paddle2ColorPicker"/></label>
+                <label> Player 1 <input type="color" onChange={Paddle1ColorPicker} value={Paddle1Color} id="Paddle1CP" className="Paddle1ColorPicker"/></label>
+                <label> Ball <input type="color" onChange={BallColorPicker} value={BallColor} id="BallCP" className="BallColorPicker"/></label>
+                <label> Net <input type="color" onChange={NetColorPicker} value={NetColor} id="NetCP" className="NetColorPicker"/></label>
+                <label> Player 2 <input type="color" onChange={Paddle2ColorPicker} value={Paddle2Color} id="Paddle2CP" className="Paddle2ColorPicker"/></label>
             </div>
             <label className='SkinLabel'>Skin</label>
             <div className="SkinSelector">
-                    <select id="skin" value={Skin} className="SkinList">
+                    <select id="skin" onChange={RetrieveSkin} value={Skin} className="SkinList">
                             <option value="default">Default</option>
                             <option value="SpaceGIF">SpaceGIF</option>
                             <option value="BananaGIF">BananaGIF</option>

@@ -4,6 +4,7 @@ import RoutesBrowser from './componenets/RoutesBrowser';
 import { RecoilRoot } from 'recoil';
 import './styles/index.css';
 import { UserStatusProvider } from './componenets/Login/UserStatusContext';
+import { WebsocketProvider } from './componenets/Game/WebsocketContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -12,9 +13,11 @@ const root = ReactDOM.createRoot(
 root.render(
 	<LoginStateProvider>
 		<UserStatusProvider>
+			<WebsocketProvider>
 			<RecoilRoot>
 				<RoutesBrowser />
 			</RecoilRoot>
+			</WebsocketProvider>
 		</UserStatusProvider>
 	</LoginStateProvider>
 );

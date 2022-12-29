@@ -4,6 +4,7 @@ import { ChatService } from './chat.service'
 import { banUserDTO, newGroupMsgDTO, newMsgDTO, newPrivateGroupMsgDTO, refreshConvDTO } from './input.dto'
 
 @WebSocketGateway({
+	namespace: 'chat',
 	cors: {
 		origin: "*",
 		methods: ["GET", "POST"]

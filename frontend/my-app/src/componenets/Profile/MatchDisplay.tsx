@@ -14,7 +14,7 @@ const MatchDisplay = (props : {player1 : protoPlayer, player2 : protoPlayer, tim
 	const player_l : protoPlayer = (props.P1W) ? props.player2 : props.player1
 	console.log("Voici les playes : ", JSON.stringify(player_l))
 	const {logState} = useContext(LoginStateContext)
-	const res : boolean = (props.P1W && logState == props.player1.id) || (!props.P1W && logState != props.player1.id)
+	const res : boolean = (props.P1W && logState === props.player1.id) || (!props.P1W && logState !== props.player1.id)
 	return (
 		<div className={"matchDisplay " + (res ? "matchWon" : "matchLoose")}>
 			<div className="score">

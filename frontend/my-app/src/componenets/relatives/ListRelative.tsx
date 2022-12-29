@@ -1,10 +1,8 @@
-import { useEffect, useState , useContext } from "react";
+import { useEffect, useState } from "react";
 import LineUser from "./LineUser";
-import LoginStateContext from "./../Login/LoginStateContext"
 import axios from "axios"
 
 const ListRelative  = (props : {}) => {
-	const {logState} = useContext(LoginStateContext)
 	type userProto = {
 		id :number,
 		email: string,
@@ -31,7 +29,7 @@ const ListRelative  = (props : {}) => {
 			setter(listUserFriends.map((ele) => {
 			let pp : string = ele.pp
 			if (pp && pp.startsWith('localhost:3000/profile-pictures/'))
-				pp = 'http://' + pp
+				pp = 'http://' + pp;
 			return <LineUser name={ele.username} img_path={pp} id={ele.id} default_state={defaultState} status={ele.status} lobbyID={ele.LobbyID}/>
 			}))
 			console.log("list of friends modified : ", JSON.stringify(listUserFriends, null, 2))

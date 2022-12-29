@@ -15,7 +15,7 @@ const Message = (props: { content: string, own: boolean, username: string, userP
 			<p className="date">{date}</p>
 		</div>
 		{!props.invite && <p>{props.content}</p>}
-		{props.invite && <a onClick={() => {nav({pathname:'/game/lobby', search: `?${createSearchParams(lobbyidquery)}`})}}>{props.content}</a>}
+		{props.invite && <button onClick={() => {nav({pathname:'/game/lobby', search: `?${createSearchParams(lobbyidquery)}`})}}>{props.content}</button>}
 	</div>
 }
 export default Message

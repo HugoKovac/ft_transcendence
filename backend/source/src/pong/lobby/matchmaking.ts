@@ -93,7 +93,6 @@ export class Matchmaking
 
         await this.pongservice.ChangeUserStatus(check1, 2, lobby.id);
         await this.pongservice.ChangeUserStatus(check2, 2, lobby.id);
-        console.log(await this.pongservice.getUserStatus(check1));
     }
     
     public async SearchAndMatch()

@@ -1,15 +1,12 @@
-import { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
-import Unauthorized from '../../pages/Unauthorized';
 import '../../styles/Game.css'
-import LoginStateContext from '../Login/LoginStateContext';
 
 export default function GameMenu() {
     
         return (
             <div>
                 <div className="GameTitle">
-                    <text className="PongTitle"> PONG </text>
+                    <p className="PongTitle"> PONG </p>
                 </div>
                 <div className="GameMode">
                     <NavLink to={'/game/matchmaking'} end>

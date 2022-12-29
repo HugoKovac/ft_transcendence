@@ -17,8 +17,6 @@ export default function GamePrivateManager()
 
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const searchParamsString = searchParams.get('id');
-
     useEffect( () => {
 
         if ( socket )
@@ -48,10 +46,9 @@ export default function GamePrivateManager()
 
     if ( lobby === null )
     {
-        console.log("going to lobby")
+        console.log("GameLobby")
         return <GameLobby/>
     }
-    
-    console.log("Instance")
+    console.log("GameInstance")
     return <GameInstance/>;
 }
