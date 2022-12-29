@@ -5,6 +5,65 @@ import {useContext, useState, useEffect} from 'react'
 import { useSearchParams } from "react-router-dom"
 import "./profile_style.scss"
 import axios from "axios"
+import { ToastContainer, toast } from 'react-toastify';
+import ButtonRelativeState from "../relatives/ButtonRelativeState"
+import { NavLink } from "react-router-dom"
+
+
+const ButtonsRelative = (props : {name : string, img_path: string, id : number} ) => {
+    const {logState} = useContext(LoginStateContext)
+	const [relative_req, setRelativeReqState] = useState<string>("")
+	const [relative_state, setRelativeState] = useState<string>("")
+	let copySetRelativeReqState = (rs : string) => {
+		setRelativeReqState(rs)
+	}
+	
+	async function get() : Promise<void> {
+		const req_base = axios.create({ baseURL: 'http://localhost:3000/api/req-friend/', withCredentials: true})
+		const obj_req = {user_id: logState, send_id : props.id}
+		let strPost : string = ""
+		if (relative_req == "remove_friend")
+			strPost = 'delete'
+		else if (relative_req == "add_friend")
+				strPost = "sendInvit"
+		else if (relative_req == "block_user")
+			strPost = "blockUser"
+		else if (relative_req == "unblock_user")
+				strPost = "unblockUser"
+		else if (relative_req == "send")
+				strPost = "sendInvit"
+		else
+		{
+			req_base.post('relative-state', obj_req).then((res) => {
+				if (!res.data)
+					return
+				setRelativeState(res.data)
+				console.log("resp 2 ; ", res.data)
+			}).catch((e) => {console.log(e)})
+				return
+		}
+		console.log("req : ", strPost)
+		req_base.post(strPost, obj_req).then((res) => {
+			console.log("response : ", res.data)
+			toast.info(res.data, {
+				position: toast.POSITION.BOTTOM_RIGHT
+			  });
+			req_base.post('relative-state', obj_req).then((res) => {
+			if (!res.data)
+				return
+			setRelativeState(res.data)
+			console.log("resp 2 ; ", res.data)
+		}).catch((e) => {console.log(e)})
+	})
+	}
+	useEffect(() => {get()}, [])
+	useEffect(() => {get()}, [relative_req])
+	if (relative_state == "")
+		return <></>
+	else
+    	return <ButtonRelativeState relative_state={relative_state} setRelativeReqState={copySetRelativeReqState}/>
+}
+
 
 export type userProto = {
 		id :number,
@@ -12,8 +71,24 @@ export type userProto = {
 		username: string,
 		pp: string,
 		provider_id : number,
-		status : string
+		status : number,
+		LobbyID: string
 		}
+
+export function statusDetermine(status : number, lobby : string) : JSX.Element
+{
+	let query : string = "game/matchmaking?id=" + lobby
+	if (status == 2)
+		return <div className="status">
+			<NavLink to="">
+				<p>Status : inGame</p>
+			</NavLink>
+		</div>
+	else if (status == 1)
+		return <div className="status"><p>Status : Online</p></div>
+	else
+		return <div className="status"><p>Status : Offline</p></div>
+}
 
 export const ProfileComp = () => {
 
@@ -44,6 +119,7 @@ export const ProfileComp = () => {
 	{
 		setDataUser(rs)
 	}
+
 	if (res_user_id != -1)
 		get_data_user(res_user_id)
 
@@ -58,7 +134,7 @@ export const ProfileComp = () => {
 	else if (dataUser == 'loading')
 	return <div className="load"><p>Loading</p></div>
 
-	else {
+	else if (dataUser != undefined) {
 	let path : JSX.Element = <img className="ppUser" src={ dataUser?.pp ?? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0D8RJLIfGu9BfAEv3oMYyxiGfkGsGABeSsY6K2Ugy&s"}/>
 	return <div className="profilePage">
 		<div className="profileHeader">
@@ -68,15 +144,12 @@ export const ProfileComp = () => {
 			<div className="nameUser">
 				<p className="name">{dataUser?.username}</p>
 			</div>
+			<ButtonsRelative name={dataUser?.username} img_path={dataUser.pp} id={dataUser.id}/>
 			<div className="status">
 				<div className="titleStatus">
-				<p className="status">Status : {dataUser?.status}</p>
+				<p className="status">{dataUser?.status}</p>
 				</div>
-				<div>
-					<button className="enterInGame">
-						watch the game
-					</button>
-				</div>
+				{statusDetermine(dataUser.status, dataUser.LobbyID)}
 			</div>
 		</div>
 		<GamePartProfile user_id={Number(user_id)}/>

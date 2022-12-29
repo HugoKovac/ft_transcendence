@@ -10,7 +10,9 @@ const ListRelative  = (props : {}) => {
 		email: string,
 		username: string,
 		pp: string,
-		provider_id : number
+		provider_id : number,
+		LobbyID : string,
+		status: number
 		}
 		let [listUserFriends, setListUserFriends] = useState<JSX.Element[]>([])
 		let [listUserInvit, setListUserInvit] = useState<JSX.Element[]>([])
@@ -26,7 +28,7 @@ const ListRelative  = (props : {}) => {
 			if (!res.data)
 				return ;
 			let listUserFriends : userProto[] = res.data
-			setter(listUserFriends.map((ele) => <LineUser name={ele.username} img_path={ele.pp} id={ele.id} default_state="friend"/>))
+			setter(listUserFriends.map((ele) => <LineUser name={ele.username} img_path={ele.pp} id={ele.id} default_state="friend" status={ele.status} lobbyID={ele.LobbyID}/>))
 			console.log("list of friends modified : ", JSON.stringify(listUserFriends, null, 2))
 		}).catch()
 

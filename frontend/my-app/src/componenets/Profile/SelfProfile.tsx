@@ -5,7 +5,8 @@ import GamePartProfile from "./GamePartProfile"
 import axios from "axios"
 import { NavLink } from "react-router-dom"
 import Disconnect from "../Disconnect"
-import "./profile_style.scss"
+import { ToastContainer, toast } from 'react-toastify';
+
 
 const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | undefined) => void}) => {
 	let userData: userProto = props.userData
@@ -37,7 +38,9 @@ const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | 
 			return
 		const req_base = axios.create({ baseURL: 'http://localhost:3000/api/profile/', withCredentials: true})
 		req_base.post("setUsername", {user_id : logState, username : newUsername}).then((res) => {
-			console.log("from change username : " + JSON.stringify(res))
+			toast.info(res.data, {
+				position: toast.POSITION.BOTTOM_RIGHT
+			  });
 			props.setData("loading")
 		}).catch((e) => console.log(e))
 	}
@@ -52,6 +55,9 @@ const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | 
     		formData.append('file',newPp)
 			req_base.post("uploadPp", formData, {headers : { "Content-Type": "multipart/form-data" }}).then((res) => {
 				console.log(res)
+				toast.info(res.data, {
+					position: toast.POSITION.BOTTOM_RIGHT
+				  });
 				props.setData("loading")
 			}).catch((e) => console.log(e))
 		}
@@ -62,6 +68,9 @@ const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | 
 				withCredentials: true,
 			})
 			req_base.post("delPp", {user_id : logState}).then((res) => {
+				toast.info(res.data, {
+					position: toast.POSITION.BOTTOM_RIGHT
+				  });
 				console.log(res)
 				props.setData("loading")
 			}).catch((e) => console.log(e))
@@ -107,6 +116,8 @@ const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | 
 		</div>
 		</div>
 		<GamePartProfile user_id={Number(userData.id)}/>
+		<ToastContainer/>
+
 	</div>
 	}
 

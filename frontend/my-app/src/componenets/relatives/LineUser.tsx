@@ -4,10 +4,11 @@ import axios from "axios"
 import LoginStateContext from "./../Login/LoginStateContext"
 import "./relatives.scss"
 import { ToastContainer, toast } from 'react-toastify';
+import { statusDetermine } from '../Profile/Profile'
 
 
 
-const LineUser = (props : {name : string, img_path: string, id : number, default_state : string}) => {
+const LineUser = (props : {name : string, img_path: string, id : number, default_state : string, status: number, lobbyID: string}) => {
 	console.log(JSON.stringify(props, null, 2))
 	const {logState} = useContext(LoginStateContext)
 	const [relative_req, setRelativeReqState] = useState<string>("")
@@ -63,7 +64,8 @@ const LineUser = (props : {name : string, img_path: string, id : number, default
 		</a>
         <p>{props.name}</p>
         <ButtonRelativeState relative_state={relative_state} setRelativeReqState={copySetRelativeReqState}/>
-        </div>
+		{statusDetermine(props.status, props.lobbyID)}
+		</div>
 		</li>
 }
 
