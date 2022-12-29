@@ -5,15 +5,15 @@ import Chat from "../pages/Chat"
 import Friends from "../pages/Friends"
 import Home from "../pages/Home"
 import Login from "../pages/Login"
-import Profile from "../pages/Profile"
+import Profile from "../pages/Profile_bis"
 import Unauthorized from "../pages/Unauthorized"
 import CheckTokenAfterLogin, { CheckTokenFirstMount } from "./Login/CheckToken"
 import LoginStateContext from "./Login/LoginStateContext"
-import GameLobby from "./Game/GameLobby"
-import GameMatchmaking from "./Game/GameMatchmaking"
-import GamePrivateManager from "./Game/GamePrivateManager"
-import Verify_2fa from "./Login/Verify2FA"
-import Active2FA from "../pages/Active2FA"
+import GameMatchmaking from "./Game/Matchmaking/GameMatchmaking"
+import GamePrivateManager from "./Game/Private/GamePrivateManager"
+import Verify2fa from "./Login/VerifyTwoFA"
+import Active2FA from "../pages/ActiveTwoFA"
+import { WebsocketProvider } from "./Game/WebsocketContext"
 
 
 
@@ -48,14 +48,14 @@ const RoutesBrowser = () : React.ReactElement => {
 				<Route path='/game' element={<ProtectedRoute />}>
 					<Route path='/game' element={<Game />}/>
 				</Route>
-				<Route path='/game/matchmaking' element={<ProtectedRoute />}>
-					<Route path='/game/matchmaking' element={<GameMatchmaking />}/>
-				</Route>
-				<Route path='/game/lobby' element={<ProtectedRoute />}>
-					<Route path='/game/lobby' element={<GamePrivateManager />}/>
-				</Route>
+					{/* <Route path='/game/matchmaking' element={<ProtectedRoute />}> */}
+						<Route path='/game/matchmaking' element={ <WebsocketProvider> <GameMatchmaking /> </WebsocketProvider>}/>
+					{/* </Route> */}
+					{/* <Route path='/game/lobby' element={<ProtectedRoute />}> */}
+						<Route path='/game/lobby' element={ <WebsocketProvider> <GamePrivateManager/> </WebsocketProvider>}/>
+					{/* </Route> */}
 				<Route path='/redirect/check_token' element={<CheckTokenAfterLogin />} />
-				<Route path='/redirect/verify_2fa' element={<Verify_2fa />} />
+				<Route path='/redirect/verify_2fa' element={<Verify2fa />} />
 				<Route path='/active2FA' element={<Active2FA />} />
 			</Routes>
 		</BrowserRouter>

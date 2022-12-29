@@ -1,0 +1,97 @@
+.profileHeader
+{
+	height: 300px;
+	background-color: #292d39;
+	text-align: center;
+	display: flex;
+	justify-content: space-around;
+	p{
+		color: azure;
+		font-size: 40px;
+	}
+	.pp{
+		.ppUser {
+			width: 150px;
+			border-radius: 100%;
+		}
+	}
+}
+
+.matchWon
+{
+	border: 3px solid greenyellow;
+	background-color: greenyellow;
+	p {
+		font-size: 30px;
+		color: black;
+	}
+}
+.matchLoose
+{
+	border: 3px solid rgb(128, 0, 0);
+	background-color: rgb(128, 0, 0);
+	p {
+		font-size: 30px;
+		color: white;
+	}
+}
+.matchDisplay
+{
+	margin-bottom: 20px;
+	height : 200px;
+	width: 80%;
+	max-width: 750px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	.score
+	{
+		display: flex;
+		flex-direction: row;
+		height: 50%;
+		width: 50%;
+		div
+		{
+			text-align: center;
+			height: 100%;
+			width : 30%;
+		}
+	}
+	.playersname
+	{
+		display: flex;
+		flex-direction: row;
+		height: 50%;
+		width: 50%;
+		div
+		{
+			text-align: center;
+			height: 100%;
+			width : 30%;
+		}
+	}
+}
+.allMatchs 
+{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.listAchivements
+{
+	margin-left: 50px;
+}
+.listSummary
+{
+	margin-left: 50px;
+}
+
+.decideSettings
+{
+	height : 500 px;
+	background-color: beige;
+}

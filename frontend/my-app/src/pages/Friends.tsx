@@ -1,4 +1,5 @@
 import AddFriend from "../componenets/AddFriend"
+import ListRelative from "../componenets/relatives/ListRelative"
 import FriendsList from "../componenets/FriendsList"
 import NavBar from "../componenets/NavBar"
 
@@ -7,7 +8,7 @@ const Friends = () => {
 		<NavBar />
 		<h1>Friends</h1>
 		<AddFriend />
-		<FriendsList />
+		<ListRelative />
 	</div>
 }
 

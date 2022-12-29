@@ -10,11 +10,22 @@ export type ServerPayload = {
   };
 
   [ServerEvents.LobbyState]: {
+
+    canvasWidth: number,
+    canvasHeight: number,
+    netWidth: number,
+    netHeight: number,
+
+    endMessage: string,
     message: string;
     skin: string;
+    NetColor: string,
     lobbyid : string,
+    numberOfSpectator: number,
 
+    gameEnd: boolean,
     gameStart: boolean,
+    PauseGame: boolean,
 
     scoreOne: number,
     scoreTwo: number,
@@ -24,6 +35,9 @@ export type ServerPayload = {
 
     Player1Ready: boolean,
     Player2Ready: boolean,
+
+    Player1Win: boolean,
+    Player2Win: boolean,
 
     Player1x: number,
     Player1y: number,

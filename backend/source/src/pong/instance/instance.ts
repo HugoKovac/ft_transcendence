@@ -1,4 +1,7 @@
 import { Lobby } from "../lobby/lobby";
+import { GameEndReason } from "../enums";
+import { BALLGRAVITY, BALLSPEED, CANVASHEIGHT, CANVASWIDTH, PADDLEHEIGHT, PADDLEWIDTH, WINCONDITION } from "./gameConstant";
+import { AuthenticatedSocket } from "../types";
 
 interface Paddle
 {
@@ -23,21 +26,8 @@ interface Ball
     gravity : number;
 }
 
-const CANVASHEIGHT = 400;
-const CANVASWIDTH = 700;
-
-const NETWIDTH = 5;
-const NETHEIGHT = CANVASHEIGHT;
-
-const PADDLEHEIGHT = 100;
-const PADDLEWIDTH = 10;
-
-const BALLSPEED = 8;
-const BALLGRAVITY = 4;
-
 export class Instance 
 {
-
     public Player1Online : boolean = false;
  
     public Player2Online : boolean = false;
@@ -46,10 +36,19 @@ export class Instance
 
     public Player2Ready : boolean = false;
 
+    public Player1Win : boolean = false;
+
+    public Player2Win : boolean = false;
+
     public Player1id : string = null;
 
     public Player2id : string = null;
 
+    public Player1userid : string = null;
+
+    public Player2userid : string = null;
+
+    public gameEnd = false;
     public gameStart = false;
 
     public Player1UpArrow = false;
@@ -60,6 +59,10 @@ export class Instance
 
     public scoreOne = 0;
     public scoreTwo = 0;
+
+    public numberOfSpectator = 0;
+
+    public endMessage : string = null;
 
     public Player1 : Paddle = ({
         x : 10,
@@ -93,23 +96,22 @@ export class Instance
         gravity: BALLGRAVITY
     })
 
-
-
-
-    constructor ( private readonly lobby : Lobby ){}
-
-
+    constructor ( private readonly lobby : Lobby ) {}
 
     public BallBounce( )
     {
 
         if ( this.Ball.y +  this.Ball.gravity <= 0 ||  this.Ball.y +  this.Ball.gravity >= CANVASHEIGHT )
         {
-            this.Ball.gravity =  this.Ball.gravity * -1;
+            this.Ball.gravity = this.Ball.gravity * -1;
             this.Ball.y +=  this.Ball.gravity;
             this.Ball.x +=  this.Ball.speed;
+            if ( this.Ball.speed < 0 )
+                this.Ball.speed -= 0.2;
+            else
+                this.Ball.speed += 0.2;
         }
-        else
+        else //! Doesn't bounce just move
         {
             this.Ball.y +=  this.Ball.gravity;
             this.Ball.x +=  this.Ball.speed;
@@ -123,13 +125,21 @@ export class Instance
             ( this.Ball.x +  this.Ball.width +  this.Ball.speed >=  this.Player2.x &&  this.Ball.x +  this.Ball.width +  this.Ball.speed <=  this.Player2.x +  this.Player2.width ) && 
             this.Ball.y +  this.Ball.gravity >  this.Player2.y ))
             {
-                this.Ball.speed =  this.Ball.speed * -1;
+                this.Ball.speed = this.Ball.speed * -1;
+                if ( this.Ball.speed < 0 )
+                    this.Ball.speed -= 0.4;
+                else
+                    this.Ball.speed += 0.4;
             }
         else if (  this.Ball.y +  this.Ball.gravity <=  this.Player1.y +  this.Player1.height && 
             (  this.Ball.x +  this.Ball.speed <=  this.Player1.x +  this.Player1.width &&  this.Ball.x +  this.Ball.speed >=  this.Player1.x ) && 
             this.Ball.y +  this.Ball.gravity >  this.Player1.y)
             {
                 this.Ball.speed =  this.Ball.speed * -1;
+                if ( this.Ball.speed < 0 )
+                    this.Ball.speed -= 0.4;
+                else
+                    this.Ball.speed += 0.4;
             }
         else if (  this.Ball.x +  this.Ball.speed <  this.Player1.x - 100 )
         {
@@ -163,7 +173,6 @@ export class Instance
             
     }
 
-
     public toggleReadyState( clientId : string )
     {
         if ( clientId === this.Player1id && this.Player1Ready == false )
@@ -176,8 +185,11 @@ export class Instance
         else if ( clientId === this.Player2id && this.Player2Ready == true )
             this.Player2Ready = false;
         
-        if ( this.Player2Ready == true  && this.Player1Ready == true )
+        if ( this.Player2Ready == true && this.Player1Ready == true )
+        {
             this.gameStart = true;
+            this.lobby.createdAT.setDate(Date.now());
+        }
         
         this.lobby.refreshLobby();
     }
@@ -238,19 +250,52 @@ export class Instance
         this.lobby.refreshLobby();
     }
 
+    public finishGame( reason: string, MatchMakingMode: boolean )
+    {
+        this.gameEnd = true;
+        this.gameStart = false;
+
+        switch ( reason )
+        {
+            case GameEndReason.Player1Left, GameEndReason.Player1LeftRanked:
+                this.Player2Win = true;
+                break ;
+            case GameEndReason.Player2Left, GameEndReason.Player2LeftRanked:
+                this.Player1Win = true;
+                break ;
+        }
+
+        if ( MatchMakingMode == true )
+            this.lobby.saveGame({Player1ID: this.Player1userid,
+                                Player2ID: this.Player2userid,
+                                Player1Score: this.scoreOne,
+                                Player2Score: this.scoreTwo,
+                                Player1Won: this.Player1Win,
+                                Player2Won: this.Player2Win,
+                                GameEndReason: reason}, reason);
+
+        this.endMessage = reason;
+    }
+
+    public checkFinish()
+    {
+        if ( this.scoreOne >= WINCONDITION )
+            this.finishGame(GameEndReason.Player1Win, this.lobby.MatchMakingMode);
+        else if ( this.scoreTwo >= WINCONDITION )
+            this.finishGame(GameEndReason.Player2Win, this.lobby.MatchMakingMode);
+    }
 
     public gameLoop()
     {
-        if ( this.gameStart == true )
+        if ( this.gameStart == true && this.gameEnd == false )
         {
             this.BallBounce();
             this.BallCollision();
             this.updateVar();
+            this.checkFinish();
         }
+        if ( this.gameEnd  === true )
+            clearInterval(this.lobby.gameloop);
         this.lobby.refreshLobby();
     }
 }
-
-
-//*! Tout les calculs de distance, hit, doit se faire cote serveur
-//*! Le client doit simplement pouvoir envoyer les requete, et ne doit faire aucun calcul de son cote

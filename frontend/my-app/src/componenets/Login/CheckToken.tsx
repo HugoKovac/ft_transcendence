@@ -3,7 +3,7 @@ import { useContext } from "react"
 import { Navigate } from "react-router-dom"
 import LoginStateContext, { CheckLogState } from "./LoginStateContext"
 
-export function CheckTokenFirstMount(){
+export async function CheckTokenFirstMount(){
 	const {logState, setLogState} = useContext(LoginStateContext)
 	
 	useEffect(

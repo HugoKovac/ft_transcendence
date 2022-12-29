@@ -1,77 +1,84 @@
-import { OnGatewayConnection, OnGatewayInit, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
+import { OnGatewayConnection, OnGatewayInit, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse, WsException } from '@nestjs/websockets';
 import { ClientEvents } from '../shared/client/Client.Events'
-import { ServerEvents } from '../shared/server/Server.Events'
 import { Server, Socket } from 'socket.io'
-import { LobbyCreateDto } from './lobby/LobbyCreateDto';
-import { LobbyFactory } from './lobby/lobby-factory';
-import { Lobby, ServerPayload } from './lobby/lobby';
-import { LobbyJoinDto } from './lobby/LobbyJoinDto';
-import { json } from 'stream/consumers';
-
-export type AuthenticatedSocket = Socket & {
-
-  data: {
-    lobby: null | Lobby;
-  };
-
-};
+import { LobbyFactory } from './lobby/lobbyfactory';
+import { LobbyJoinDto, LobbyCreateDto, JoinMatchmakingDto } from './lobby/lobbydtos';
+import { AuthenticatedSocket } from './types'
+import { Matchmaking } from './lobby/matchmaking';
+import { PongService } from './pong.service';
 
 @WebSocketGateway({
+    namespace: 'game',
     cors:{
       origin:['http://localhost:3000'],
     },  
   }
 )
-export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGatewayDisconnect {
+export class PongGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
-    constructor( private readonly lobbyManager: LobbyFactory )
-    {
-    }
+constructor( private readonly lobbyManager: LobbyFactory, private readonly matchmaking: Matchmaking,
+  private readonly pongservice: PongService ) 
+  { 
+    setInterval( () => { this.matchmaking.SearchAndMatch() }, 1000);  
+  }
+
 
     afterInit(server: Server) {
       
       this.lobbyManager.server = server;
-
+      this.lobbyManager.pongservice = this.pongservice;
+      this.matchmaking.server = server;
+      this.matchmaking.pongservice = this.pongservice;
+      this.matchmaking.LobbyGenerator = this.lobbyManager;
     }
  
 
     async handleConnection( client: Socket ) : Promise<void> 
     {
+      console.log(client.handshake.query)
+      this.lobbyManager.initializeClient(client as AuthenticatedSocket, client.handshake.query.userID );
 
-      
-      //? Cette fonction se lancera automatiquement a la connection d'un client (socket)
-      //? Cette fonction permettera d'itentifier l'utilisateur, s'il est connecter ou a le droit de jouer au jeu.
-      //? De la nous pouvons verifier son token, s'il est dans la database ect...
-
-      //? Si tout c'est bien passer nous pourrons passer au restes des methodes ci-dessous
-
-      
-      this.lobbyManager.initializeClient(client as AuthenticatedSocket);
+      const check = await this.pongservice.checkUserID(client.data.userID);
+      if ( !check )
+      {
+        console.log("user not found")
+        this.handleDisconnect(client as AuthenticatedSocket);
+        return ;
+      }
+      console.log("user found");
     }
 
     async handleDisconnect( client: AuthenticatedSocket ) : Promise<void> 
     {
       this.lobbyManager.terminateClient(client);
+      if ( this.matchmaking.MatchmakingQueue.has(client.id) )
+          this.matchmaking.MatchmakingQueue.delete(client.id);
     }
 
-    //? Blind mode 
+    //? Blind mode
+    
     @SubscribeMessage(ClientEvents.CreateLobby)
     onLobbyCreation( client: AuthenticatedSocket, data: LobbyCreateDto )
     {
-      const lobby = this.lobbyManager.generateLobby(data.skin);
+      if ( !client.data.userID )
+        throw new WsException(' User not found ');
+      const lobby = this.lobbyManager.generateLobby(data.skin, data.Paddle1color, data.Paddle2color, data.Ballcolor, data.Netcolor, false);
       lobby.addClient(client);
     }
-    
 
     @SubscribeMessage(ClientEvents.JoinLobby)
     onLobbyJoin( client: AuthenticatedSocket, data: LobbyJoinDto )
     {
+      if ( !client.data.userID )
+        throw new WsException(' User not found ');
       this.lobbyManager.joinLobby(data.lobbyId, client);
     }
 
     @SubscribeMessage(ClientEvents.LeaveLobby)
     onLobbyLeave( client: AuthenticatedSocket, data: LobbyJoinDto )
     {
+      if ( !client.data.userID )
+        throw new WsException(' User not found ');
       if ( client.data.lobby )
         client.data.lobby.removeClient(client);
     }
@@ -81,23 +88,19 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.toggleReadyState(client.id);
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.toggleReadyState(client.id);
     }
 
-    @SubscribeMessage(ClientEvents.GameLoop)
-    onGameLoop( client : AuthenticatedSocket )
-    {
-      if (!client.data.lobby)
-        return ;
-      client.data.lobby.instance.gameLoop();
-    }
+    //! Annoying key handler
 
     @SubscribeMessage(ClientEvents.Player1ArrowDownRelease)
     onPlayer1ArrowDownRelease( client : AuthenticatedSocket )
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.Player1ArrowDownRelease();
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.Player1ArrowDownRelease();
     }
 
     @SubscribeMessage(ClientEvents.Player1ArrowDownPress)
@@ -105,7 +108,8 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.Player1ArrowDownPress();
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.Player1ArrowDownPress();
     }
 
     @SubscribeMessage(ClientEvents.Player1ArrowUpRelease)
@@ -113,7 +117,8 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.Player1ArrowUpRelease();
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.Player1ArrowUpRelease();
     }
 
     @SubscribeMessage(ClientEvents.Player1ArrowUpPress)
@@ -121,7 +126,8 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.Player1ArrowUpPress();
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.Player1ArrowUpPress();
     }
 
     @SubscribeMessage(ClientEvents.Player2ArrowDownRelease)
@@ -129,7 +135,8 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.Player2ArrowDownRelease();
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.Player2ArrowDownRelease();
     }
 
     @SubscribeMessage(ClientEvents.Player2ArrowDownPress)
@@ -137,7 +144,8 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.Player2ArrowDownPress();
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.Player2ArrowDownPress();
     }
 
     @SubscribeMessage(ClientEvents.Player2ArrowUpRelease)
@@ -145,7 +153,8 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.Player2ArrowUpRelease();
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.Player2ArrowUpRelease();
     }
 
     @SubscribeMessage(ClientEvents.Player2ArrowUpPress)
@@ -153,22 +162,46 @@ export class PongGateway implements OnGatewayInit,OnGatewayConnection, OnGateway
     {
       if (!client.data.lobby)
         return ;
-      client.data.lobby.instance.Player2ArrowUpPress();
+      if ( client.data.lobby.instance.gameEnd == false )
+        client.data.lobby.instance.Player2ArrowUpPress();
     }
 
+    //! Annoying key handler
+
+
+
+    @SubscribeMessage(ClientEvents.JoinMatchmaking)
+    onJoinMatchMaking( client : AuthenticatedSocket, data : JoinMatchmakingDto )
+    {
+      if ( !client.data.userID )
+        throw new WsException('User not found');
+      if ( client.data.lobby )
+        throw new WsException('You are already in a lobby !');
+      
+      this.matchmaking.addClientToQueue(client, data.SkinPref);
+    }
+
+    @SubscribeMessage(ClientEvents.LeaveMatchmaking)
+    onLeaveMatchMaking( client : AuthenticatedSocket )
+    {
+      if ( !client.data.userID )
+        throw new WsException(' User not found ');
+      this.matchmaking.removeClientFromQueue(client);
+    }
+
+
+
+
+
+
+
+
+
+    
     //? Blind mode
 
 
     //? Ranked mode 
-    // @SubscribeMessage(ClientEvents.JoinMatchmaking)
-    // onJoinMatchmaking() : 
-    // {
-    //   return (ServerEvents.LobbyState, {
-    //     event: ServerEvents.LobbyState,
-    //     data: { message: "server_createlobby", lobbyid: lobby.id }
-    //   }
-    // )
-    // }
     //? Ranked mode 
 
 }

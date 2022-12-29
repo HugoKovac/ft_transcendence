@@ -1,0 +1,20 @@
+.profileLine
+{
+	background-color: #292d39;
+	border: 3px, solid black;
+	width: 400px;
+	text-align: center;
+	display: flex;
+	justify-content: space-around;
+	.pp {
+		border-radius: 100%;
+		height : 50px;
+	}
+	.divButtons {
+		display: flex;
+		justify-content: space-between;
+			.button_relative{
+			background-color:blanchedalmond;
+		}
+	}
+}

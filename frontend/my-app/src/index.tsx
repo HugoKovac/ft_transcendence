@@ -3,6 +3,7 @@ import { LoginStateProvider } from './componenets/Login/LoginStateContext';
 import RoutesBrowser from './componenets/RoutesBrowser';
 import { RecoilRoot } from 'recoil';
 import './styles/index.css';
+import { UserStatusProvider } from './componenets/Login/UserStatusContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -10,8 +11,10 @@ const root = ReactDOM.createRoot(
 
 root.render(
 	<LoginStateProvider>
-		<RecoilRoot>
-			<RoutesBrowser />
-		</RecoilRoot>
+		<UserStatusProvider>
+			<RecoilRoot>
+				<RoutesBrowser />
+			</RecoilRoot>
+		</UserStatusProvider>
 	</LoginStateProvider>
 );
