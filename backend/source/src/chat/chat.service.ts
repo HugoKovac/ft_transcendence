@@ -69,7 +69,6 @@ export class ChatService{
 
 	async newMsg({conv_id, message, invite}:DTO.newMsgDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
-		console.log(conv_id, invite)
 		if (!message && !invite)
 			return false
 		try{
@@ -176,7 +175,7 @@ export class ChatService{
 
 			const date = new Date()
 			for (let i of conv.ban_users){
-				if ((i.user_banned.id === tokenUserInfo.id) && (i.end > date)){
+				if ((i.user_banned.id === tokenUserInfo.id) && (i.end < date)){
 					kick = true
 				}
 				if (i.end < date)
@@ -188,7 +187,7 @@ export class ChatService{
 			}
 
 			for (let i of conv.mute_users)
-				if ((i.user_muted.id === tokenUserInfo.id) && (i.end > date))
+				if ((i.user_muted.id === tokenUserInfo.id) && (i.end < date))
 					await this.muteRepo.delete(i.id)
 
 			return {...conv, password:''}
@@ -315,7 +314,7 @@ export class ChatService{
 		}
 	}
 
-	async banUser({group_conv_id, user_id, to}: DTO.banUserDTO, jwt:string){//! if admin or owner
+	async banUser({group_conv_id, user_id, to}: DTO.banUserDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		try{
 			const conv = await this.groupConvRepo.findOne({where:{group_conv_id:group_conv_id}, relations:['owner', 'ban_users', 'messages']})
@@ -345,7 +344,7 @@ export class ChatService{
 		}
 	}
 
-	async muteUser({group_conv_id, user_id, to}: DTO.banUserDTO, jwt:string){//! if admin or owner
+	async muteUser({group_conv_id, user_id, to}: DTO.banUserDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
 		try{
 			const conv = await this.groupConvRepo.findOne({where:{group_conv_id:group_conv_id}, relations:['owner', 'mute_users', 'messages']})
@@ -454,7 +453,6 @@ export class ChatService{
 
 			for (let i of group_conv.mute_users){
 				if ((i.user_muted.id === tokenUserInfo.id) && (i.end > date)){
-					// console.log(banEnt.end, date)
 					kick = true
 				}
 			}
