@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { decode, JwtPayload } from 'jsonwebtoken';
+import { send } from 'process';
 import { Friends, ReqFriend, User, BlockPeople } from 'src/typeorm';
 import { Repository } from 'typeorm';
 
@@ -68,6 +69,8 @@ export class ReqFriendService {
         let {id} = decode(jwt) as JwtPayload
         if ( id != user_id)
            return "sender id dont match your cookie"
+		if (user_id == send_id)
+		   return "action impossible in yourself"
             const oneUser : User = await this.userRepo.findOne({where : {id : user_id}, relations : ['recvReqFriend']})
 			let list_req_friends : ReqFriend[] = oneUser.recvReqFriend.filter((e) => e.from_id == send_id);
 			if (list_req_friends.length <= 0)
@@ -82,6 +85,8 @@ export class ReqFriendService {
         let {id} = decode(jwt) as JwtPayload
         if ( id != user_id)
            return "sender id dont match your cookie"
+		if (user_id == send_id)
+		   return "action impossible in yourself"
        try 
        {
 			const permission : boolean = await this.canIAdd({user_id : user_id, send_id : send_id})
@@ -126,7 +131,9 @@ export class ReqFriendService {
         let {id} = decode(jwt) as JwtPayload
          if ( id != user_id)
             return "sender id dont match your cookie"
-        try 
+		if (user_id == send_id)
+			return "action impossible in yourself"
+		 try 
         {
 			const permission : boolean = await this.canIAdd({user_id : user_id, send_id : send_id})
 			if (!permission)
@@ -193,6 +200,8 @@ export class ReqFriendService {
         let {id} = decode(jwt) as JwtPayload
         if ( id != user_id)
            return "sender id dont match your cookie"
+		if (user_id == send_id)
+		   return "action impossible in yourself"
         try {
 			const req : ReqFriend = await this.reqfriendRepo.findOne({where : [{from_id : send_id, to_id : user_id}, {from_id : user_id, to_id : send_id}]})
 			if (req)
@@ -214,6 +223,8 @@ export class ReqFriendService {
         let {id} = decode(jwt) as JwtPayload
         if ( id != user_id)
            return "sender id dont match your cookie"
+		if (user_id == send_id)
+		   return "action impossible in yourself"
         try {
 			// rm friendship and req
 			await this.removeFriend({user_id : user_id, send_id : send_id}, jwt)
@@ -236,6 +247,8 @@ export class ReqFriendService {
         let {id} = decode(jwt) as JwtPayload
         if ( id != user_id)
            return "sender id dont match your cookie"
+		if (user_id == send_id)
+			return "action impossible in yourself"
         try {
             const userEntity: User = await this.userRepo.findOne({where: {id: user_id}, relations : ["blocked", "block_me"]})
             let dest_user : User = await this.checkUserExist(send_id)
@@ -270,7 +283,7 @@ export class ReqFriendService {
 	async getUserRelativeState({user_id, send_id} :  {user_id:number, send_id : number}, jwt : string) : Promise<string>
 	{
         let {id} = decode(jwt) as JwtPayload
-        if ( id != user_id)
+        if ( id != user_id || user_id == send_id)
 		{
            return undefined
 		}
