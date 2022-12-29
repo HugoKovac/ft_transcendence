@@ -11,7 +11,7 @@ import { ToastContainer, toast } from 'react-toastify';
 const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | undefined) => void}) => {
 	let userData: userProto = props.userData
 	const [newUsername, setNewUsername] = useState<string>("")
-	const [newPp, setNewPp] = useState<any>(null)
+	const [newPp, setNewPp] = useState<File>()
 	const newPathSaMere : string = userData.pp
 	let path : JSX.Element = <img className="ppUser" src={userData.pp ? newPathSaMere : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0D8RJLIfGu9BfAEv3oMYyxiGfkGsGABeSsY6K2Ugy&s"}/>
 	const {logState} = useContext(LoginStateContext)
@@ -47,12 +47,20 @@ const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | 
 	function setPp () {
 		if (newPp)
 		{
+			if (newPp.size > 10000)
+			{
+				toast.info("can't load : image too heavy", {
+					position: toast.POSITION.BOTTOM_RIGHT
+				  })
+				  return ;
+			}
 			const req_base = axios.create({
 				baseURL: 'http://localhost:3000/api/profile/',
 				withCredentials: true
 			})
 			const formData = new FormData();
     		formData.append('file',newPp)
+			
 			req_base.post("uploadPp", formData, {headers : { "Content-Type": "multipart/form-data" }}).then((res) => {
 				console.log(res)
 				toast.info(res.data, {
