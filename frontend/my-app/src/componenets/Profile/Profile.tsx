@@ -146,9 +146,6 @@ export const ProfileComp = () => {
 			</div>
 			<ButtonsRelative name={dataUser?.username} img_path={dataUser.pp} id={dataUser.id}/>
 			<div className="status">
-				<div className="titleStatus">
-				<p className="status">{dataUser?.status}</p>
-				</div>
 				{statusDetermine(dataUser.status, dataUser.LobbyID)}
 			</div>
 		</div>

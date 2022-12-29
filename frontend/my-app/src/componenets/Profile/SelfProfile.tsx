@@ -111,9 +111,6 @@ const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | 
 				</button>
 			</div>
 		</div>
-		<div className="status">
-			<p className="status">{userData.status}</p>
-		</div>
 		</div>
 		<GamePartProfile user_id={Number(userData.id)}/>
 		<ToastContainer/>

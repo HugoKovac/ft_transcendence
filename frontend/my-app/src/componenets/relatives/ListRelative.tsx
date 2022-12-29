@@ -20,7 +20,7 @@ const ListRelative  = (props : {}) => {
 		function setFriends (newElem : JSX.Element[]) : void {setListUserFriends(newElem)}
 		function setInvit (newElem : JSX.Element[]) : void {setListUserInvit(newElem)}
 
-		function setUpList(req : string, setter : (newE : JSX.Element[]) => void) : void
+		function setUpList(req : string, setter : (newE : JSX.Element[]) => void, defaultState : string) : void
 		{
 		const req_base = axios.create({ baseURL: 'http://localhost:3000/api/req-friend/', withCredentials: true})
 		req_base.post(req).then((res) => {
@@ -28,14 +28,14 @@ const ListRelative  = (props : {}) => {
 			if (!res.data)
 				return ;
 			let listUserFriends : userProto[] = res.data
-			setter(listUserFriends.map((ele) => <LineUser name={ele.username} img_path={ele.pp} id={ele.id} default_state="friend" status={ele.status} lobbyID={ele.LobbyID}/>))
+			setter(listUserFriends.map((ele) => <LineUser name={ele.username} img_path={ele.pp} id={ele.id} default_state={defaultState} status={ele.status} lobbyID={ele.LobbyID}/>))
 			console.log("list of friends modified : ", JSON.stringify(listUserFriends, null, 2))
 		}).catch()
 
 		}
 		useEffect(() => {
-			setUpList('list-friends-as-users', setFriends)
-			setUpList("list-invit", setInvit)
+			setUpList('list-friends-as-users', setFriends, "friend")
+			setUpList("list-invit", setInvit, "recv")
 		}, [])
 
 	console.log("first_response : ", JSON.stringify(listUserFriends, null, 2))
