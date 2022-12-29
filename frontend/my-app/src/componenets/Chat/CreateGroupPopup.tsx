@@ -1,23 +1,25 @@
 import axios from 'axios'
 import { useContext, useEffect, useState } from 'react'
+import { ToastContainer, toast } from 'react-toastify';
 import './CreateGroupPopup.scss'
 import LoginStateContext from '../Login/LoginStateContext'
+import 'react-toastify/dist/ReactToastify.css';
 
 type Friend = {
-	id:number,
+	id: number,
 	friend_id: number,
 	friend_username: string
 }
 
-const CreateGroupPopup = (props: {setPopup: (v:boolean)=>void}) => {
+const CreateGroupPopup = (props: { setPopup: (v: boolean) => void }) => {
 	const [groupName, setGroupName] = useState('')
 	const [friendList, setFriendList] = useState([<label></label>])
 	const [checkboxState, setCheckboxState] = useState([false])
-	const {logState} = useContext(LoginStateContext)
-	
-	
+	const { logState } = useContext(LoginStateContext)
+
+
 	useEffect(() => {
-		const handleCheckedBox = (e:any) => {
+		const handleCheckedBox = (e: any) => {
 			let tmp = checkboxState
 			tmp[e.target.value] = tmp[e.target.value] ? !tmp[e.target.value] : true
 			setCheckboxState(tmp)
@@ -28,22 +30,17 @@ const CreateGroupPopup = (props: {setPopup: (v:boolean)=>void}) => {
 				baseURL: 'http://localhost:3000/api/friends/',
 				withCredentials: true
 			})
-			try{
-				await axInst.get('list').then((res) => {
-					console.log(res.data)
-					let list = res.data
-					setFriendList(list.map((i: Friend) => <label key={i.friend_id}><input onChange={handleCheckedBox} value={i.friend_id} type="checkbox" /> {i.friend_username}</label>))
-				})
-			}
-			catch{
-				console.error('Error with fetch of http://localhost:3000/api/friends/list')
-			}
+			await axInst.get('list').then((res) => {
+				console.log(res.data)
+				let list = res.data
+				setFriendList(list.map((i: Friend) => <label key={i.friend_id}><input onChange={handleCheckedBox} value={i.friend_id} type="checkbox" /> {i.friend_username}</label>))
+			}).catch((e) => { console.error(e) })
 		}
 		get()
 	}, [setFriendList, checkboxState])
 
 	const groupSubmit = async () => {
-		let addList:number[] = []
+		let addList: number[] = []
 
 		for (let i in checkboxState)
 			if (checkboxState[i] === true)
@@ -56,24 +53,18 @@ const CreateGroupPopup = (props: {setPopup: (v:boolean)=>void}) => {
 			group_name: groupName
 		}
 
-		console.log(payload)
-
 		const axInst = axios.create({
 			baseURL: 'http://localhost:3000/api/message/',
 			withCredentials: true
 		})
-		try{
-			await axInst.post('new_group_conv', payload).then((res) => {
-				console.log(res.data)
-			})
+		await axInst.post('new_group_conv', payload).then((res) => {
+			console.log(res.data)
 			props.setPopup(false)
-		}
-		catch{
-			console.error('Error with fetch of http://localhost:3000/api/message/new_group_conv')
-		}
+		}).catch((e) => { console.log(e); toast.error(e.response.data.message[0]) })
 	}
 
 	return <div className='CreateGroupPopup'>
+		<ToastContainer />
 		<div className='groupName'>
 			<label htmlFor='groupName'>Group Name :</label>
 			<input id='groupName' name='groupName' type="text" placeholder="Group Name" maxLength={35} onChange={(e) => (setGroupName(e.target.value))} autoFocus />

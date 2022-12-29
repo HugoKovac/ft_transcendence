@@ -20,7 +20,7 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 	const isConvPrivateCpy = props.isConvPrivate
 
 	const [refresh, setRefresh] = useState(false)
-	const [msgList, setMsgList] = useState([<Message key='' content='' own={true} username='' userPP='' date='' />])
+	const [msgList, setMsgList] = useState([<Message key='' content='' own={true} username='' userPP='' date='' sender_id={0}/>])
 	const [userGroupList, setUserGroupList] = useState<userType[]>([])
 	const [passwordPopupState, setPasswordPopupState] = useState(false)
 	const [passwordInput, setPasswordInput] = useState('')
@@ -75,7 +75,7 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 					
 					list.unshift(
 						<Message 
-							key={i.msg_id} own={i.sender_id === logStateCpy ? true : false}
+							key={i.msg_id} own={i.sender_id === logStateCpy ? true : false} sender_id={i.sender_id}
 							content={i.message} username={user.username} userPP={user.pp} date={i.send_at}//mettre info du message plus bon user dans message
 						/>
 					)
@@ -130,7 +130,7 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 					
 					list.unshift(
 						<Message
-						key={i.msg_id} own={i.sender_id === logStateCpy ? true : false}
+						key={i.msg_id} own={i.sender_id === logStateCpy ? true : false} sender_id={i.sender_id}
 						content={i.message} username={user.username} userPP={user.pp} date={i.send_at}
 						/>//mettre info du message plus bon user dans message
 						)
@@ -197,7 +197,7 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 					
 					list.unshift(
 					<Message
-					key={i.msg_id} own={i.sender_id === logStateCpy ? true : false}
+					key={i.msg_id} own={i.sender_id === logStateCpy ? true : false} sender_id={i.sender_id}
 					content={i.message} username={user.username} userPP={user.pp} date={i.send_at}
 					/>
 					)
