@@ -1,7 +1,11 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { io } from "socket.io-client"
+import { ClientEvents } from "../../shared/client/Client.Events";
+import { ServerEvents } from "../../shared/server/Server.Events";
+import { WebsocketContext } from "../Game/WebsocketContext";
 import LoginStateContext from "../Login/LoginStateContext";
 import Popup from "../Popup";
 import AdminPanel from "./AdminPanel";
@@ -187,6 +191,27 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 		})
 	}, [perm, setConv, convCpy, setRefreshConvListCpy, setRefresh, setHideRightCpy])
 
+	const gameSocket = io('http://localhost:3000/game', {query: { userID : logState }});
+	const [lobbyid, setlobbyid] = useState("");
+
+	useEffect( () => 
+	{
+		gameSocket.on(ServerEvents.LobbyJoin, (data) => { console.log(data.lobbyid); setlobbyid(data.lobbyid) } );
+		
+	}, [lobbyid, gameSocket])
+
+	const onPlayTogether = () =>
+	{
+		gameSocket.emit(ClientEvents.CreateLobby, 
+		{
+				skin: "gotham",
+				Paddle1color: "#FF0000",
+				Paddle2color: "#001EFF",
+				Ballcolor: "#FFFFFF",
+				Netcolor: "#FFFFFF",
+		});
+	}
+
 	const [panelTrigger, setPanelTrigger] = useState(false)
 	const admin_btn_panel =  nav === 2 && isAdmin ? <button className="adminBtnPanel" onClick={() => {setPanelTrigger(true)}}>Manage</button> : <></> 
 	const panelPopup = nav === 2 && isAdmin ? <Popup trigger={panelTrigger} setPopup={setPanelTrigger}> 
@@ -196,6 +221,8 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 		passwordInput={passwordInput} setPasswordInput={setPasswordInput}/>
 	 </Popup>
 	 : <></>
+
+	const inviteGame = <button onClick={onPlayTogether}>PlayTogether</button>
 
 	return <div className='btn-wrapper'>
 		<form onSubmit={(e) => {
@@ -218,6 +245,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 			</form>
 			{admin_btn_panel}
 			{panelPopup}
+			{inviteGame}
 	</div>
 }
 

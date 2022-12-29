@@ -6,6 +6,7 @@ import { LobbyJoinDto, LobbyCreateDto, JoinMatchmakingDto } from './lobby/lobbyd
 import { AuthenticatedSocket } from './types'
 import { Matchmaking } from './lobby/matchmaking';
 import { PongService } from './pong.service';
+import { ServerEvents } from 'src/shared/server/Server.Events';
 
 @WebSocketGateway({
     namespace: 'game',
@@ -64,6 +65,7 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
         throw new WsException(' User not found ');
       const lobby = this.lobbyManager.generateLobby(data.skin, data.Paddle1color, data.Paddle2color, data.Ballcolor, data.Netcolor, false);
       lobby.addClient(client);
+      lobby.server.to(lobby.id).emit(ServerEvents.LobbyJoin, { lobbyid: lobby.id } )
     }
 
     @SubscribeMessage(ClientEvents.JoinLobby)

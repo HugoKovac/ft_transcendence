@@ -31,11 +31,6 @@ export default function GamePrivateManager()
 
             socket.on(ServerEvents.LobbyState, (data) => { setLobby(data); });
         }
-        if ( !socket )
-            
-
-        console.log("re render");
-
 
         return () => 
         {
