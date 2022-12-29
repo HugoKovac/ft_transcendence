@@ -1,11 +1,10 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { StatusEntity, User } from "src/typeorm";
+import { User } from "src/typeorm";
 import { Repository } from "typeorm";
 
 export class StatusService
 {
-    constructor( @InjectRepository(User) private userRepo: Repository<User>,
-                @InjectRepository(StatusEntity) private statusRepo: Repository<StatusEntity> ) {}
+    constructor( @InjectRepository(User) private userRepo: Repository<User> ) {}
 
 
     async checkUserID( userID: string ) : Promise<User>
@@ -25,11 +24,11 @@ export class StatusService
         }
     }
 
-    async getUserStatus( userEntity: User ) : Promise<StatusEntity>
+    async getUserStatus( userEntity: User ) : Promise<number>
     {
         try
         {
-            const status = this.statusRepo.findOne({where: {user: userEntity}});
+            const status = userEntity.status;
             if ( !status )
                 return undefined;
             return status;
@@ -41,32 +40,30 @@ export class StatusService
         }
     }
 
-    async ChangeUserStatus( userEntity : User, status: number, lobbyID : string ) : Promise<StatusEntity>
+    async ChangeUserStatus( userEntity : User, status: number, lobbyID : string ) : Promise<any>
     {
         try
         {
-            let StatusEntity = await this.statusRepo.findOne({ where: {user: userEntity} });
-            if ( !StatusEntity )
+            if ( status == 2 && lobbyID )
             {
-                if ( status == 2 && lobbyID )
-                    StatusEntity = await this.statusRepo.create({CurrentStatus: status, LobbyID: lobbyID, user: userEntity});
-                if ( status == 0 || status == 1 )
-                    StatusEntity = await this.statusRepo.create({CurrentStatus: status, LobbyID: null, user: userEntity});
+                userEntity.status = status;
+                userEntity.LobbyID = lobbyID;   
             }
-            else if ( status == 2 && lobbyID )
+            else if ( status == 0 || status == 1 )
             {
-                StatusEntity.LobbyID = lobbyID;
-                StatusEntity.CurrentStatus = status;
+                userEntity.status = status;
+                userEntity.LobbyID = null;
             }
             else
             {
-                StatusEntity.CurrentStatus = status;
-                StatusEntity.LobbyID = null;
+                userEntity.status = status;
+                userEntity.LobbyID = null;
             }
 
 
-            await this.statusRepo.save(StatusEntity);
-            return StatusEntity;
+            await this.userRepo.save(userEntity);
+
+            return userEntity.status, userEntity.LobbyID
         }
         catch(error)
         {

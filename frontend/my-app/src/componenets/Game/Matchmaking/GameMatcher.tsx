@@ -1,5 +1,6 @@
 import React from "react";
 import { useContext, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { ClientEvents } from "../../../shared/client/Client.Events";
 import NavBar from "../../NavBar";
@@ -9,15 +10,28 @@ export default function GameMatcher()
 {
     const socket = useContext(WebsocketContext);
 
+    const [searchParams] = useSearchParams();
+    const searchParamsString = searchParams.get('id');
+    
     const SkinPref = React.useRef<string>("default");
 
     useEffect( () => {
         document.getElementById('skin')?.addEventListener('change', RetrieveSkin);
+        if ( searchParamsString )
+        {
+            if  ( socket )
+            {
+                socket.emit(ClientEvents.JoinLobby, 
+                {
+                    lobbyId: searchParamsString,
+                });
+            }
+        }
     }, [])
 
-    const emitJoinQueue = ( () => { console.log("Event Emitted"); socket.emit(ClientEvents.JoinMatchmaking, { SkinPref: SkinPref.current }); });
+    const emitJoinQueue = ( () => { console.log("Event Emitted"); if ( socket ) socket.emit(ClientEvents.JoinMatchmaking, { SkinPref: SkinPref.current }); });
 
-    const emitLeaveQueue = ( () => { console.log("Event Emitted"); socket.emit(ClientEvents.LeaveMatchmaking); });
+    const emitLeaveQueue = ( () => { console.log("Event Emitted"); if ( socket ) socket.emit(ClientEvents.LeaveMatchmaking); });
 
     function RetrieveSkin( event : any )
     {

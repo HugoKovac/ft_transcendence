@@ -7,7 +7,6 @@ import { MuteEntity } from "./mute.entity";
 import { BlockPeople } from "./blockPeople.entity"
 import { ReqFriend } from "./ReqFriend.entity";
 import { GameRanked } from "./gameranked.entity";
-import { StatusEntity } from "./status.entity";
 
 @Entity()
 export class User {
@@ -150,6 +149,10 @@ export class User {
 	@JoinTable()
 	Games: GameRanked[]
 
-	@OneToOne( () => StatusEntity, status => status.user )
-	Status: StatusEntity
+	@Column({ default: 0 })
+	status: number
+    
+    @Column( { nullable: true } )
+    LobbyID : string
+
 }

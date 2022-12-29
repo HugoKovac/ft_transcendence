@@ -21,21 +21,32 @@ export default function GamePrivateManager()
 
     useEffect( () => {
 
-        socket.on('connect', () => {});
+        if ( socket )
+        {
+            socket.on('connect', () => {});
 
-        socket.on('exception', (data) => { toast(data.message); });
+            socket.on('exception', (data) => { toast(data.message); });
 
-        socket.on(ServerEvents.ServerMessage, (message) => { toast(message); });
+            socket.on(ServerEvents.ServerMessage, (message) => { toast(message); });
 
-        socket.on(ServerEvents.LobbyState, (data) => { setLobby(data); });
+            socket.on(ServerEvents.LobbyState, (data) => { setLobby(data); });
+        }
+        if ( !socket )
+            
+
+        console.log("re render");
+
 
         return () => 
         {
-            socket.off('connect');
-            socket.off('disconnect');
-            socket.off(ServerEvents.LobbyState);
-            socket.off(ServerEvents.LobbyJoin);
-            socket.off(ServerEvents.ServerMessage);
+            if ( socket )
+            {
+                socket.off('connect');
+                socket.off('disconnect');
+                socket.off(ServerEvents.LobbyState);
+                socket.off(ServerEvents.LobbyJoin);
+                socket.off(ServerEvents.ServerMessage);
+            }
         }
 
     }, [searchParams, setLobby, socket, setSearchParams]);

@@ -67,22 +67,29 @@ export default function GameLobby() {
 
         if ( searchParamsString )
         {
-            socket.emit(ClientEvents.JoinLobby, {
-                lobbyId: searchParamsString,
-          });
+            if  ( socket )
+            {
+                socket.emit(ClientEvents.JoinLobby, 
+                {
+                    lobbyId: searchParamsString,
+                });
+            }
         }
     }, [searchParamsString]);
 
     const emitLobby = () => 
     {
-        socket.emit(ClientEvents.CreateLobby, 
+        if ( socket )
         {
-            skin: Skin,
-            Paddle1color: Paddle1Color,
-            Paddle2color: Paddle2Color,
-            Ballcolor: BallColor,
-            Netcolor: NetColor,
-        });
+            socket.emit(ClientEvents.CreateLobby, 
+            {
+                skin: Skin,
+                Paddle1color: Paddle1Color,
+                Paddle2color: Paddle2Color,
+                Ballcolor: BallColor,
+                Netcolor: NetColor,
+            });
+        }
     }  
 
     useEffect( () => {

@@ -48,12 +48,12 @@ const RoutesBrowser = () : React.ReactElement => {
 				<Route path='/game' element={<ProtectedRoute />}>
 					<Route path='/game' element={<Game />}/>
 				</Route>
-					{/* <Route path='/game/matchmaking' element={<ProtectedRoute />}> */}
+					<Route path='/game/matchmaking' element={<ProtectedRoute />}>
 						<Route path='/game/matchmaking' element={ <WebsocketProvider> <GameMatchmaking /> </WebsocketProvider>}/>
-					{/* </Route> */}
-					{/* <Route path='/game/lobby' element={<ProtectedRoute />}> */}
+					</Route>
+					<Route path='/game/lobby' element={<ProtectedRoute />}>
 						<Route path='/game/lobby' element={ <WebsocketProvider> <GamePrivateManager/> </WebsocketProvider>}/>
-					{/* </Route> */}
+					</Route>
 				<Route path='/redirect/check_token' element={<CheckTokenAfterLogin />} />
 				<Route path='/redirect/verify_2fa' element={<Verify2fa />} />
 				<Route path='/active2FA' element={<Active2FA />} />
