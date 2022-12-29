@@ -190,7 +190,8 @@ export class ChatService {
 		let tokenUserInfo: any = decode(jwt)
 
 		try {
-			const conv = await this.groupConvRepo.findOne({ where: { group_conv_id: group_conv_id }, relations: ['messages', 'users', 'ban_users', 'ban_users.user_banned', 'mute_users', 'mute_users.user_muted', 'admin', 'owner'], order: { messages: { msg_id: 'ASC' } } })
+			const conv: GroupConv = await this.groupConvRepo.findOne({ where: { group_conv_id: group_conv_id }, relations: ['messages', 'users', 'ban_users', 'ban_users.user_banned', 'mute_users', 'mute_users.user_muted', 'admin', 'owner'], order: { messages: { msg_id: 'ASC' } } })
+			const { blocked, block_me } = await this.userRepo.findOne({ where: { id: tokenUserInfo.id }, relations: ['blocked', 'block_me'] })
 
 			if (!conv || conv.isPrivate === true)
 				return false
@@ -209,15 +210,21 @@ export class ChatService {
 					await this.banRepo.delete(i.id)
 			}
 
+			const rtn_conv: GroupConv = { ...conv, messages: [] }
+			for (let i of conv.messages) {
+				if (!this.isBlocked(blocked, block_me, i.sender_id))
+					rtn_conv.messages.push(i)
+			}
+
 			if (kick) {
 				return false
 			}
 
-			for (let i of conv.mute_users)
+			for (let i of rtn_conv.mute_users)
 				if ((i.user_muted.id === tokenUserInfo.id) && (i.end < date))
 					await this.muteRepo.delete(i.id)
 
-			return { ...conv, password: '' }
+			return { ...rtn_conv, password: '' }
 		}
 		catch {
 			console.error('Error: getGroupConvMsg')
@@ -262,6 +269,7 @@ export class ChatService {
 
 		try {
 			const conv = await this.groupConvRepo.findOne({ where: { group_conv_id: group_conv_id }, relations: ['messages', 'users', 'admin', 'owner'], order: { messages: { msg_id: 'ASC' } } })
+			const { blocked, block_me } = await this.userRepo.findOne({ where: { id: tokenUserInfo.id }, relations: ['blocked', 'block_me'] })
 
 			if (!conv || conv.isPrivate === false)
 				return
@@ -274,7 +282,13 @@ export class ChatService {
 			if (!conv || kick || !await bcrypt.compare(password, conv.password))
 				return false
 
-			return { ...conv, password: '' }
+			const rtn_conv: GroupConv = { ...conv, messages: [] }
+			for (let i of conv.messages) {
+				if (!this.isBlocked(blocked, block_me, i.sender_id))
+					rtn_conv.messages.push(i)
+			}
+
+			return { ...rtn_conv, password: '' }
 		}
 		catch {
 			console.error('Error: getGroupSecretConvMsg')
