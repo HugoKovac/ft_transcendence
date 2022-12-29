@@ -50,6 +50,12 @@
 			h2{
 				margin: 10px;
 			}
+			ul{
+				text-decoration: none;
+			}
+			li{
+				color: black;
+			}
 		}
 
 		.del-users{
@@ -60,6 +66,12 @@
 			width: 568px;
 			height: 218.75px;
 			background-color: rgba(0, 0, 0, 0.082);
+			ul{
+				text-decoration: none;
+			}
+			li{
+				color: black;
+			}
 			.ban{
 				background-color: rgb(189, 0, 0);
 			}
