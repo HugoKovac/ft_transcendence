@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router"
+import { createSearchParams } from "react-router-dom"
 
 const Message = (props: { content: string, own: boolean, username: string, userPP: string, sender_id: number, date: string, invite: boolean }) => {
 	const date = new Date(props.date).toLocaleString()
 	const nav = useNavigate()
 
-	console.log(props.invite)
+	const lobbyidquery = { id: props.content }
 
 	return <div className={props.own ? "msg own" : "msg"}>
 		<div className="info">
@@ -13,8 +14,7 @@ const Message = (props: { content: string, own: boolean, username: string, userP
 			<p className="date">{date}</p>
 		</div>
 		{!props.invite && <p>{props.content}</p>}
-		{props.invite && <a onClick={() => {nav(`../../game/lobby?id=${props.content}`)}}>Hey wanna play a 1v1 Pong ?</a>}
+		{props.invite && <a onClick={() => {nav({pathname:'/game/lobby', search: `?${createSearchParams(lobbyidquery)}`})}}>{props.content}</a>}
 	</div>
 }
-
 export default Message

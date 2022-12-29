@@ -36,7 +36,7 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
 
     async handleConnection( client: Socket ) : Promise<void> 
     {
-      // console.log(client.handshake.query)
+      console.log(client.handshake.query)
       this.lobbyManager.initializeClient(client as AuthenticatedSocket, client.handshake.query.userID );
 
       const check = await this.pongservice.checkUserID(client.data.userID);
@@ -68,11 +68,22 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
       lobby.server.to(lobby.id).emit(ServerEvents.LobbyJoin, { lobbyid: lobby.id } )
     }
 
-    @SubscribeMessage(ClientEvents.JoinLobby)
-    onLobbyJoin( client: AuthenticatedSocket, data: LobbyJoinDto )
+    @SubscribeMessage(ClientEvents.CreateEmptyLobby)
+    onEmptyLobbyCreation( client: AuthenticatedSocket, data: LobbyCreateDto )
     {
       if ( !client.data.userID )
         throw new WsException(' User not found ');
+      const lobby = this.lobbyManager.generateLobby(data.skin, data.Paddle1color, data.Paddle2color, data.Ballcolor, data.Netcolor, false);
+      lobby.server.to(client.id).emit(ServerEvents.LobbyJoin, { lobbyid: lobby.id } )
+    }
+
+    @SubscribeMessage(ClientEvents.JoinLobby)
+    onLobbyJoin( client: AuthenticatedSocket, data: LobbyJoinDto )
+    {
+      console.log("Before user not found")
+      if ( !client.data.userID )
+        throw new WsException(' User not found ');
+      console.log("client joined the lobby !")
       this.lobbyManager.joinLobby(data.lobbyId, client);
     }
 
@@ -89,7 +100,10 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
     onReadyState( client : AuthenticatedSocket )
     {
       if (!client.data.lobby)
+      {
+        console.log("Client doesnt have a lobby brooo")
         return ;
+      }
       if ( client.data.lobby.instance.gameEnd == false )
         client.data.lobby.instance.toggleReadyState(client.id);
     }

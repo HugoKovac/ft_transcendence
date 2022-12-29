@@ -60,21 +60,25 @@ export default function GameLobby() {
     const [BallColor, SetBallColor] = useState("#fff");
     const [Skin, SetSkin] = useState("default");
 
-    
+    console.log("hey")
+    console.log(searchParamsString)
 
     
-    useEffect( () => {
+    useEffect( () => 
+    {
 
         if ( searchParamsString )
         {
             if  ( socket )
             {
+                console.log("Emited join lobby !")
                 socket.emit(ClientEvents.JoinLobby, 
                 {
                     lobbyId: searchParamsString,
                 });
             }
         }
+
     }, [searchParamsString]);
 
     const emitLobby = () => 

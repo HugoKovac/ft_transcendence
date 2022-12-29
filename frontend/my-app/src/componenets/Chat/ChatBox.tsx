@@ -73,7 +73,6 @@ const ChatBox = (props: {conv:number, logState:number, setConv: (v:number)=>void
 				for (let i of res.data.message){
 					const user = i.sender_id === parseInt(ownMsg.id) ? ownMsg : otherMsg
 					
-					console.log(i.invite)
 					list.unshift(
 						<Message 
 							key={i.msg_id} own={i.sender_id === logStateCpy ? true : false} sender_id={i.sender_id} invite={i.invite}

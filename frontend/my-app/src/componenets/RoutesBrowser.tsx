@@ -14,6 +14,7 @@ import GamePrivateManager from "./Game/Private/GamePrivateManager"
 import Verify2fa from "./Login/VerifyTwoFA"
 import Active2FA from "../pages/ActiveTwoFA"
 import { WebsocketProvider } from "./Game/WebsocketContext"
+import { InviteProvider } from "./Chat/InviteSocket"
 
 
 
@@ -40,7 +41,7 @@ const RoutesBrowser = () : React.ReactElement => {
 					<Route path="/profile" element={<Profile />} />
 				</Route>
 				<Route path='/chat' element={<ProtectedRoute />}>
-					<Route path='/chat' element={<Chat />}/>
+					<Route path='/chat' element={ <InviteProvider> <Chat /> </InviteProvider>}/>
 				</Route>
 				<Route path='/friends' element={<ProtectedRoute />}>
 					<Route path='/friends' element={<Friends />}/>

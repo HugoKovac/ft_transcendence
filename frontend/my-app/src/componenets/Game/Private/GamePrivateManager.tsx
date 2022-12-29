@@ -11,13 +11,13 @@ import 'react-toastify/dist/ReactToastify.css';
     
 export default function GamePrivateManager() 
 {
-
     const socket = useContext(WebsocketContext);
 
     const [lobby, setLobby] = useRecoilState(LobbyState);
 
     const [searchParams, setSearchParams] = useSearchParams();
 
+    const searchParamsString = searchParams.get('id');
 
     useEffect( () => {
 
@@ -47,7 +47,11 @@ export default function GamePrivateManager()
     }, [searchParams, setLobby, socket, setSearchParams]);
 
     if ( lobby === null )
+    {
+        console.log("going to lobby")
         return <GameLobby/>
+    }
     
+    console.log("Instance")
     return <GameInstance/>;
 }
