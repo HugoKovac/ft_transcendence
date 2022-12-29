@@ -31,9 +31,9 @@ export class GameRanked
 
     @Column({ nullable: false, default: new Date() })
     Date : Date;
-    @Column({ nullable: false, default: undefined })
+    @Column({ nullable: false, default: "" })
     player1Username : string;
-    @Column({ nullable: false, default: undefined })
+    @Column({ nullable: false, default: "" })
     player2Username : string;
 
     @ManyToMany( () => User, user => user.Games)

@@ -13,7 +13,6 @@ import GameMatchmaking from "./Game/Matchmaking/GameMatchmaking"
 import GamePrivateManager from "./Game/Private/GamePrivateManager"
 import Verify2fa from "./Login/VerifyTwoFA"
 import Active2FA from "../pages/ActiveTwoFA"
-import ListRelative from "./relatives/ListRelative"
 import { WebsocketProvider } from "./Game/WebsocketContext"
 
 
@@ -48,13 +47,13 @@ const RoutesBrowser = () : React.ReactElement => {
 				</Route>
 				<Route path='/game' element={<ProtectedRoute />}>
 					<Route path='/game' element={<Game />}/>
-				</Route> //! NEED TO MAKE THAT SOCKET CONNECT FOR BOTH LOBBY
-					<Route path='/game/matchmaking' element={<ProtectedRoute />}>
+				</Route>
+					{/* <Route path='/game/matchmaking' element={<ProtectedRoute />}> */}
 						<Route path='/game/matchmaking' element={ <WebsocketProvider> <GameMatchmaking /> </WebsocketProvider>}/>
-					</Route>
-					<Route path='/game/lobby' element={<ProtectedRoute />}>
+					{/* </Route> */}
+					{/* <Route path='/game/lobby' element={<ProtectedRoute />}> */}
 						<Route path='/game/lobby' element={ <WebsocketProvider> <GamePrivateManager/> </WebsocketProvider>}/>
-					</Route>
+					{/* </Route> */}
 				<Route path='/redirect/check_token' element={<CheckTokenAfterLogin />} />
 				<Route path='/redirect/verify_2fa' element={<Verify2fa />} />
 				<Route path='/active2FA' element={<Active2FA />} />

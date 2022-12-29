@@ -2,12 +2,15 @@ import { WsException } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io'
 import { ServerEvents } from 'src/shared/server/Server.Events';
 import { MAXTIME_IN_QUEUE } from '../instance/gameConstant';
+import { PongService } from '../pong.service';
 import { AuthenticatedSocket, InQueuePlayer } from '../types'
 import { LobbyFactory } from './lobbyfactory';
 
 export class Matchmaking
 {
     public server: Server;
+
+    public pongservice: PongService;
 
     public readonly MatchmakingQueue: Map<string, InQueuePlayer > = new Map<string, InQueuePlayer >();
 
@@ -41,7 +44,7 @@ export class Matchmaking
             this.server.to(client.id).emit(ServerEvents.ServerMessage, "You are already in a queue !");
         else
         {
-            this.MatchmakingQueue.set(client.id, {joined_time: Date.now(), id: client.id, pref_skin: defaultskinpref, socket: client} );
+            this.MatchmakingQueue.set(client.id, {joined_time: Date.now(), id: client.data.userID, pref_skin: defaultskinpref, socket: client} );
             this.server.to(client.id).emit(ServerEvents.ServerMessage, "Join the queue !");
         }
     }
@@ -64,7 +67,7 @@ export class Matchmaking
         return false;
     }
 
-    public Match( Player1 : InQueuePlayer, Player2: InQueuePlayer )
+    public async Match( Player1 : InQueuePlayer, Player2: InQueuePlayer )
     {
         let skin = "default";
         if ( Player1.pref_skin != Player2.pref_skin )
@@ -77,12 +80,23 @@ export class Matchmaking
         else
             skin = Player1.pref_skin;
 
+        const check1 = await this.pongservice.checkUserID(Player1.id);
+        if ( !check1 )
+            return ;
+        const check2 = await this.pongservice.checkUserID(Player2.id);
+        if ( !check2 )
+            return ;
+        
         const lobby = this.LobbyGenerator.generateLobby(skin, "#FF0000", "#001EFF", "#FFFFFF", "#FFFFFF", true); //? Special color for ranked games
         lobby.addClient(Player1.socket);
         lobby.addClient(Player2.socket);
+
+        await this.pongservice.ChangeUserStatus(check1, 2, lobby.id);
+        await this.pongservice.ChangeUserStatus(check2, 2, lobby.id);
+        console.log(await this.pongservice.getUserStatus(check1));
     }
     
-    public SearchAndMatch()
+    public async SearchAndMatch()
     {
         if ( this.MatchmakingQueue.size <= 1 )
             return ;
@@ -96,7 +110,7 @@ export class Matchmaking
                     const matched2 = this.MatchmakingQueue.get(p2);
                     if ( matched1 && matched2 )
                     {
-                        this.Match(matched1, matched2);
+                        await this.Match(matched1, matched2);
                         this.MatchmakingQueue.delete(p1);
                         this.MatchmakingQueue.delete(p2);
                     }

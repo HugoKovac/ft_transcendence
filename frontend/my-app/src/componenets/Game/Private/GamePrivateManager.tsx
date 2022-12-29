@@ -6,13 +6,12 @@ import { WebsocketContext } from "../WebsocketContext";
 import { LobbyState } from "../LobbyState";
 import { useRecoilState } from 'recoil';
 import { useSearchParams } from "react-router-dom";
-import { Socket } from "socket.io-client";
-import { ClientEvents } from "../../../shared/client/Client.Events";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
     
 export default function GamePrivateManager() 
 {
+
     const socket = useContext(WebsocketContext);
 
     const [lobby, setLobby] = useRecoilState(LobbyState);

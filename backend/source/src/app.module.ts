@@ -15,6 +15,7 @@ import { ProfileModule } from './profile/profile.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ScheduleModule } from '@nestjs/schedule';
 import { join } from 'path';
+import { StatusModule } from './status/status.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { join } from 'path';
 	PongModule,
 	ReqFriendModule,
 	ProfileModule,
+	StatusModule,
   ],
   controllers: [AppController],
   providers: [AppService],

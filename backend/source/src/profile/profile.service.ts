@@ -72,9 +72,9 @@ export class ProfileService {
 	{
 		let buffIds : {id : number, username : string}[] = []
 		Games.map((e) => {
-			if (!e.player1Username && buffIds.filter((el) => el.id == e.Player1ID).length == 0)
+			if (e.player1Username == "" && buffIds.filter((el) => el.id == e.Player1ID).length == 0)
 				buffIds.push({id : e.Player1ID, username : ""})
-			if (!e.player2Username && buffIds.filter((el) => el.id == e.Player2ID).length == 0)
+			if (e.player2Username == "" && buffIds.filter((el) => el.id == e.Player2ID).length == 0)
 				buffIds.push({id : e.Player2ID, username : ""})
 		})
 		await buffIds.map(async (e) => {
@@ -84,11 +84,11 @@ export class ProfileService {
 			e.username = user_one.username
 		})
 		Games.map(async (e) => {
-			if (!e.player1Username || !e.player2Username)
+			if (e.player1Username == "" || e.player2Username == "")
 			{
-				if (!e.player1Username)
+				if (e.player1Username == "")
 					e.player1Username = buffIds.filter((el) => el.id == e.Player1ID)[0].username
-				if (!e.player2Username)
+				if (e.player2Username == "")
 					e.player2Username = buffIds.filter((el) => el.id == e.Player2ID)[0].username
 				await this.gameRankedRepo.save(e)
 			}

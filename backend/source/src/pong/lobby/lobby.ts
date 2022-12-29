@@ -98,22 +98,32 @@ export class Lobby
     public async saveGame( payload: RankedGameData, endReason: string )
     {
         await this.pongservice.addRankedGame(payload);
-
+        
         if ( endReason != GameEndReason.LobbyTimedOut )
         {
             if ( payload.Player1Won == true )
             {
-                console.log(await this.pongservice.incrementeUserVictory(payload.Player1ID));
-                console.log(await this.pongservice.incrementeUserDefeat(payload.Player2ID));
+                await this.pongservice.incrementeUserVictory(payload.Player1ID);
+                await this.pongservice.incrementeUserDefeat(payload.Player2ID);
             }
             else if ( payload.Player2Won == true )
             {
-                console.log(await this.pongservice.incrementeUserVictory(payload.Player2ID));
-                console.log(await this.pongservice.incrementeUserDefeat(payload.Player1ID));
+                await this.pongservice.incrementeUserVictory(payload.Player2ID);
+                await this.pongservice.incrementeUserDefeat(payload.Player1ID);
             }
         }
 
-        console.log(await this.pongservice.getGetGamesById(payload.Player1ID));
+        const check1 = await this.pongservice.checkUserID(payload.Player1ID);
+        if ( !check1 )
+            return ;
+        const check2 = await this.pongservice.checkUserID(payload.Player2ID);
+        if ( !check2 )
+            return ;
+
+        await this.pongservice.ChangeUserStatus(check1, 1, null);
+        await this.pongservice.ChangeUserStatus(check2, 1, null);
+
+        console.log(await this.pongservice.getUserStatus(check1));
     }
 
     public refreshLobby()

@@ -15,7 +15,7 @@ export const LoginStateContext = createContext<ObjLoginStateContext>({
 	setRerender : () => {},
 })
 
-async function ReqApiLogState(): Promise<number>{
+export async function ReqApiLogState(): Promise<number>{
 	const axInst = axios.create({
 		baseURL: 'http://localhost:3000/api/',
 		withCredentials: true,
