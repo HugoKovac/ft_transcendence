@@ -12,7 +12,7 @@ import ButtonRelativeState from "../relatives/ButtonRelativeState"
 
 const SetProfile = () : JSX.Element => {
     const [newUsername, setNewUsername] = useState<string>("")
-	const [newPp, setNewPp] = useState<any>(null)
+	const [newPp, setNewPp] = useState<File>()
 	const [dataUser, setDataUser] = useState<userProto | 'loading' | undefined>("loading")
 	const {logState} = useContext(LoginStateContext)
     let buffUN : string = ""
@@ -51,6 +51,13 @@ const SetProfile = () : JSX.Element => {
 	function setPp () {
 		if (newPp)
 		{
+			if (newPp.size > 10000)
+			{
+				toast.info("can't load : image too heavy", {
+					position: toast.POSITION.BOTTOM_RIGHT
+				  })
+				  return ;
+			}
 			const req_base = axios.create({
 				baseURL: 'http://localhost:3000/api/profile/',
 				withCredentials: true
