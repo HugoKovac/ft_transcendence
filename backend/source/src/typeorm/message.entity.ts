@@ -20,6 +20,12 @@ export class Message{
 	})
 	message: string
 
+	@Column({
+		nullable: false,
+		default: false
+	})
+	invite: boolean
+
 	@CreateDateColumn()
 	send_at: Date
 

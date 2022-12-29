@@ -36,17 +36,17 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
 
     async handleConnection( client: Socket ) : Promise<void> 
     {
-      console.log(client.handshake.query)
+      // console.log(client.handshake.query)
       this.lobbyManager.initializeClient(client as AuthenticatedSocket, client.handshake.query.userID );
 
       const check = await this.pongservice.checkUserID(client.data.userID);
       if ( !check )
       {
-        console.log("user not found")
+        // console.log("user not found")
         this.handleDisconnect(client as AuthenticatedSocket);
         return ;
       }
-      console.log("user found");
+      // console.log("user found");
     }
 
     async handleDisconnect( client: AuthenticatedSocket ) : Promise<void> 

@@ -11,10 +11,13 @@ export class newMsgDTO{
 	@IsNumber()
 	conv_id: number
 	
-	@IsNotEmpty()
 	@IsString()
 	@MaxLength(300)
 	message: string
+
+	@IsNotEmpty()
+	@IsBoolean()
+	invite: boolean
 }
 
 export class newGroupConvDTO{
@@ -60,10 +63,14 @@ export class newGroupMsgDTO{
 	@IsNumber()
 	group_conv_id:number
 	
-	@IsNotEmpty()
+	// @IsNotEmpty()
 	@IsString()
 	@MaxLength(300)
 	message: string
+
+	@IsNotEmpty()
+	@IsBoolean()
+	invite: boolean
 }
 
 export class newPrivateGroupMsgDTO{
@@ -80,10 +87,14 @@ export class newPrivateGroupMsgDTO{
 	@MaxLength(300)
 	message: string
 
-	@IsNotEmpty()
+	// @IsNotEmpty()
 	@IsString()
 	@MaxLength(35)
 	password: string
+
+	@IsNotEmpty()
+	@IsBoolean()
+	invite: boolean
 }
 
 export class getConvMsgDTO{

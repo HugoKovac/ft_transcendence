@@ -20,6 +20,7 @@ export class ChatGateway{
 
 	@SubscribeMessage('message')
 	async handleMessage(@ConnectedSocket() client: Socket, @MessageBody()body: newMsgDTO){
+		console.log('message', body.message)
 		await this.chatService.newMsg(body, client.handshake.auth.token)
 		this.serv.emit(body.conv_id.toString())
 	}

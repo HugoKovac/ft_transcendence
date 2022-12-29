@@ -67,9 +67,10 @@ export class ChatService{
 		}
 	}
 
-	async newMsg({conv_id, message}:DTO.newMsgDTO, jwt:string){
+	async newMsg({conv_id, message, invite}:DTO.newMsgDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
-		if (!message)
+		console.log(conv_id, invite)
+		if (!message && !invite)
 			return false
 		try{
 			const conv = await this.convRepo.findOne({where: {conv_id: conv_id}})
@@ -80,7 +81,8 @@ export class ChatService{
 			const new_msg = this.messRepo.create({
 				message: message,
 				sender_id: tokenUserInfo.id,
-				conv
+				conv,
+				invite: invite
 			})
 
 			await this.messRepo.save(new_msg)
@@ -425,9 +427,9 @@ export class ChatService{
 		}
 	}
 
-	async newGroupMsg({group_conv_id, message}:DTO.newGroupMsgDTO, jwt:string){
+	async newGroupMsg({group_conv_id, message, invite}:DTO.newGroupMsgDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
-		if (!message)
+		if (!message && !invite)
 			return false
 		try{
 			const group_conv: GroupConv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}, relations: ['ban_users', 'ban_users.user_banned', 'users', 'mute_users', 'mute_users.user_muted']})
@@ -461,7 +463,7 @@ export class ChatService{
 				return false
 			}
 
-			const newMsg = this.messRepo.create({sender_id: tokenUserInfo.id, message: message, group_conv: group_conv})
+			const newMsg = this.messRepo.create({sender_id: tokenUserInfo.id, message: message, group_conv: group_conv, invite: invite})
 			await this.messRepo.save(newMsg)
 
 			return true
@@ -472,9 +474,9 @@ export class ChatService{
 		}
 	}
 
-	async newPrivateGroupMsg({group_conv_id, message, password}:DTO.newPrivateGroupMsgDTO, jwt:string){
+	async newPrivateGroupMsg({group_conv_id, message, password, invite}:DTO.newPrivateGroupMsgDTO, jwt:string){
 		let tokenUserInfo: any = decode(jwt)
-		if (!message)
+		if (!message && !invite)
 			return false
 		try{
 			const group_conv: GroupConv = await this.groupConvRepo.findOne({where: {group_conv_id: group_conv_id}})
@@ -485,7 +487,7 @@ export class ChatService{
 			if (!await bcrypt.compare(password, group_conv.password))
 				return false
 
-			const newMsg = this.messRepo.create({sender_id: tokenUserInfo.id, message: message, group_conv: group_conv})
+			const newMsg = this.messRepo.create({sender_id: tokenUserInfo.id, message: message, group_conv: group_conv, invite: invite})
 			await this.messRepo.save(newMsg)
 
 			return true
