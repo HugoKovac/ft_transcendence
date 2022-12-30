@@ -208,7 +208,6 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 		if ( gameSocket )
 			gameSocket.on(ServerEvents.LobbyJoin, (data) => { console.log(data.lobbyid); setlobbyid(data.lobbyid) } );
 
-		 console.error("No Lobby ID");
 		if ( lobbyid )
 		{
 			setInvite(true)
@@ -249,7 +248,19 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	 </Popup>
 	 : <></>
 
+	const handleLeave = async () => {
+		const axInst = axios.create({
+			baseURL: 'http://localhost:3000/api/message/',
+			withCredentials: true
+		})
+
+		await axInst.post('del_self_to_group', { group_conv_id: conv_id }).then((res) => {
+			console.log(res.data)
+		}).catch((e) => {console.error(e)})
+	}
+
 	const inviteGame = <button onClick={onPlayTogether}>PlayTogether</button>
+	const leave = <button onClick={handleLeave}>Leave</button>
 
 	return <div className='btn-wrapper'>
 		<form onSubmit={(e) => {
@@ -273,6 +284,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 			{admin_btn_panel}
 			{panelPopup}
 			{inviteGame}
+			{leave}
 	</div>
 }
 

@@ -150,6 +150,12 @@ export class delUserToGroupDTO{
 	del_user_ids:number[]
 }
 
+export class delSelfToGroupDTO{
+	@IsNotEmpty()
+	@IsNumber()
+	group_conv_id:number
+}
+
 export class changeGroupNameDTO{
 	@IsNotEmpty()
 	@IsNumber()

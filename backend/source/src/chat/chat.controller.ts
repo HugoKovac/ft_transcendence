@@ -93,8 +93,14 @@ export class ChatController{
 
 	@Post('del_user_to_group')
 	@UseGuards(AuthGuard('jwt'))
-	async delUserToGroup(@Body()bod: DTO.delUserToGroupDTO){
-		return await this.chatService.delUserToGroup(bod)
+	async delUserToGroup(@Body()bod: DTO.delUserToGroupDTO, @Req() req){
+		return await this.chatService.delUserToGroup(bod, req.cookies['jwt'])
+	}
+
+	@Post('del_self_to_group')
+	@UseGuards(AuthGuard('jwt'))
+	async delSelfToGroup(@Body()bod: DTO.delSelfToGroupDTO, @Req() req){
+		return await this.chatService.delSelfToGroup(bod, req.cookies['jwt'])
 	}
 
 	@Post('change_group_name')

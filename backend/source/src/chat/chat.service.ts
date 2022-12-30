@@ -567,7 +567,8 @@ export class ChatService {
 		}
 	}
 
-	async delUserToGroup({ group_conv_id, del_user_ids }: DTO.delUserToGroupDTO) {
+	async delUserToGroup({ group_conv_id, del_user_ids }: DTO.delUserToGroupDTO, jwt:string) {
+		let tokenUserInfo: any = decode(jwt)
 		if (!del_user_ids || !del_user_ids.length)
 			return true
 		try {
@@ -579,7 +580,7 @@ export class ChatService {
 			for (let i of conv.users) {
 				let push: boolean = true
 				for (let j of del_user_ids) {
-					if (j == i.id && j != conv.owner.id)
+					if ((j == i.id && j != conv.owner.id))
 						push = false
 					if (j == conv.owner.id)
 						push = true
@@ -590,6 +591,38 @@ export class ChatService {
 			}
 
 			const newConv = this.groupConvRepo.create({ ...conv, users: users })
+			await this.groupConvRepo.save(newConv)
+
+			return true
+		}
+		catch (e) {
+			console.error(e)
+			return false
+		}
+	}
+
+	async delSelfToGroup({ group_conv_id }: DTO.delSelfToGroupDTO, jwt:string) {
+		let tokenUserInfo: any = decode(jwt)
+		try {
+			const conv = await this.groupConvRepo.findOne({ where: { group_conv_id: group_conv_id }, relations: ['users', 'owner'] })
+			if (!conv)
+				return false
+
+			let users: User[] = []
+			for (let i of conv.users) {
+				let push: boolean = true
+				if (tokenUserInfo.id == i.id)
+					push = false
+
+				if (push)
+					users.push(i)
+			}
+
+			let newConv
+			if (conv.owner != tokenUserInfo.id)
+				newConv = this.groupConvRepo.create({ ...conv, users: users })
+			else
+				newConv = this.groupConvRepo.create({ ...conv, users: users, owner: new User() })
 			await this.groupConvRepo.save(newConv)
 
 			return true
