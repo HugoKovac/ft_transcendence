@@ -55,7 +55,7 @@ const ChooseFriend = (props: {setPopup: (set: boolean) => void, convList: JSX.El
 			withCredentials: true
 		})
 		try{
-			// console.log(await axInst.post('new_conv', {user_id_1: logState, user_id_2: friend_id}).then((res) => (res.data)))
+			await axInst.post('new_conv', {user_id_1: logState, user_id_2: friend_id}).then((res) => (res.data))
 			props.setPopup(false)
 		}
 		catch{
