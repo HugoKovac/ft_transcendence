@@ -10,7 +10,7 @@ import Parsepp from '../imgParse'
 
 
 const LineUser = (props : {name : string, img_path: string, id : number, default_state : string, status: number, lobbyID: string}) => {
-	console.log(JSON.stringify(props, null, 2))
+	// console.log(JSON.stringify(props, null, 2))
 	const {logState} = useContext(LoginStateContext)
 	const [relative_req, setRelativeReqState] = useState<string>("")
 	const [relative_state, setRelativeState] = useState<string>(props.default_state)
@@ -34,12 +34,12 @@ const LineUser = (props : {name : string, img_path: string, id : number, default
 				strPost = "sendInvit"
 		else
 		{
-			console.log("No req were sent")
+			// console.log("No req were sent")
 			return
 		}
-		console.log("req : ", strPost)
+		// console.log("req : ", strPost)
 		req_base.post(strPost, obj_req).then((res) => {
-			console.log("response : ", res.data)
+			// console.log("response : ", res.data)
 			toast.info(res.data, {
 				position: toast.POSITION.BOTTOM_RIGHT
 			  });
@@ -47,8 +47,8 @@ const LineUser = (props : {name : string, img_path: string, id : number, default
 			if (!res.data)
 				return
 			setRelativeState(res.data)
-			console.log("resp 2 ; ", res.data)
-		}).catch((e) => {console.log(e)})
+			// console.log("resp 2 ; ", res.data)
+		}).catch((e) => {console.error(e)})
 	})
 	}
 	useEffect(() => {get()}, [])
@@ -56,7 +56,7 @@ const LineUser = (props : {name : string, img_path: string, id : number, default
 
 	const renderImg = props.img_path ? <img src={Parsepp(props.img_path)} alt="pp" className='pp'/> : <></>
     //will redirect to the profile onclick
-	console.log("relativeState : ", relative_state)
+	// console.log("relativeState : ", relative_state)
     return <li>
 		<div className="profileLine">
 		<ToastContainer/>

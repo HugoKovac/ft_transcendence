@@ -12,7 +12,7 @@ export const InviteProvider = ({children}:any) => {
 	if (logState !== 0)
 		socket = io('http://localhost:3000/game', {query: { userID : logState }});
 
-	console.log(logState)
+	// console.log(logState)
 	return (
 		<InviteContext.Provider value={socket}>
 			{children}

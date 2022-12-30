@@ -61,7 +61,7 @@ export class ProfileController {
     }),
 	) file: Express.Multer.File, @Req() req) : Promise<string>
 	{
-		console.log("salut ", JSON.stringify(file, null, 2))
+		// console.log("salut ", JSON.stringify(file, null, 2))
 		const str : string = await this.profileService.uploadPp(file, req.cookies['jwt'])
 		return str
 	}

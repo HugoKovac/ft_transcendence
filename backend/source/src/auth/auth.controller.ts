@@ -25,7 +25,7 @@ export class AuthController {
 			return
 		}
 		this.authService.generate2FA(token[0])
-		console.log(token, "    <----- voici")
+		// console.log(token, "    <----- voici")
 		if (token[1] === "true")
 			res.redirect(301, 'http://localhost:3002/redirect/check_token_first')
 		else

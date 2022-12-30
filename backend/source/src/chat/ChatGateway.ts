@@ -21,21 +21,21 @@ export class ChatGateway{
 
 	@SubscribeMessage('message')
 	async handleMessage(@ConnectedSocket() client: Socket, @MessageBody()body: newMsgDTO){
-		console.log('message', body.message)
+		// console.log('message', body.message)
 		await this.chatService.newMsg(body, client.handshake.auth.token)
 		this.serv.emit(body.conv_id.toString())
 	}
 
 	@SubscribeMessage('groupMessage')
 	async handleGroupMessage(@ConnectedSocket() client: Socket, @MessageBody()body: newGroupMsgDTO){
-		console.log('groupMessage', body.message)
+		// console.log('groupMessage', body.message)
 		await this.chatService.newGroupMsg(body, client.handshake.auth.token)
 		this.serv.emit((body.group_conv_id * -1).toString())
 	}
 	
 	@SubscribeMessage('privateGroupMessage')
 	async handlePrivateGroupMessage(@ConnectedSocket() client: Socket, @MessageBody()body: newPrivateGroupMsgDTO){
-		console.log('privateGroupMessage', body.message)
+		// console.log('privateGroupMessage', body.message)
 		await this.chatService.newPrivateGroupMsg(body, client.handshake.auth.token)
 		this.serv.emit((body.group_conv_id * -1).toString())
 	}
@@ -46,14 +46,14 @@ export class ChatGateway{
 
 
 		setTimeout(() => {
-			console.log(`unban${body.user_id.toString()}`)
+			// console.log(`unban${body.user_id.toString()}`)
 			this.serv.emit(`unban${body.user_id.toString()}`)
 		}, body.to * 1000)
 	}
 
 	@SubscribeMessage('refreshConv')
 	async refreshConv(@MessageBody()body: refreshConvDTO){
-		console.log(body.group_conv_id * -1)
+		// console.log(body.group_conv_id * -1)
 		this.serv.emit((`resetConv${body.group_conv_id}`).toString())
 	}
 

@@ -31,7 +31,7 @@ export class ReqFriendService {
 			const {friends} = await this.userRepo.findOne({where: {id: id}, relations: ['friends'], })
 			if (!friends)
 				return undefined
-			console.log(JSON.stringify(friends))
+			// console.log(JSON.stringify(friends))
 			return friends
 		}catch{
 			return undefined
@@ -43,7 +43,7 @@ export class ReqFriendService {
 			const {friends} = await this.userRepo.findOne({where: {id: id}, relations: ['friends'] })
 			if (!friends)
 				return undefined
-			console.log(JSON.stringify(friends, null, 2))
+			// console.log(JSON.stringify(friends, null, 2))
 			const listFriends : User[] = await Promise.all(friends.map(async (e) => await this.userRepo.findOne({where: {id: e.friend_id}})))
 			return listFriends
 		}catch{
@@ -102,9 +102,9 @@ export class ReqFriendService {
             await this.friendsRepo.save(new_friend_one)
             const new_friend_two: Friends = this.friendsRepo.create({friend_id : oneUser.id, friend_username : oneUser.username, user : friend})
             await this.friendsRepo.save(new_friend_two)
-            console.log("list des req en attente : ", oneUser.recvReqFriend)
+            // console.log("list des req en attente : ", oneUser.recvReqFriend)
             await this.reqfriendRepo.delete({id : req_id})
-            console.log("after delete : ", oneUser.recvReqFriend)
+            // console.log("after delete : ", oneUser.recvReqFriend)
             return `a new friendship has been created !`
         } catch {
             return `Error while adding friend`
@@ -141,12 +141,12 @@ export class ReqFriendService {
             const userEntity: User = await this.userRepo.findOne({where: {id: user_id}, relations : ["friends", "recvReqFriend",  "sendReqFriend"]})
             let dest_user : User = await this.checkUserExist(send_id)
             for (let i of userEntity.friends){
-                console.log(`i = `, JSON.stringify(i))
+                // console.log(`i = `, JSON.stringify(i))
 				if (i.friend_id == send_id)
 					return `this user is already your friend`
 			}
 			for (let i of userEntity.sendReqFriend){
-                console.log(`i = `, JSON.stringify(i))
+                // console.log(`i = `, JSON.stringify(i))
                 await this.reqfriendRepo.delete(i)
 				if (i.to_id == send_id)
 					return `invitation to this user already sent`
@@ -171,7 +171,7 @@ export class ReqFriendService {
 			const {recvReqFriend} = await this.userRepo.findOne({where: {id: id}, relations: ['recvReqFriend', 'recvReqFriend.owner']})
 			if (!recvReqFriend)
 				return undefined
-			console.log(JSON.stringify(recvReqFriend, null, 2))
+			// console.log(JSON.stringify(recvReqFriend, null, 2))
 			return recvReqFriend.map(x => x.owner)
 		}catch{
 			return undefined
@@ -182,7 +182,7 @@ export class ReqFriendService {
     {
         const user : User = await this.userRepo.findOne({where : {id : actual_id}, relations : ['friends']})
         let has_been_found : boolean = false
-		console.log ("friends : ", JSON.stringify(user.friends, null, 2))
+		// console.log ("friends : ", JSON.stringify(user.friends, null, 2))
         for (let i of user.friends)
         {
             if ( i.friend_id == friend_id)
@@ -207,7 +207,7 @@ export class ReqFriendService {
 			if (req)
 			{
 				await this.reqfriendRepo.delete({id : req.id})
-				console.log("req = ", JSON.stringify(req, null, 2))
+				// console.log("req = ", JSON.stringify(req, null, 2))
 				return "Invitation deleted"
 			}
             await this.deleteFromFriendList(user_id, send_id)

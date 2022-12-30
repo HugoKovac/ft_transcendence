@@ -95,11 +95,11 @@ export class ReqFriendController {
     async PrintRepo( @Req() req) : Promise<void>
     {
         //this.reqfriendRepo.delete({id : 19})
-        console.log("==========================================================================")
-        console.log("jwt = ", req.cookies['jwt'])
+        // console.log("==========================================================================")
+        // console.log("jwt = ", req.cookies['jwt'])
         let {id} = decode(req.cookies['jwt']) as JwtPayload
-        console.log("id = ", id)
-        console.log("req : ")
+        // console.log("id = ", id)
+        // console.log("req : ")
         let reqs : ReqFriend[] = await this.reqfriendRepo.find({select : {
             id : true,
             from_id : true,
@@ -110,26 +110,26 @@ export class ReqFriendController {
         // {
         //     await this.reqfriendRepo.delete({id : i.id})
         // }
-        console.log("req : ")
-        console.log(JSON.stringify(await this.reqfriendRepo.find({select : {
-            id : true,
-            from_id : true,
-            to_id : true
-        }}), null, 2))
-        console.log("friends : ")
-        console.log(JSON.stringify(await this.friendsRepo.find({select : {
-            id : true,
-            friend_id : true,
-            friend_username : true
-        }}), null, 2))
-        console.log("users : ")
+        // console.log("req : ")
+        // console.log(JSON.stringify(await this.reqfriendRepo.find({select : {
+        //     id : true,
+        //     from_id : true,
+        //     to_id : true
+        // }}), null, 2))
+        // console.log("friends : ")
+        // console.log(JSON.stringify(await this.friendsRepo.find({select : {
+        //     id : true,
+        //     friend_id : true,
+        //     friend_username : true
+        // }}), null, 2))
+        // console.log("users : ")
         let yop : User[] = await this.userRepo.find({select : {
             id : true,
             username : true
         },
         relations : ['friends', "sendReqFriend", "recvReqFriend"]
     })
-        console.log(JSON.stringify(yop, null, 2))
+        // console.log(JSON.stringify(yop, null, 2))
     //     for (let i of yop)
     //     {
     //         await this.userRepo.delete({id : i.id})
@@ -139,6 +139,6 @@ export class ReqFriendController {
     //         id : true,
     //         username : true
     //     }})))
-        console.log("==========================================================================")
+        // console.log("==========================================================================")
     }
 }

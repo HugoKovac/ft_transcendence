@@ -13,7 +13,7 @@ export async function CheckTokenFirstMount(){
 					await CheckLogState(logState, setLogState)
 					localStorage.setItem('jwt', JSON.stringify(logState))
 				}catch(e){
-					console.log(e)
+					// console.log(e)
 				}
 			}
 			fetchLogState()

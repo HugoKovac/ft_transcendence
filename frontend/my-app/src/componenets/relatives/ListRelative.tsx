@@ -22,7 +22,7 @@ const ListRelative  = (props : {}) => {
 		{
 		const req_base = axios.create({ baseURL: 'http://localhost:3000/api/req-friend/', withCredentials: true})
 		req_base.post(req).then((res) => {
-			console.log("list of friends : ", JSON.stringify(res.data, null, 2))
+			// console.log("list of friends : ", JSON.stringify(res.data, null, 2))
 			if (!res.data)
 				return ;
 			let listUserFriends : userProto[] = res.data
@@ -32,7 +32,7 @@ const ListRelative  = (props : {}) => {
 				pp = 'http://' + pp;
 			return <LineUser name={ele.username} img_path={pp} id={ele.id} default_state={defaultState} status={ele.status} lobbyID={ele.LobbyID}/>
 			}))
-			console.log("list of friends modified : ", JSON.stringify(listUserFriends, null, 2))
+			// console.log("list of friends modified : ", JSON.stringify(listUserFriends, null, 2))
 		}).catch()
 
 		}
@@ -41,7 +41,7 @@ const ListRelative  = (props : {}) => {
 			setUpList("list-invit", setInvit, "recv")
 		}, [])
 
-	console.log("first_response : ", JSON.stringify(listUserFriends, null, 2))
+	// console.log("first_response : ", JSON.stringify(listUserFriends, null, 2))
 	return <div className="ListRelative">
 		<div className="titleListRelative">
 			<p>Friends</p>

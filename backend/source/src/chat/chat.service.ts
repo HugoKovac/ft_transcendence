@@ -131,7 +131,7 @@ export class ChatService {
 		}
 
 		for (let i of block_me) {
-			console.log(parseInt(i.from_id.toString()), id)
+			// console.log(parseInt(i.from_id.toString()), id)
 			if ((parseInt(i.from_id.toString()) === id))
 				return true
 		}
@@ -143,7 +143,7 @@ export class ChatService {
 		try {
 			const { blocked, block_me } = await this.userRepo.findOne({ where: { id: tokenUserInfo.id }, relations: ['blocked', 'block_me'] })
 
-			console.log(blocked)
+			// console.log(blocked)
 
 			const conv = await this.convRepo.find({
 				where: [

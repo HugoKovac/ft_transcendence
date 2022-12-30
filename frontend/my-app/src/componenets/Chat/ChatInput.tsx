@@ -31,7 +31,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 					return i
 			return goodPass[0]
 		}
-		console.log(channel)
+		// console.log(channel)
 
 		if (channel){
 			const socket = io("localhost:3000/chat", {
@@ -50,7 +50,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 				})
 				else if (channel === 'groupMessage')
 				{
-					console.log(lobbyid)
+					// console.log(lobbyid)
 				socket.emit('groupMessage', {
 					group_conv_id: conv_id,
 					message: invite ? lobbyid : msg,
@@ -99,7 +99,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 
 		for (let i of ids){
 			socket.on(i.toString(), () => {
-				console.log(i.toString())
+				// console.log(i.toString())
 				setRefresh(true)
 				setRefreshConvListCpy(true)
 			});
@@ -123,7 +123,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 		})
 
 		socket.on(logState.toString(), () => {
-			console.log(logState.toString())
+			// console.log(logState.toString())
 			setHideRightCpy(true)
 			setRefreshConvListCpy(true)
 			setRefresh(true)
@@ -148,7 +148,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	// 	})
 
 	// 	socket.on(logState.toString(), () => {
-	// 		console.log(`ref${logState}`)
+			// console.log(`ref${logState}`)
 	// 		setRefresh(true)
 	// 	});
 
@@ -206,9 +206,9 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	useEffect( () => 
 	{
 		if ( gameSocket )
-			gameSocket.on(ServerEvents.LobbyJoin, (data) => { console.log(data.lobbyid); setlobbyid(data.lobbyid) } );
+			// gameSocket.on(ServerEvents.LobbyJoin, (data) => { console.log(data.lobbyid); setlobbyid(data.lobbyid) } );
 
-		console.log("No Lobby ID");
+		// console.log("No Lobby ID");
 		if ( lobbyid )
 		{
 			setInvite(true)
@@ -226,7 +226,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 
 	const onPlayTogether = () =>
 	{
-		console.log("game socket")
+		// console.log("game socket")
 		
 		if ( gameSocket )
 			gameSocket.emit(ClientEvents.CreateEmptyLobby, 

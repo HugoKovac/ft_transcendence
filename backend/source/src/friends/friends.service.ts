@@ -48,7 +48,7 @@ export class FriendsService {
 		try{
 			const friendId: number = await this.findUsernameId(payload)
 
-			console.log(friendId, payload.id)
+			// console.log(friendId, payload.id)
 
 			if (friendId == payload.id)
 				return "It's you"

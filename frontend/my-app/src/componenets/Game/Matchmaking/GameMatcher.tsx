@@ -30,9 +30,9 @@ export default function GameMatcher()
         }
     }, [])
 
-    const emitJoinQueue = ( () => { console.log("Event Emitted"); if ( socket ) socket.emit(ClientEvents.JoinMatchmaking, { SkinPref: SkinPref.current }); });
+    const emitJoinQueue = ( () => { if ( socket ) socket.emit(ClientEvents.JoinMatchmaking, { SkinPref: SkinPref.current }); });
 
-    const emitLeaveQueue = ( () => { console.log("Event Emitted"); if ( socket ) socket.emit(ClientEvents.LeaveMatchmaking); });
+    const emitLeaveQueue = ( () => { if ( socket ) socket.emit(ClientEvents.LeaveMatchmaking); });
 
     function RetrieveSkin( event : any )
     {

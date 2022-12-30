@@ -24,7 +24,7 @@ const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | 
 		})
 
 		axInst.get('is_active').then((res) => {
-			console.log(res.data)
+			// console.log(res.data)
 			if (res.data === false)
 				setActiveButton(true)
 		}).catch((e) => {
@@ -42,7 +42,7 @@ const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | 
 				position: toast.POSITION.BOTTOM_RIGHT
 			  });
 			props.setData("loading")
-		}).catch((e) => console.log(e))
+		}).catch((e) => console.error(e))
 	}
 	function setPp () {
 		if (newPp)
@@ -62,12 +62,12 @@ const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | 
     		formData.append('file',newPp)
 			
 			req_base.post("uploadPp", formData, {headers : { "Content-Type": "multipart/form-data" }}).then((res) => {
-				console.log(res)
+				// console.log(res)
 				toast.info(res.data, {
 					position: toast.POSITION.BOTTOM_RIGHT
 				  });
 				props.setData("loading")
-			}).catch((e) => console.log(e))
+			}).catch((e) => console.error(e))
 		}
 	}
 	function delPp() {
@@ -79,9 +79,9 @@ const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | 
 				toast.info(res.data, {
 					position: toast.POSITION.BOTTOM_RIGHT
 				  });
-				console.log(res)
+				// console.log(res)
 				props.setData("loading")
-			}).catch((e) => console.log(e))
+			}).catch((e) => console.error(e))
 		}
 
 	return <div className="profilePage">

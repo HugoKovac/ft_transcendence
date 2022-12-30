@@ -19,7 +19,7 @@ export class StatusService
         }
         catch(error)
         {
-            console.log(error)
+            // console.log(error)
             return undefined;
         }
     }
@@ -35,8 +35,8 @@ export class StatusService
         }
         catch(error)
         {
-            console.log("something went wrong ....")
-            console.log(error);
+            // console.log("something went wrong ....")
+            // console.log(error);
         }
     }
 
@@ -68,7 +68,7 @@ export class StatusService
         catch(error)
         {
             console.error(error);
-            console.log("something went wrong");
+            // console.log("something went wrong");
             return undefined;
         }
     }

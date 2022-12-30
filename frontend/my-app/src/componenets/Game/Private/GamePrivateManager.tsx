@@ -46,9 +46,9 @@ export default function GamePrivateManager()
 
     if ( lobby === null )
     {
-        console.log("GameLobby")
+        // console.log("GameLobby")
         return <GameLobby/>
     }
-    console.log("GameInstance")
+    // console.log("GameInstance")
     return <GameInstance/>;
 }

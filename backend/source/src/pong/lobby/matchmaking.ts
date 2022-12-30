@@ -91,10 +91,10 @@ export class Matchmaking
         lobby.addClient(Player1.socket);
         lobby.addClient(Player2.socket);
 
-        console.log("HEYOO ")
-        console.log(Player1.id);
-        console.log(Player2.id);
-        console.log("HEYOO ")
+        // console.log("HEYOO ")
+        // console.log(Player1.id);
+        // console.log(Player2.id);
+        // console.log("HEYOO ")
         await this.pongservice.pushActiveGame(Player1.id, Player2.id, lobby.id);
         await this.pongservice.ChangeUserStatus(check1, 2, lobby.id);
         await this.pongservice.ChangeUserStatus(check2, 2, lobby.id);

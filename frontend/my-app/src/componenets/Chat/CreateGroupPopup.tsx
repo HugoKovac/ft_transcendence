@@ -64,9 +64,9 @@ const CreateGroupPopup = (props: { setPopup: (v: boolean) => void }) => {
 			withCredentials: true
 		})
 		await axInst.post('new_group_conv', payload).then((res) => {
-			console.log(res.data)
+			// console.log(res.data)
 			props.setPopup(false)
-		}).catch((e) => { console.log(e); toast.error(e.response.data.message[0]) })
+		}).catch((e) => { toast.error(e.response.data.message[0]) })
 	}
 
 	return <div key={5465} className='CreateGroupPopup'>

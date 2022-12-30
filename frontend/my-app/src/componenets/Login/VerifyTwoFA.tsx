@@ -15,7 +15,7 @@ const Verify2fa = () => {//if return of verify navigate to check_token
 		
 		if (code.length){
 			axInst.post('verify2fa', {code: code}).then((res) => {
-				console.log(res.data)
+				// console.log(res.data)
 				if(res.data === true)
 					nav('/redirect/check_token')
 				else if (res.data === false)

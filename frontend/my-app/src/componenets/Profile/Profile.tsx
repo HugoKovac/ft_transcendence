@@ -38,13 +38,13 @@ const ButtonsRelative = (props : {name : string, img_path: string, id : number} 
 				if (!res.data)
 					return
 				setRelativeState(res.data)
-				console.log("resp 2 ; ", res.data)
-			}).catch((e) => {console.log(e)})
+				// console.log("resp 2 ; ", res.data)
+			}).catch((e) => {console.error(e)})
 				return
 		}
-		console.log("req : ", strPost)
+		// console.log("req : ", strPost)
 		req_base.post(strPost, obj_req).then((res) => {
-			console.log("response : ", res.data)
+			// console.log("response : ", res.data)
 			toast.info(res.data, {
 				position: toast.POSITION.BOTTOM_RIGHT
 			  });
@@ -52,8 +52,8 @@ const ButtonsRelative = (props : {name : string, img_path: string, id : number} 
 			if (!res.data)
 				return
 			setRelativeState(res.data)
-			console.log("resp 2 ; ", res.data)
-		}).catch((e) => {console.log(e)})
+			// console.log("resp 2 ; ", res.data)
+		}).catch((e) => {console.error(e)})
 	})
 	}, [relative_req, logState, props.id])
 
@@ -96,7 +96,7 @@ export const ProfileComp = () => {
 	const {logState} = useContext(LoginStateContext)
 	let user_id : string  = queryEntries.get('userId') ?? logState.toString()
 	const res_user_id : number = !Number.isNaN(user_id) && !Number.isNaN(Number.parseInt(user_id)) ? Number.parseInt(user_id) : -1
-	console.log("Query : => ", res_user_id)
+	// console.log("Query : => ", res_user_id)
 	
 	async function get_data_user (res_user_id : number) : Promise<void> 
 	{
@@ -104,7 +104,7 @@ export const ProfileComp = () => {
 			return
 		const req_base = axios.create({ baseURL: 'http://localhost:3000/api/profile/', withCredentials: true})
 		req_base.post("getUserData", {user_id : logState, target_id : res_user_id}).then((res) => {
-			console.log(JSON.stringify(res.data, null, 2), "  <----")
+			// console.log(JSON.stringify(res.data, null, 2), "  <----")
 			let buffProto : userProto | undefined = res.data
 			if (buffProto?.pp && buffProto.pp.startsWith('localhost:3000/profile-pictures/'))
 				buffProto.pp = 'http://' + buffProto.pp
@@ -112,7 +112,7 @@ export const ProfileComp = () => {
 				setDataUser(buffProto)
 			else
 				setDataUser(undefined)
-		}).catch((e) => console.log(e))
+		}).catch((e) => console.error(e))
 	}
 	function copySetDataUser(rs : 'loading' | undefined) : void
 	{

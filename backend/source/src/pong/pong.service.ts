@@ -68,7 +68,7 @@ export class PongService
         }
         catch (error)
         {
-            console.log("Something went wrong")
+            // console.log("Something went wrong")
             console.error(error);
             return undefined
         }
@@ -85,8 +85,8 @@ export class PongService
         }
         catch(error)
         {
-            console.log("something went wrong ....")
-            console.log(error);
+            // console.log("something went wrong ....")
+            // console.log(error);
         }
     }
 
@@ -118,7 +118,7 @@ export class PongService
         catch(error)
         {
             console.error(error);
-            console.log("something went wrong");
+            // console.log("something went wrong");
             return undefined;
         }
     }
@@ -140,7 +140,7 @@ export class PongService
         }
         catch(error)
         {
-            console.log(error);
+            // console.log(error);
             return "Something went wrong";
         }
     }
@@ -162,7 +162,7 @@ export class PongService
         }
         catch(error)
         {
-            console.log(error);
+            // console.log(error);
             return "Something went wrong";
         }
     } 
@@ -233,7 +233,7 @@ export class PongService
         }
         catch(error)
         {
-            console.log(error)
+            // console.log(error)
             return undefined;
         }
     }
@@ -250,7 +250,7 @@ export class PongService
         }
         catch(error)
         {
-            console.log(error)
+            // console.log(error)
             return undefined;
         }
     }

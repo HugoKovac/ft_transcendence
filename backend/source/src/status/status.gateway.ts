@@ -27,11 +27,11 @@ export class StatusGateway implements OnGatewayConnection, OnGatewayDisconnect
       const check = await this.statusservice.checkUserID(client.handshake.query.userID as string);
       if ( !check )
       {
-        console.log("user not found")
+        // console.log("user not found")
         return ;
       }
       await this.statusservice.ChangeUserStatus(check, 1, null);
-      console.log(await this.statusservice.getUserStatus(check))
+      // console.log(await this.statusservice.getUserStatus(check))
     }
 
     async handleDisconnect( client: Socket )
@@ -40,7 +40,7 @@ export class StatusGateway implements OnGatewayConnection, OnGatewayDisconnect
       if ( !check )
         return ;
       await this.statusservice.ChangeUserStatus(check, 0, null);
-      console.log("disconnected")
-      console.log(await this.statusservice.getUserStatus(check))
+      // console.log("disconnected")
+      // console.log(await this.statusservice.getUserStatus(check))
     }
 }

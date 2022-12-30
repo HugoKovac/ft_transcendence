@@ -21,7 +21,7 @@ const SetProfile = () : JSX.Element => {
 			return
 		const req_base = axios.create({ baseURL: 'http://localhost:3000/api/profile/', withCredentials: true})
 		req_base.post("getUserData", {user_id : logState, target_id : logState}).then((res) => {
-			console.log(JSON.stringify(res.data, null, 2))
+			// console.log(JSON.stringify(res.data, null, 2))
 			let buffProto : userProto | undefined = res.data
 			if (buffProto?.pp && buffProto.pp.startsWith('localhost:3000/profile-pictures/'))
 				buffProto.pp = 'http://' + buffProto.pp
@@ -31,7 +31,7 @@ const SetProfile = () : JSX.Element => {
             }
 			else
 				setDataUser(undefined)
-		}).catch((e) => console.log(e))
+		}).catch((e) => console.error(e))
     }
 
     useEffect(() => {
@@ -39,10 +39,10 @@ const SetProfile = () : JSX.Element => {
             return 
 		const req_base = axios.create({ baseURL: 'http://localhost:3000/api/profile/', withCredentials: true})
 		req_base.post("setUsername", {user_id : logState, username : newUsername}).then((res) => {
-			console.log("from change username : " + JSON.stringify(res))
+			// console.log("from change username : " + JSON.stringify(res))
             toast(res.data)
 			setDataUser("loading")
-		}).catch((e) => console.log(e))
+		}).catch((e) => console.error(e))
 
     }, [newUsername])
 
@@ -63,10 +63,10 @@ const SetProfile = () : JSX.Element => {
 			const formData = new FormData();
     		formData.append('file',newPp)
 			req_base.post("uploadPp", formData, {headers : { "Content-Type": "multipart/form-data" }}).then((res) => {
-				console.log(res)
+				// console.log(res)
                 toast(res.data)
 				setDataUser("loading")
-			}).catch((e) => console.log(e.response))
+			}).catch((e) => console.error(e.response))
 		}
 	}
 	function delPp() {
@@ -75,10 +75,10 @@ const SetProfile = () : JSX.Element => {
 				withCredentials: true,
 			})
 			req_base.post("delPp", {user_id : logState}).then((res) => {
-				console.log(res)
+				// console.log(res)
                 toast(res.data)
 				setDataUser("loading")
-			}).catch((e) => console.log(e))
+			}).catch((e) => console.error(e))
 		}
 
     if (dataUser === 'loading')

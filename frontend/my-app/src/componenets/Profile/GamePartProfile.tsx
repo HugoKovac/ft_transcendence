@@ -25,7 +25,7 @@ const GamePartProfile = (props : {user_id : number}) => {
 		const req_base = axios.create({ baseURL: 'http://localhost:3000/api/profile/', withCredentials: true})
 		req_base.post("getDataGames", {user_id : logState}).then((res) => {
 			if (!res.data)
-				console.log("Error : no data transferred")
+				// console.log("Error : no data transferred")
 			setHistory(res.data)
 		})
 	}, [logState])

@@ -29,7 +29,7 @@ export class ProfileService {
 		if (user_one.block_me.filter((e) => e.from_id == target_id).length > 0)
 			return undefined
 		const return_pro = await this.userRepo.findOne({where : {id : target_id}})
-		console.log("gromage => ", return_pro)
+		// console.log("gromage => ", return_pro)
 		return return_pro
 	}
 	async uploadPp(file: Express.Multer.File, jwt : string) : Promise<string>
@@ -48,7 +48,7 @@ export class ProfileService {
 		const {id} = decode(jwt) as JwtPayload
 		if (id != user_id)
 		{
-			console.log("c'est terminer")
+			// console.log("c'est terminer")
 			return "id don't match"
 		}
 		const user_one : User = await this.userRepo.findOne({where : {id : id}})
@@ -109,13 +109,13 @@ export class ProfileService {
 		const chien : ActiveGame = await this.activegameRepo.findOne({where : {id : 1}, relations : ["Games"]})
 		if (!chien)
 			return undefined
-		console.log("len : ", chien.Games.length)
+		// console.log("len : ", chien.Games.length)
 		for (let e of chien.Games)
 		{
 			let item : {username1 : string, username2 :string, lobbyID : string} = {username1 : "string", username2 :"string", lobbyID : "string"}
 			let u1 : User = await this.userRepo.findOne({where : {id : e.Player1ID}})
 			let u2 : User = await this.userRepo.findOne({where : {id : e.Player2ID}})
-			console.log(JSON.stringify(u1, null, 2))
+			// console.log(JSON.stringify(u1, null, 2))
 			if (!u1 || !u2)
 				return undefined
 			item.username1 = u1.username

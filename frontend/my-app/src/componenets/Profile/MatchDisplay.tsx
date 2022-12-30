@@ -12,7 +12,7 @@ type protoPlayer = {
 const MatchDisplay = (props : {player1 : protoPlayer, player2 : protoPlayer, time : Date, P1W : boolean}) : JSX.Element => {
 	const player_w : protoPlayer = (props.P1W) ? props.player1 : props.player2
 	const player_l : protoPlayer = (props.P1W) ? props.player2 : props.player1
-	console.log("Voici les playes : ", JSON.stringify(player_l))
+	// console.log("Voici les playes : ", JSON.stringify(player_l))
 	const {logState} = useContext(LoginStateContext)
 	const res : boolean = (props.P1W && logState === props.player1.id) || (!props.P1W && logState !== props.player1.id)
 	return (

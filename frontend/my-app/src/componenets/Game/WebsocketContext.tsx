@@ -6,14 +6,14 @@ export const WebsocketContext = createContext<Socket | undefined >(undefined);
 
 export const WebsocketProvider = ({children}:any) => {
 
-	console.log("CONTEXT")
+	// console.log("CONTEXT")
 	let socket = undefined;
 	const {logState} = useContext(LoginStateContext);
 
 	if ( logState !== 0 )
 		socket = io('http://localhost:3000/game', {query: { userID : logState }});
 
-	console.log(logState)
+	// console.log(logState)
 	return (
 		<WebsocketContext.Provider value={socket}>
 			{children}
