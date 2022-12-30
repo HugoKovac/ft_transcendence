@@ -526,6 +526,8 @@ export default function GameInstance()
     });
 
     
+    
+    
     const gameloop = ( () => 
     {
         startClock.current = Date.now();
@@ -568,14 +570,12 @@ export default function GameInstance()
         deltatime.current = Date.now() - startClock.current;
         requestRef.current = requestAnimationFrame(gameloop);
     });
-
-
     useEffect( () => 
     {
         requestRef.current = requestAnimationFrame(gameloop);
         return () =>
             cancelAnimationFrame(requestRef.current);
-    }, [CurrentLobbyState, gameEnd, gameStart]);
+    }, [CurrentLobbyState, gameEnd, gameStart, gameloop]);
 
 
     //? Client game loop
