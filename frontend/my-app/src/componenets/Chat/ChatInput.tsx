@@ -245,7 +245,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 		<h1>Manage Group</h1>
 		<AdminPanel userGroupList={userGroupList} conv_id={conv_id} setPanelTrigger={setPanelTrigger}
 		setRefreshConvList={setRefreshConvList} isConvPrivate={isConvPrivate} setConv={setConv}
-		passwordInput={passwordInput} setPasswordInput={setPasswordInput}/>
+		passwordInput={passwordInput} setPasswordInput={setPasswordInput} setRefresh={setRefresh} /> 
 	 </Popup>
 	 : <></>
 
