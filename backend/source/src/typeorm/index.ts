@@ -8,8 +8,10 @@ import { MuteEntity } from './mute.entity'
 import { GameRanked } from './gameranked.entity'
 import { BlockPeople } from './blockPeople.entity'
 import { ReqFriend } from './ReqFriend.entity'
+import { ActiveGame } from './activegame.entity'
+import { Game } from './game.entity'
 
-const entities = [User, Message, Friends, Conv, GroupConv, BanEnity, MuteEntity, ReqFriend, BlockPeople, GameRanked]
+const entities = [User, Message, Friends, Conv, GroupConv, BanEnity, MuteEntity, ReqFriend, BlockPeople, GameRanked, ActiveGame, Game]
 
-export {User, Message, Friends, Conv, GroupConv, BanEnity, MuteEntity, ReqFriend, BlockPeople, GameRanked}
+export {User, Message, Friends, Conv, GroupConv, BanEnity, MuteEntity, ReqFriend, BlockPeople, GameRanked, ActiveGame, Game}
 export default entities

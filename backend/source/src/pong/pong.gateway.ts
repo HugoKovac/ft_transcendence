@@ -26,6 +26,8 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
 
     afterInit(server: Server) {
       
+      const save = this.pongservice.activegameRepo.create({id: 1});
+      this.pongservice.activegameRepo.save(save);
       this.lobbyManager.server = server;
       this.lobbyManager.pongservice = this.pongservice;
       this.matchmaking.server = server;
@@ -36,7 +38,6 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
 
     async handleConnection( client: Socket ) : Promise<void> 
     {
-      console.log(client.handshake.query)
       this.lobbyManager.initializeClient(client as AuthenticatedSocket, client.handshake.query.userID );
 
       const check = await this.pongservice.checkUserID(client.data.userID);
@@ -96,10 +97,7 @@ constructor( private readonly lobbyManager: LobbyFactory, private readonly match
     onReadyState( client : AuthenticatedSocket )
     {
       if (!client.data.lobby)
-      {
-        console.log("Client doesnt have a lobby")
         return ;
-      }
       if ( client.data.lobby.instance.gameEnd == false )
         client.data.lobby.instance.toggleReadyState(client.id);
     }

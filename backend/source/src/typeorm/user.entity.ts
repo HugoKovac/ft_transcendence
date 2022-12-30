@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 import { BanEnity } from "./ban.entity";
 import Conv from "./conv.entity";
 import { Friends } from "./friends.entity";
@@ -7,6 +7,7 @@ import { MuteEntity } from "./mute.entity";
 import { BlockPeople } from "./blockPeople.entity"
 import { ReqFriend } from "./ReqFriend.entity";
 import { GameRanked } from "./gameranked.entity";
+import { ActiveGame } from "./activegame.entity";
 
 @Entity()
 export class User {
@@ -154,5 +155,4 @@ export class User {
     
     @Column( { nullable: true } )
     LobbyID : string
-
 }

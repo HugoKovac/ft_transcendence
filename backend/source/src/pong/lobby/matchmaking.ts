@@ -16,7 +16,6 @@ export class Matchmaking
 
     public LobbyGenerator : LobbyFactory;
 
-
     public addClientToQueue( client : AuthenticatedSocket, SkinPref: string )
     {
         let defaultskinpref = "default";
@@ -88,9 +87,11 @@ export class Matchmaking
             return ;
         
         const lobby = this.LobbyGenerator.generateLobby(skin, "#FF0000", "#001EFF", "#FFFFFF", "#FFFFFF", true); //? Special color for ranked games
+
         lobby.addClient(Player1.socket);
         lobby.addClient(Player2.socket);
 
+        await this.pongservice.pushActiveGame(Player1.id, Player2.id, lobby.id);
         await this.pongservice.ChangeUserStatus(check1, 2, lobby.id);
         await this.pongservice.ChangeUserStatus(check2, 2, lobby.id);
     }

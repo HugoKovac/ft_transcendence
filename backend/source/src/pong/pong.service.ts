@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User, GameRanked} from 'src/typeorm';
+import { User, GameRanked, ActiveGame, Game} from 'src/typeorm';
 import { Repository } from "typeorm";
 import { RankedGameData } from "./types";
 
@@ -8,8 +8,71 @@ import { RankedGameData } from "./types";
 export class PongService
 {
     constructor( @InjectRepository(User) private userRepo: Repository<User>,
-                 @InjectRepository(GameRanked) private gamerankedRepo: Repository<GameRanked> ) {}
+                 @InjectRepository(GameRanked) private gamerankedRepo: Repository<GameRanked>,
+                 @InjectRepository(ActiveGame) public activegameRepo: Repository<ActiveGame>,
+                 @InjectRepository(Game) private gameRepo: Repository<Game>, ) {}
 
+                
+    public async getAllActiveGame() : Promise<Game[]>
+    {
+        try 
+        {
+            let games = undefined;
+
+            games = await this.activegameRepo.findOne({where: {id: 1}, relations: ['Games']});
+            if ( !games )
+                return undefined;
+            return games.Games;
+        }
+        catch (error)
+        {
+            console.error(error);
+            return undefined;
+        }
+    }
+
+    public async popActiveGame( lobbydelete : string ) : Promise<string>
+    {
+        try 
+        {
+            await this.gameRepo.delete({LobbyID: lobbydelete});
+            return "Successfully deleted this lobby";
+        }
+        catch (error)
+        {
+            return "This game doesnt exist";
+        }
+    }
+                    
+    public async pushActiveGame( player1id: string, player2id: string, lobbyID : string ) : Promise<Game>
+    {
+        let user1id : any = player1id;
+        let user2id : any = player2id;
+        let lobbyid : any = lobbyID;
+
+        try 
+        {
+            let activegame = undefined;
+
+            activegame = await this.activegameRepo.findOne({where:{id: 1}, relations: ['Games']});
+            if ( !activegame )
+                activegame = this.activegameRepo.create({id: 1});
+
+            const game = this.gameRepo.create({Player1ID: user1id, Player2ID: user2id, LobbyID: lobbyid, activegame: activegame});
+            if ( !game )
+                return undefined;
+
+            
+            await this.gameRepo.save(game);
+            return game;
+        }
+        catch (error)
+        {
+            console.log("Something went wrong")
+            console.error(error);
+            return undefined
+        }
+    }
 
     async getUserStatus( userEntity: User ) : Promise<number>
     {
