@@ -10,7 +10,7 @@ type protoMatch = {
 	playerone_username : string,
 	playertwo_username : string,
 	date : Date,
-	playerone_won : boolean
+	playerone_won : boolean 
 }
 const AchivementDisplay = (props : {history : protoMatch[]}) => {
 	const {logState} = useContext(LoginStateContext)

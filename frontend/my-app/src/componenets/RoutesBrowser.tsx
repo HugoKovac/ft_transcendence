@@ -15,6 +15,7 @@ import Verify2fa from "./Login/VerifyTwoFA"
 import Active2FA from "../pages/ActiveTwoFA"
 import Setup from "../pages/Setup"
 import { InviteProvider } from "./Chat/InviteSocket"
+import Parties from "../pages/Parties"
 
 
 
@@ -68,6 +69,9 @@ const RoutesBrowser = () : React.ReactElement => {
 					</Route>
 					<Route path='/Setup' element={<FirstConnection />}>
 						<Route path='/Setup' element={<Setup/>}/>
+					</Route>
+					<Route path='/Parties' element={<FirstConnection />}>
+						<Route path='/Parties' element={<Parties/>}/>
 					</Route>
 				<Route path='/redirect/check_token_first' element={<CheckTokenAfterFirstLogin />} />
 				<Route path='/redirect/check_token' element={<CheckTokenAfterLogin />} />
