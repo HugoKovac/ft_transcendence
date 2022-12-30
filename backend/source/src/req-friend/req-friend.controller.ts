@@ -74,8 +74,8 @@ export class ReqFriendController {
 	}	
     @Post('list-blocked')
 	@UseGuards(AuthGuard('jwt'))
-	async getBlocked(@Body() bod : ReqInvitFriend, @Req() req) {
-		let str : User[] = await this.ReqFriendService.getBlockUser(bod, req.cookies['jwt'])
+	async getBlocked(@Req() req) {
+		let str : User[] = await this.ReqFriendService.getBlockUser(req.cookies['jwt'])
         return str
 	}	
 	@Post('delete')
@@ -94,51 +94,18 @@ export class ReqFriendController {
 @Post("jwt")
     async PrintRepo( @Req() req) : Promise<void>
     {
-        //this.reqfriendRepo.delete({id : 19})
-        // console.log("==========================================================================")
-        // console.log("jwt = ", req.cookies['jwt'])
         let {id} = decode(req.cookies['jwt']) as JwtPayload
-        // console.log("id = ", id)
-        // console.log("req : ")
         let reqs : ReqFriend[] = await this.reqfriendRepo.find({select : {
             id : true,
             from_id : true,
             to_id : true
         }})
 
-        // for (let i of reqs)
-        // {
-        //     await this.reqfriendRepo.delete({id : i.id})
-        // }
-        // console.log("req : ")
-        // console.log(JSON.stringify(await this.reqfriendRepo.find({select : {
-        //     id : true,
-        //     from_id : true,
-        //     to_id : true
-        // }}), null, 2))
-        // console.log("friends : ")
-        // console.log(JSON.stringify(await this.friendsRepo.find({select : {
-        //     id : true,
-        //     friend_id : true,
-        //     friend_username : true
-        // }}), null, 2))
-        // console.log("users : ")
         let yop : User[] = await this.userRepo.find({select : {
             id : true,
             username : true
         },
         relations : ['friends', "sendReqFriend", "recvReqFriend"]
     })
-        // console.log(JSON.stringify(yop, null, 2))
-    //     for (let i of yop)
-    //     {
-    //         await this.userRepo.delete({id : i.id})
-    //     }
-    //     console.log("users : ")
-    //     console.log(JSON.stringify(await this.userRepo.find({select : {
-    //         id : true,
-    //         username : true
-    //     }})))
-        // console.log("==========================================================================")
     }
 }

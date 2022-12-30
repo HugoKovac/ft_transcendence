@@ -206,9 +206,9 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	useEffect( () => 
 	{
 		if ( gameSocket )
-			// gameSocket.on(ServerEvents.LobbyJoin, (data) => { console.log(data.lobbyid); setlobbyid(data.lobbyid) } );
+			 gameSocket.on(ServerEvents.LobbyJoin, (data) => { console.log(data.lobbyid); setlobbyid(data.lobbyid) } );
 
-		// console.log("No Lobby ID");
+		 console.error("No Lobby ID");
 		if ( lobbyid )
 		{
 			setInvite(true)

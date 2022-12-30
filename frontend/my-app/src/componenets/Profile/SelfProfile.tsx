@@ -34,8 +34,10 @@ const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | 
 	const button = activeButton ? <NavLink to='/active2FA'>Active 2FA</NavLink> : <></>
 
 	function setUsername () {
+		setNewUsername(newUsername.substring(0, 10))
 		if (newUsername == props.userData.username)
 			return
+		
 		const req_base = axios.create({ baseURL: 'http://localhost:3000/api/profile/', withCredentials: true})
 		req_base.post("setUsername", {user_id : logState, username : newUsername}).then((res) => {
 			toast.info(res.data, {

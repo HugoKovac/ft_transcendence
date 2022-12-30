@@ -167,7 +167,7 @@ const AdminPanel = (props: { userGroupList: userType[], conv_id: number, setConv
 
 		if (toInfo[1]) {
 			await axInst.post('ban_user', { group_conv_id: props.conv_id, user_id: parseInt(toInfo[0].toString()), to: parseInt(time) }).then((res) => {
-				console.log(res.data)
+				//console.log(res.data)
 				setTo(false)
 
 				const socket = io("localhost:3000", {
@@ -188,7 +188,7 @@ const AdminPanel = (props: { userGroupList: userType[], conv_id: number, setConv
 		}
 		else if (!toInfo[1]) {
 			await axInst.post('mute_user', { group_conv_id: props.conv_id, user_id: parseInt(toInfo[0].toString()), to: parseInt(time) }).then((res) => {
-				console.log(res.data)
+				//console.log(res.data)
 				setTo(false)
 			}).catch((e) => {
 				console.error(e)

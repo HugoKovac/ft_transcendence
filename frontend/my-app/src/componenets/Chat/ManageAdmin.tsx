@@ -80,7 +80,7 @@ const ManageAdmin = (props:{conv_id:number, setPanelTrigger: (v:boolean)=>void, 
 		set_del_list(del)
 		
 		await axInst.post('del_admin', {group_conv_id: props.conv_id, admin_ids: del}).then((res) => {
-			console.log(res.data)
+			//console.log(res.data)
 		}).catch((e) => {
 			console.error(e)
 		})
