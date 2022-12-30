@@ -49,7 +49,7 @@ const SelfProfile = (props : {userData : userProto, setData : (rs : 'loading' | 
 	function setPp () {
 		if (newPp)
 		{
-			if (newPp.size > 10000000)
+			if (newPp.size > 1000000)
 			{
 				toast.info("can't load : image too heavy", {
 					position: toast.POSITION.BOTTOM_RIGHT
