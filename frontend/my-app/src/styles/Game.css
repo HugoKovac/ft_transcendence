@@ -60,10 +60,23 @@
     font-weight: 100;
 }
 
+.SkinSelectorName
+{
+    color:white;
+    margin-top: 25px;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-family: cursive;
+    font-size: x-large;
+    font-weight: 100;
+}
 
 .SkinList
 {
-    background-color:black;
+    background-color: white;
     border: 4px inset brown;
 }
 .SkinList:hover
@@ -73,7 +86,7 @@
 
 .CreateLobbyBtn
 {
-    background-color: black;
+    background-color: white;
     width: 200px;
     border: 4px inset brown;
 }
@@ -147,6 +160,7 @@
 
 .Spectator
 {
+    color: white;
     font-family: cursive;
     font-size: large;
     background-color:transparent; 
@@ -164,6 +178,7 @@
 
 .BackToLobby
 {
+    color: white;
     font-family: cursive;
     font-size: large;
     background-color:transparent;
@@ -176,6 +191,7 @@
 
 .CopyLink
 {
+    color: white;
     font-family: cursive;
     font-size: large;
     background-color: transparent;
@@ -187,6 +203,41 @@
 }
 
 
+.JoinQueue
+{
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    background-color: white;
+    width: 200px;
+    border: 4px inset brown;
+}
+
+.JoinQueue:hover
+{
+    background-color: crimson;
+}
+
+.LeaveQueue
+{
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    background-color: white;
+    width: 200px;
+    border: 4px inset brown;
+}
+
+.LeaveQueue:hover
+{
+    background-color: crimson;
+}
 
 
 .GameTitle
@@ -211,6 +262,7 @@
 
 .MatchMakingBtn
 {
+    color: white;
     margin-top: 100px;
     font-family: cursive;
     font-size: large;
@@ -224,6 +276,8 @@
 
 .PrivateBtn
 {
+    color: white;
+
     margin-top: 100px;
     margin-left: 50px;
     font-family: cursive;
@@ -238,6 +292,7 @@
 
 .PongTitle
 {
+    color: white;
     font-family: cursive;
     font-size: xx-large;
 }

@@ -41,13 +41,10 @@ export default function GameMatcher()
     }
 
     return (
-        <div>
+        <div className="default">
             <NavBar />
-            <div className="MatchmakingBtn">
-                <button onClick={() => emitJoinQueue()}> Join Queue </button>
-                <button onClick={() => emitLeaveQueue()}> Leave queue </button>
-            </div>
-            <div className="SkinSelector">
+            <p className="SkinSelectorName">Main Skin</p>
+            <div className="SkinSelector" >
                     <select id="skin" className="SkinList">
                             <option value="default">Default</option>
                             <option value="SpaceGIF">SpaceGIF</option>
@@ -55,6 +52,10 @@ export default function GameMatcher()
                             <option value="neonsunsetoverdrive">Neon Sunset Overdrive</option>
                             <option value="gotham">Gotham City</option>
                     </select>
+            </div>
+            <div className="MatchmakingBtn">
+                <button className="JoinQueue" onClick={() => emitJoinQueue()}> Join Queue </button>
+                <button className="LeaveQueue" onClick={() => emitLeaveQueue()}> Leave queue </button>
             </div>
             <ToastContainer />
         </div>

@@ -206,7 +206,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 	useEffect( () => 
 	{
 		if ( gameSocket )
-			// gameSocket.on(ServerEvents.LobbyJoin, (data) => { console.log(data.lobbyid); setlobbyid(data.lobbyid) } );
+			gameSocket.on(ServerEvents.LobbyJoin, (data) => { console.log(data.lobbyid); setlobbyid(data.lobbyid) } );
 
 		// console.log("No Lobby ID");
 		if ( lobbyid )
@@ -226,7 +226,7 @@ function ChatInput({conv_id, setRefresh, nav, userGroupList, setConv, setRefresh
 
 	const onPlayTogether = () =>
 	{
-		// console.log("game socket")
+		console.log("game socket")
 		
 		if ( gameSocket )
 			gameSocket.emit(ClientEvents.CreateEmptyLobby, 
