@@ -6,6 +6,7 @@ import "./profile_style.scss"
 import axios from "axios"
 
 type protoMatch = {
+	id : number,
 	playerone_id : number,
 	playertwo_id : number,
 	playerone_score : number,
@@ -57,8 +58,9 @@ const GamePartProfile = (props : {user_id : number}) => {
 		{ playerone_id : logState, playertwo_id : 34, playerone_score : 50, playertwo_score : 50,
 			playerone_username : "Bob", playertwo_username : "string", date : new Date(), playerone_won : true},
 				]*/
+				let i = 0
 	const games : JSX.Element[] = History.map((e) => {
-		return <MatchDisplay player1={{id : e.playerone_id, username : e.playerone_username, score : e.playerone_score}}
+		return <MatchDisplay key={i++} player1={{id : e.playerone_id, username : e.playerone_username, score : e.playerone_score}}
 		player2={{id : e.playertwo_id, username : e.playertwo_username, score : e.playertwo_score}} time={e.date} P1W={e.playerone_won}/>
 	})
 	const displayListGames = () : JSX.Element => {
