@@ -27,7 +27,7 @@ const GamePartProfile = (props : {user_id : number}) => {
 				console.log("Error : no data transferred")
 			setHistory(res.data)
 		})
-	}, [])
+	}, [logState])
 	/*const History : protoMatch[] = [
 		{ playerone_id : logState, playertwo_id : 34, playerone_score : 2, playertwo_score : 50,
 			playerone_username : "Bob", playertwo_username : "string", date : new Date(), playerone_won : true},
@@ -62,7 +62,7 @@ const GamePartProfile = (props : {user_id : number}) => {
 		player2={{id : e.playertwo_id, username : e.playertwo_username, score : e.playertwo_score}} time={e.date} P1W={e.playerone_won}/>
 	})
 	const displayListGames = () : JSX.Element => {
-		if ( games.length == 0)
+		if ( games.length === 0)
 			return <div className="allMatchs"><p className="voidMessage">Nothing to see here ...</p></div>
 		return <div className="allMatchs">{games}</div>
 	}

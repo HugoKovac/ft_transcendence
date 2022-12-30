@@ -2,7 +2,6 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { NavLink } from "react-router-dom"
 import { toast } from "react-toastify"
-import { LobbyState } from "./Game/LobbyState"
 
 type Fight = {
     lobbyID : string,
@@ -22,7 +21,6 @@ const Party = (props : { username1 : string, username2 : string, lobbyID : strin
 
 const ListParty = () : JSX.Element => {
 
-    let list : Fight[] = []
     const [listParty, setListParty] = useState<JSX.Element[]>([])
 
     useEffect(() => {
@@ -30,6 +28,7 @@ const ListParty = () : JSX.Element => {
             baseURL: 'http://localhost:3000/api/profile/',
             withCredentials: true
         })
+
         axInst.post("listParties").then((res) => {
             if (!res.data)
             {
@@ -37,7 +36,7 @@ const ListParty = () : JSX.Element => {
             }
             else
             {
-                list = res.data
+                let list : Fight[] = res.data
                 setListParty(list.map((e) => <Party username1={e.username1} username2={e.username2} lobbyID={e.lobbyID}/>))
             }
         })

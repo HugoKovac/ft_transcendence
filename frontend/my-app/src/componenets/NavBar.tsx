@@ -32,6 +32,10 @@ function GameButton(){
 	return ( <Button path='/game' content='Game'/> )
 }
 
+function PartiesButton(){
+	return ( <Button path='/Parties' content='Parties'/> )
+}
+
 function LeftBar(){
 	const {logState} = useContext(LoginStateContext)
 	let button
@@ -40,6 +44,7 @@ function LeftBar(){
 		button = <>
 			<ChatButton />
 			<GameButton />
+			<PartiesButton />
 		</> 
 
 	return (
