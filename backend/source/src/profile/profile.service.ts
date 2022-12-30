@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { decode, JwtPayload } from 'jsonwebtoken';
-import { Friends, ReqFriend, User, BlockPeople, GameRanked } from 'src/typeorm';
+import { Friends, ReqFriend, User, BlockPeople, GameRanked, ActiveGame } from 'src/typeorm';
 import { Repository } from 'typeorm';
 import { join } from 'path';
 import { waitForDebugger } from 'inspector';
@@ -15,6 +15,8 @@ export class ProfileService {
     	private readonly userRepo: Repository<User>,
         @InjectRepository(GameRanked)
     	private readonly gameRankedRepo: Repository<GameRanked>,
+		@InjectRepository(ActiveGame)
+		private readonly activegameRepo : Repository<ActiveGame>
     )
     {
     }
@@ -101,6 +103,29 @@ export class ProfileService {
 
 		return Games
 	}
+	async listParties ()
+	{
+		let list : {username1 : string, username2 :string, lobbyID : string}[] = []
+		const chien : ActiveGame = await this.activegameRepo.findOne({where : {id : 1}, relations : ["Games"]})
+		if (!chien)
+			return undefined
+		console.log("len : ", chien.Games.length)
+		for (let e of chien.Games)
+		{
+			let item : {username1 : string, username2 :string, lobbyID : string} = {username1 : "string", username2 :"string", lobbyID : "string"}
+			let u1 : User = await this.userRepo.findOne({where : {id : e.Player1ID}})
+			let u2 : User = await this.userRepo.findOne({where : {id : e.Player2ID}})
+			console.log(JSON.stringify(u1, null, 2))
+			if (!u1 || !u2)
+				return undefined
+			item.username1 = u1.username
+			item.username2 = u2.username
+			item.lobbyID = e.LobbyID
+			list.push(item)
+		}
+		return list
+	}
+
 	async getDataGames(user_id : number, jwt : string) : Promise<protoMatch[]>
 	{
 		const {id} = decode(jwt) as JwtPayload

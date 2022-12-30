@@ -6,7 +6,7 @@ import { diskStorage } from 'multer'
 import { FileInterceptor, MulterModule } from '@nestjs/platform-express';
 import { extname, join } from 'path';
 import { decode, JwtPayload } from 'jsonwebtoken';
-import { GameRanked } from 'src/typeorm';
+import { GameRanked, ActiveGame } from 'src/typeorm';
 import { userInfo } from 'os';
 
 export type protoMatch = {
@@ -65,7 +65,12 @@ export class ProfileController {
 		const str : string = await this.profileService.uploadPp(file, req.cookies['jwt'])
 		return str
 	}
-
+	@Post("listParties")
+	@UseGuards(AuthGuard('jwt'))
+	async listParties( @Req() req)
+	{
+		return await this.profileService.listParties()
+	}
 	@Post('delPp')
 	@UseGuards(AuthGuard('jwt'))
 	async deletePp(@Body() bod : {user_id : number}, @Req() req) : Promise<string>
