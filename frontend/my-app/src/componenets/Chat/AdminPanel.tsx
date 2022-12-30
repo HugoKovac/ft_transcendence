@@ -22,7 +22,7 @@ const DelComponent = ({ id, handleCheckedBox, handleSetTime, username }: { id: n
 	</li>
 }
 
-const AdminPanel = (props: { userGroupList: userType[], conv_id: number, setConv: (v: number) => void, setPanelTrigger: (v: boolean) => void, setRefreshConvList: (v: boolean) => void, isConvPrivate: boolean, passwordInput: string, setPasswordInput: (v: string) => void }) => {
+const AdminPanel = (props: { userGroupList: userType[], conv_id: number, setConv: (v: number) => void, setPanelTrigger: (v: boolean) => void, setRefreshConvList: (v: boolean) => void, isConvPrivate: boolean, passwordInput: string, setPasswordInput: (v: string) => void, setRefresh: (e:boolean)=>void }) => {
 
 	const [groupName, setGroupName] = useState('')
 	const [friendList, setFriendList] = useState<JSX.Element[]>([])
@@ -78,7 +78,6 @@ const AdminPanel = (props: { userGroupList: userType[], conv_id: number, setConv
 	}
 
 	useEffect(() => {
-
 		const handleCheckedBox = (e: any) => {
 			let tmp = delCheckboxState
 			tmp[e.target.value] = tmp[e.target.value] ? !tmp[e.target.value] : true
@@ -151,6 +150,8 @@ const AdminPanel = (props: { userGroupList: userType[], conv_id: number, setConv
 
 			props.setPanelTrigger(false)
 			props.setRefreshConvList(true)
+			props.setRefresh(true)
+			
 		}
 		catch {
 			console.error('Error with fetch of http://localhost:3000/api/message/ addList || delList || change_group_name')
@@ -167,7 +168,7 @@ const AdminPanel = (props: { userGroupList: userType[], conv_id: number, setConv
 
 		if (toInfo[1]) {
 			await axInst.post('ban_user', { group_conv_id: props.conv_id, user_id: parseInt(toInfo[0].toString()), to: parseInt(time) }).then((res) => {
-				console.log(res.data)
+				// console.log(res.data)
 				setTo(false)
 
 				const socket = io("localhost:3000", {
@@ -188,7 +189,7 @@ const AdminPanel = (props: { userGroupList: userType[], conv_id: number, setConv
 		}
 		else if (!toInfo[1]) {
 			await axInst.post('mute_user', { group_conv_id: props.conv_id, user_id: parseInt(toInfo[0].toString()), to: parseInt(time) }).then((res) => {
-				console.log(res.data)
+				// console.log(res.data)
 				setTo(false)
 			}).catch((e) => {
 				console.error(e)
