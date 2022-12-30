@@ -6,6 +6,17 @@ export class newConvDTO{
 	user_id_2: number
 }
 
+export class usernameDTO
+{
+	@IsNotEmpty()
+	@IsNumber()
+	user_id: number
+
+	@MaxLength(12)
+	@IsNotEmpty()
+	username : string
+}
+
 export class newMsgDTO{
 	@IsNotEmpty()
 	@IsNumber()

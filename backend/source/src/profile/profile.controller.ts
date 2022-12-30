@@ -8,6 +8,7 @@ import { extname, join } from 'path';
 import { decode, JwtPayload } from 'jsonwebtoken';
 import { GameRanked, ActiveGame } from 'src/typeorm';
 import { userInfo } from 'os';
+import { usernameDTO } from 'src/chat/input.dto';
 
 export type protoMatch = {
 	playerone_id : number,
@@ -19,6 +20,8 @@ export type protoMatch = {
 	date : Date,
 	playerone_won : boolean
 }
+
+
 
 @Controller('profile')
 export class ProfileController {
@@ -81,7 +84,7 @@ export class ProfileController {
 
 	@Post('setUsername')
 	@UseGuards(AuthGuard('jwt'))
-	async setUsername(@Body() bod : {user_id : number,  username : string}, @Req() req) : Promise<string>
+	async setUsername(@Body() bod : usernameDTO, @Req() req) : Promise<string>
 	{
 		const str : string = await this.profileService.updateUsername(bod.user_id, bod.username, req.cookies['jwt'])
 		return str

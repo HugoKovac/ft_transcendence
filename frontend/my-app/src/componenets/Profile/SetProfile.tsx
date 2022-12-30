@@ -36,7 +36,8 @@ const SetProfile = () : JSX.Element => {
 
     useEffect(() => {
         if (newUsername === "")
-            return 
+            return
+		setNewUsername(newUsername.substring(0, 10))
 		const req_base = axios.create({ baseURL: 'http://localhost:3000/api/profile/', withCredentials: true})
 		req_base.post("setUsername", {user_id : logState, username : newUsername}).then((res) => {
 			// console.log("from change username : " + JSON.stringify(res))

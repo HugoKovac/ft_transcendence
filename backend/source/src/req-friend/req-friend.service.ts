@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { decode, JwtPayload } from 'jsonwebtoken';
+import { use } from 'passport';
 import { send } from 'process';
 import { Friends, ReqFriend, User, BlockPeople } from 'src/typeorm';
 import { Repository } from 'typeorm';
@@ -43,7 +44,6 @@ export class ReqFriendService {
 			const {friends} = await this.userRepo.findOne({where: {id: id}, relations: ['friends'] })
 			if (!friends)
 				return undefined
-			// console.log(JSON.stringify(friends, null, 2))
 			const listFriends : User[] = await Promise.all(friends.map(async (e) => await this.userRepo.findOne({where: {id: e.friend_id}})))
 			return listFriends
 		}catch{
@@ -264,14 +264,11 @@ export class ReqFriendService {
             return `error while unblocking this user`
         }
     }
-	async getBlockUser({user_id} :  {user_id:number}, jwt : string) : Promise<User[]>
+	async getBlockUser(jwt : string) : Promise<User[]>
 	{
         let {id} = decode(jwt) as JwtPayload
-        if ( id != user_id)
-		{
-           return null
-		}
-		const user_one : User = await this.userRepo.findOne({where : {id: user_id}, relations : ["blocked", "blocked.dest"]})
+
+		const user_one : User = await this.userRepo.findOne({where : {id: id}, relations : ["blocked", "blocked.dest"]})
 		if (user_one == undefined)
 		{
 			return null

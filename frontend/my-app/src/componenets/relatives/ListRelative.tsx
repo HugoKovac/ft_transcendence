@@ -14,9 +14,11 @@ const ListRelative  = (props : {}) => {
 		}
 		let [listUserFriends, setListUserFriends] = useState<JSX.Element[]>([])
 		let [listUserInvit, setListUserInvit] = useState<JSX.Element[]>([])
+		let [listUserBlock, setListUserBlock] = useState<JSX.Element[]>([])
 
 		function setFriends (newElem : JSX.Element[]) : void {setListUserFriends(newElem)}
 		function setInvit (newElem : JSX.Element[]) : void {setListUserInvit(newElem)}
+		function setBlock (newElem : JSX.Element[]) : void {setListUserBlock(newElem)}
 
 		function setUpList(req : string, setter : (newE : JSX.Element[]) => void, defaultState : string) : void
 		{
@@ -39,6 +41,7 @@ const ListRelative  = (props : {}) => {
 		useEffect(() => {
 			setUpList('list-friends-as-users', setFriends, "friend")
 			setUpList("list-invit", setInvit, "recv")
+			setUpList("list-blocked", setBlock, "blocked")
 		}, [])
 
 	// console.log("first_response : ", JSON.stringify(listUserFriends, null, 2))
@@ -51,6 +54,10 @@ const ListRelative  = (props : {}) => {
 			<p>Invitations</p>
 		</div>
 	<ul>{listUserInvit}</ul>
+	<div className="titleListRelative">
+			<p>Block List</p>
+		</div>
+	<ul>{listUserBlock}</ul>
 	</div>
 }
 export default ListRelative

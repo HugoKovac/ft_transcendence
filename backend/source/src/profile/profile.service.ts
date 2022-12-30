@@ -37,7 +37,7 @@ export class ProfileService {
 		const {id} = decode(jwt) as JwtPayload
 		const user_one : User = await this.userRepo.findOne({where : {id : id}})
 		if (user_one.pp.startsWith('localhost:3000/profile-pictures/'))
-			unlink("/usr/src/app/profile-pictures/" + user_one.pp.split('/').pop(), (e) => { console.log(e, " chien2")})
+			unlink("/usr/src/app/profile-pictures/" + user_one.pp.split('/').pop(), (e) => { console.error(e)})
 		user_one.pp = join('localhost:3000/profile-pictures', file.filename)
 		await this.userRepo.save(user_one)
 
@@ -53,7 +53,7 @@ export class ProfileService {
 		}
 		const user_one : User = await this.userRepo.findOne({where : {id : id}})
 		if (user_one.pp.startsWith('localhost:3000/profile-pictures/'))
-			unlink("/usr/src/app/profile-pictures/" + user_one.pp.split('/').pop(), (e) => { console.log(e, " chien")})
+			unlink("/usr/src/app/profile-pictures/" + user_one.pp.split('/').pop(), (e) => { console.error(e)})
 		user_one.pp = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKz5NrMH98NhzE4PEweSeetyBYYctrkap_d56IPqor&s"
 		await this.userRepo.save(user_one)
 		return "Profile picture has been deleted"
@@ -115,7 +115,6 @@ export class ProfileService {
 			let item : {username1 : string, username2 :string, lobbyID : string} = {username1 : "string", username2 :"string", lobbyID : "string"}
 			let u1 : User = await this.userRepo.findOne({where : {id : e.Player1ID}})
 			let u2 : User = await this.userRepo.findOne({where : {id : e.Player2ID}})
-			// console.log(JSON.stringify(u1, null, 2))
 			if (!u1 || !u2)
 				return undefined
 			item.username1 = u1.username
@@ -133,6 +132,7 @@ export class ProfileService {
 			return undefined
 		let {Games} : User = await this.userRepo.findOne({where : {id : user_id}, relations : ['Games']})
 		try {
+			//console.log(JSON.stringify(Games))
 			Games = await this.moulinette_usernames(Games)
 		} catch {
 			return undefined

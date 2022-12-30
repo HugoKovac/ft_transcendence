@@ -60,7 +60,7 @@ const LineUser = (props : {name : string, img_path: string, id : number, default
     return <li>
 		<div className="profileLine">
 		<ToastContainer/>
-		<a href={"/profile?userId?" + logState}>
+		<a href={"/profile?userId=" + props.id}>
         	{renderImg}
 		</a>
         <p>{props.name}</p>
